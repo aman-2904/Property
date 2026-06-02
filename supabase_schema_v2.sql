@@ -174,7 +174,8 @@ CREATE TABLE IF NOT EXISTS public.commissions (
     amount NUMERIC(15, 2) NOT NULL CHECK (amount >= 0.00),
     status public.commission_status NOT NULL DEFAULT 'pending'::public.commission_status,
     approved_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
-    approved_at TIMESTAMP WITH TIME ZONE
+    approved_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
 -- Enable RLS

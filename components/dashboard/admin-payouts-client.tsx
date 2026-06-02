@@ -48,8 +48,8 @@ export function AdminPayoutsClient({ initialPayouts }: AdminPayoutsClientProps) 
 
   const filteredPayouts = payouts.filter((pay) => {
     const matchesSearch =
-      pay.profiles?.name.toLowerCase().includes(search.toLowerCase()) ||
-      pay.profiles?.email.toLowerCase().includes(search.toLowerCase()) ||
+      (pay.profiles?.name || "").toLowerCase().includes(search.toLowerCase()) ||
+      (pay.profiles?.email || "").toLowerCase().includes(search.toLowerCase()) ||
       (pay.profiles?.bank_name || "").toLowerCase().includes(search.toLowerCase());
     const matchesFilter = filter === "" ? true : pay.status === filter;
     return matchesSearch && matchesFilter;

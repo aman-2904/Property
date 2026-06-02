@@ -139,9 +139,9 @@ export function ActivityLogsClient({ initialLogs }: ActivityLogsClientProps) {
   const filtered = logs.filter((log) => {
     const matchSearch =
       search === "" ||
-      (log.profiles?.name?.toLowerCase().includes(search.toLowerCase())) ||
+      (log.profiles?.name || "").toLowerCase().includes(search.toLowerCase()) ||
       (ACTION_LABELS[log.action] || log.action).toLowerCase().includes(search.toLowerCase()) ||
-      log.entity_type.toLowerCase().includes(search.toLowerCase());
+      (log.entity_type || "").toLowerCase().includes(search.toLowerCase());
     const matchType = typeFilter === "" || log.entity_type === typeFilter;
     return matchSearch && matchType;
   });

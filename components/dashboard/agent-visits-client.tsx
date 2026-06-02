@@ -33,9 +33,9 @@ export function AgentVisitsClient({ initialVisits }: AgentVisitsClientProps) {
   const filteredVisits = React.useMemo(() => {
     return initialVisits.filter((visit) => {
       const matchesSearch =
-        visit.customer_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        visit.properties?.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        visit.coordinator_name.toLowerCase().includes(searchQuery.toLowerCase());
+        (visit.customer_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (visit.properties?.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (visit.coordinator_name || "").toLowerCase().includes(searchQuery.toLowerCase());
       
       const matchesMode = modeFilter === "" || visit.visit_mode === modeFilter;
 

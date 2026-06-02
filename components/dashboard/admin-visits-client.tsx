@@ -55,9 +55,9 @@ export function AdminVisitsClient({ initialVisits, analytics }: AdminVisitsClien
     return initialVisits.filter((visit) => {
       const agentName = visit.profiles?.name || "";
       const matchesSearch =
-        visit.customer_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        visit.properties?.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        visit.coordinator_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (visit.customer_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (visit.properties?.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (visit.coordinator_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
         agentName.toLowerCase().includes(searchQuery.toLowerCase());
       
       const matchesMode = modeFilter === "" || visit.visit_mode === modeFilter;
