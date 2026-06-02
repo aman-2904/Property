@@ -137,7 +137,7 @@ export async function getAgentSalesSummary(agentId: string) {
   const { data: commissions, error: commError } = await supabase
     .from("commissions")
     .select("amount, status")
-    .eq("agent_id", agentId);
+    .eq("recipient_id", agentId);
 
   if (commError) {
     console.error("Error fetching agent commissions:", commError);
