@@ -1,0 +1,228 @@
+"use client";
+
+import * as React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  LayoutDashboard,
+  Building2,
+  Network,
+  DollarSign,
+  Users,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  Coins,
+  MapPin,
+  ClipboardList,
+} from "lucide-react";
+import { signOut } from "@/lib/actions/auth";
+import { ThemeToggle } from "./theme-toggle";
+import { cn } from "@/lib/utils";
+
+interface SidebarProps {
+  role: "SUPER_ADMIN" | "ADMIN" | "AGENT";
+}
+
+interface SidebarItem {
+  label: string;
+  href: string;
+  icon: React.ComponentType<any>;
+}
+
+export function Sidebar({ role }: SidebarProps) {
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [isPending, startTransition] = React.useTransition();
+
+  const handleLogout = () => {
+    startTransition(async () => {
+      await signOut();
+    });
+  };
+
+  const agentItems: SidebarItem[] = [
+    { label: "Dashboard", href: "/agent/dashboard", icon: LayoutDashboard },
+    { label: "Properties & Sales", href: "/agent/properties", icon: Building2 },
+    { label: "My Downline", href: "/agent/network", icon: Network },
+    { label: "My Payouts", href: "/agent/payouts", icon: DollarSign },
+    { label: "Visit Logs", href: "/agent/visits", icon: MapPin },
+  ];
+
+  const adminItems: SidebarItem[] = [
+    { label: "Overview", href: "/admin/dashboard", icon: LayoutDashboard },
+    { label: "Properties", href: "/admin/properties", icon: Building2 },
+    { label: "Agents", href: "/admin/agents", icon: Users },
+    { label: "Payouts Requests", href: "/admin/payouts", icon: Coins },
+    { label: "Visits Tracking", href: "/admin/visits", icon: MapPin },
+    { label: "Activity Logs", href: "/admin/activity", icon: ClipboardList },
+    { label: "Settings", href: "/admin/settings", icon: Settings },
+  ];
+
+  const items = role === "SUPER_ADMIN" || role === "ADMIN" ? adminItems : agentItems;
+
+  const sidebarVariants = {
+    open: { x: 0, opacity: 1 },
+    closed: { x: "-100%", opacity: 0 },
+  };
+
+  return (
+    <>
+      {/* Mobile top navbar */}
+      <div className="flex h-16 w-full items-center justify-between border-b border-border/40 bg-card/65 px-4 backdrop-blur-md lg:hidden z-30 fixed top-0 left-0">
+        <div className="flex items-center gap-2">
+          <Coins className="h-6 w-6 text-primary" />
+          <span className="font-extrabold tracking-wider bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent">
+            AuraCommission
+          </span>
+        </div>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="rounded-xl border border-border/50 p-2 text-foreground"
+        >
+          {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </div>
+
+      {/* Desktop Sidebar */}
+      <aside className="fixed bottom-0 left-0 top-0 z-40 hidden w-64 border-r border-border/30 bg-card/40 backdrop-blur-xl lg:flex flex-col justify-between py-6 px-4">
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 pl-3">
+            <Coins className="h-7 w-7 text-primary animate-pulse" />
+            <div>
+              <span className="font-extrabold text-lg tracking-wider bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent block">
+                AuraComm
+              </span>
+              <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">
+                {role} Portal
+              </span>
+            </div>
+          </div>
+
+          <nav className="space-y-1.5 pt-4">
+            {items.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href;
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold tracking-wide transition-all duration-200",
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-[1.02]"
+                      : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between px-3">
+            <span className="text-xs text-muted-foreground font-semibold">Appearance</span>
+            <ThemeToggle />
+          </div>
+
+          <button
+            onClick={handleLogout}
+            disabled={isPending}
+            className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-rose-500 hover:bg-rose-500/10 transition-all border border-transparent hover:border-rose-500/20 active:scale-[0.98]"
+          >
+            <LogOut className="h-4 w-4" />
+            {isPending ? "Logging out..." : "Log Out"}
+          </button>
+        </div>
+      </aside>
+
+      {/* Mobile drawer overlay */}
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsOpen(false)}
+              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+            />
+            {/* Sidebar content */}
+            <motion.div
+              variants={sidebarVariants}
+              initial="closed"
+              animate="open"
+              exit="closed"
+              transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
+              className="fixed bottom-0 left-0 top-0 z-50 flex w-64 flex-col justify-between bg-card/90 border-r border-border/50 py-6 px-4 shadow-2xl backdrop-blur-xl lg:hidden"
+            >
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Coins className="h-6 w-6 text-primary" />
+                    <span className="font-extrabold text-lg tracking-wider bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent">
+                      AuraComm
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="rounded-xl p-1.5 hover:bg-muted text-foreground"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                <nav className="space-y-1.5 pt-4">
+                  {items.map((item) => {
+                    const Icon = item.icon;
+                    const isActive = pathname === item.href;
+
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setIsOpen(false)}
+                        className={cn(
+                          "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold tracking-wide transition-all duration-200",
+                          isActive
+                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-[1.02]"
+                            : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+                        )}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {item.label}
+                      </Link>
+                    );
+                  })}
+                </nav>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between px-3">
+                  <span className="text-xs text-muted-foreground font-semibold">Appearance</span>
+                  <ThemeToggle />
+                </div>
+
+                <button
+                  onClick={handleLogout}
+                  disabled={isPending}
+                  className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-rose-500 hover:bg-rose-500/10 transition-all active:scale-[0.98]"
+                >
+                  <LogOut className="h-4 w-4" />
+                  {isPending ? "Logging out..." : "Log Out"}
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
