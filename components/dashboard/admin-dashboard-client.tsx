@@ -11,7 +11,7 @@ import { AgentGrowthChart } from "@/components/charts/agent-growth-chart";
 import { VisitTrendsChart } from "@/components/charts/visit-trends-chart";
 import { updateSaleStatus } from "@/lib/actions/sales";
 import { updatePayoutStatus } from "@/lib/actions/payouts";
-import { globalSearch } from "@/lib/actions/admin";
+import { globalSearch, updateCommissionStatus } from "@/lib/actions/admin";
 import {
   Users,
   Building2,
@@ -473,6 +473,19 @@ export function AdminDashboardClient({
     }
   };
 
+  // ── Commission Actions ─────────────────────────────────────────────────────
+  const handleCommissionAction = async (commissionId: string, status: "approved" | "rejected") => {
+    setActionLoading(commissionId);
+    const res = await updateCommissionStatus(commissionId, status);
+    setActionLoading(null);
+    if (res?.error) {
+      showToast(res.error, false);
+    } else {
+      showToast(status === "approved" ? "Commission approved & balance credited." : "Commission rejected.");
+      router.refresh();
+    }
+  };
+
   // ── Filtered Data ──────────────────────────────────────────────────────────
   const filteredSales = statusFilter
     ? recentSales.filter((s) => s.status === statusFilter)
@@ -493,7 +506,7 @@ export function AdminDashboardClient({
     status,
   }: {
     id: string;
-    type: "sale" | "withdrawal";
+    type: "sale" | "withdrawal" | "commission";
     status: string;
   }) => {
     const isPending = status === "pending" || status === "pending_approval";
@@ -502,11 +515,15 @@ export function AdminDashboardClient({
     return (
       <div className="flex items-center gap-1.5">
         <button
-          onClick={() =>
-            type === "sale"
-              ? handleSaleAction(id, "approved")
-              : handleWithdrawalAction(id, "approved")
-          }
+          onClick={() => {
+            if (type === "sale") {
+              handleSaleAction(id, "approved");
+            } else if (type === "withdrawal") {
+              handleWithdrawalAction(id, "approved");
+            } else {
+              handleCommissionAction(id, "approved");
+            }
+          }}
           disabled={actionLoading === id}
           className="inline-flex h-7 items-center gap-1 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-2 text-[11px] font-bold text-emerald-500 hover:bg-emerald-500 hover:text-white transition-all disabled:opacity-50"
         >
@@ -514,11 +531,15 @@ export function AdminDashboardClient({
           Approve
         </button>
         <button
-          onClick={() =>
-            type === "sale"
-              ? handleSaleAction(id, "rejected")
-              : handleWithdrawalAction(id, "rejected")
-          }
+          onClick={() => {
+            if (type === "sale") {
+              handleSaleAction(id, "rejected");
+            } else if (type === "withdrawal") {
+              handleWithdrawalAction(id, "rejected");
+            } else {
+              handleCommissionAction(id, "rejected");
+            }
+          }}
           disabled={actionLoading === id}
           className="inline-flex h-7 items-center gap-1 rounded-lg border border-rose-500/20 bg-rose-500/10 px-2 text-[11px] font-bold text-rose-500 hover:bg-rose-500 hover:text-white transition-all disabled:opacity-50"
         >
@@ -760,7 +781,7 @@ export function AdminDashboardClient({
                     <td className="px-5 py-3.5 text-xs font-medium text-foreground/80">{s.properties?.title ?? "—"}</td>
                     <td className="px-5 py-3.5 text-xs text-foreground/80">{s.buyer_name}</td>
                     <td className="px-5 py-3.5 text-xs font-bold text-foreground">${Number(s.sale_amount).toLocaleString("en-US")}</td>
-                    <td className="px-5 py-3.5 text-xs text-muted-foreground">{new Date(s.created_at).toLocaleDateString()}</td>
+                    <td className="px-5 py-3.5 text-xs text-muted-foreground" suppressHydrationWarning>{new Date(s.created_at).toLocaleDateString()}</td>
                     <td className="px-5 py-3.5">
                       <ActionButtons id={s.id} type="sale" status={s.status} />
                     </td>
@@ -788,7 +809,7 @@ export function AdminDashboardClient({
                     <td className="px-5 py-3.5 text-xs font-semibold text-foreground">{w.profiles?.name ?? "—"}</td>
                     <td className="px-5 py-3.5 text-xs text-muted-foreground">{w.profiles?.email}</td>
                     <td className="px-5 py-3.5 text-xs font-bold text-foreground">${Number(w.amount).toLocaleString("en-US")}</td>
-                    <td className="px-5 py-3.5 text-xs text-muted-foreground">{new Date(w.created_at).toLocaleDateString()}</td>
+                    <td className="px-5 py-3.5 text-xs text-muted-foreground" suppressHydrationWarning>{new Date(w.created_at).toLocaleDateString()}</td>
                     <td className="px-5 py-3.5">
                       <ActionButtons id={w.id} type="withdrawal" status={w.status} />
                     </td>
@@ -803,7 +824,7 @@ export function AdminDashboardClient({
             <table className="w-full border-collapse text-left text-sm">
               <thead>
                 <tr className="border-b border-border/40 bg-muted/20">
-                  {["Recipient", "Property", "Level", "Amount", "Status"].map((h) => (
+                  {["Recipient", "Property", "Level", "Amount", "Status / Action"].map((h) => (
                     <th key={h} className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{h}</th>
                   ))}
                 </tr>
@@ -826,7 +847,9 @@ export function AdminDashboardClient({
                       </span>
                     </td>
                     <td className="px-5 py-3.5 text-xs font-bold text-foreground">${Number(c.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}</td>
-                    <td className="px-5 py-3.5"><StatusBadge status={c.status} /></td>
+                    <td className="px-5 py-3.5">
+                      <ActionButtons id={c.id} type="commission" status={c.status} />
+                    </td>
                   </tr>
                 ))}
               </tbody>

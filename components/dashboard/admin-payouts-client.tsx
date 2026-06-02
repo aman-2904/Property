@@ -143,7 +143,7 @@ export function AdminPayoutsClient({ initialPayouts }: AdminPayoutsClientProps) 
       header: "Request Date",
       accessorKey: "created_at",
       render: (row: Payout) => (
-        <span>{new Date(row.created_at).toLocaleDateString()}</span>
+        <span suppressHydrationWarning>{new Date(row.created_at).toLocaleDateString()}</span>
       ),
     },
     {

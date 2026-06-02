@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { PayoutForm } from "@/components/forms/payout-form";
+import { BankDetailsForm } from "@/components/forms/bank-details-form";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { DataTable } from "@/components/tables/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -24,12 +25,18 @@ export function AgentPayoutsClient({
   hasBankDetails,
   payouts,
 }: AgentPayoutsClientProps) {
+  const [isEditingBank, setIsEditingBank] = React.useState(!hasBankDetails);
+
+  React.useEffect(() => {
+    setIsEditingBank(!hasBankDetails);
+  }, [hasBankDetails]);
+
   const columns = [
     {
       header: "Request Date",
       accessorKey: "created_at",
       render: (row: any) => (
-        <span>{new Date(row.created_at).toLocaleDateString()}</span>
+        <span suppressHydrationWarning>{new Date(row.created_at).toLocaleDateString()}</span>
       ),
     },
     {
@@ -43,7 +50,7 @@ export function AgentPayoutsClient({
     },
     {
       header: "Method",
-      accessorKey: "payment_method",
+      accessorKey: "method",
     },
     {
       header: "Status",
@@ -52,10 +59,10 @@ export function AgentPayoutsClient({
     },
     {
       header: "Tx Hash / Reference",
-      accessorKey: "transaction_hash",
+      accessorKey: "hash",
       render: (row: any) => (
         <span className="font-mono text-xs text-muted-foreground break-all">
-          {row.transaction_hash || "Processing..."}
+          {row.hash || "Processing..."}
         </span>
       ),
     },
@@ -97,15 +104,32 @@ export function AgentPayoutsClient({
       <div className="grid gap-8 lg:grid-cols-3">
         {/* Left Side: Submit payout */}
         <div className="lg:col-span-1 p-6 rounded-3xl border border-border/40 bg-card text-foreground shadow-lg h-fit">
-          <div className="mb-6">
-            <h3 className="text-lg font-bold text-foreground">
-              Request Withdrawal
-            </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              Submit a request to transfer commissions to your account
-            </p>
+          <div className="mb-6 flex justify-between items-center">
+            <div>
+              <h3 className="text-lg font-bold text-foreground">
+                {isEditingBank ? "Bank Account Details" : "Request Withdrawal"}
+              </h3>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {isEditingBank 
+                  ? "Configure where your cashouts are sent" 
+                  : "Submit a request to transfer commissions"}
+              </p>
+            </div>
+            {hasBankDetails && (
+              <button
+                onClick={() => setIsEditingBank(!isEditingBank)}
+                className="text-xs font-semibold text-primary hover:underline"
+              >
+                {isEditingBank ? "Back to Payout" : "Edit Bank"}
+              </button>
+            )}
           </div>
-          <PayoutForm balance={balance} hasBankDetails={hasBankDetails} />
+          
+          {isEditingBank ? (
+            <BankDetailsForm onSuccessCallback={() => setIsEditingBank(false)} />
+          ) : (
+            <PayoutForm balance={balance} hasBankDetails={hasBankDetails} />
+          )}
         </div>
 
         {/* Right Side: Ledger history */}

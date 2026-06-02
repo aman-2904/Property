@@ -7,7 +7,7 @@ export async function getPayouts(agentId?: string) {
   const supabase = createClient();
   let query = supabase
     .from("withdrawals")
-    .select("*, profiles:user_id(name, email)")
+    .select("*, profiles:user_id(name, email, bank_name, account_number, ifsc_code)")
     .order("created_at", { ascending: false });
 
   if (agentId) {
@@ -103,6 +103,7 @@ export async function requestPayout(formData: {
       user_id: user.id,
       amount: formData.amount,
       status: "pending",
+      method: formData.paymentMethod || "Bank Transfer",
     },
   ]);
 
@@ -133,6 +134,7 @@ export async function updatePayoutStatus(formData: {
     processed_by: user.id,
     processed_at: new Date().toISOString(),
     remarks: formData.remarks || null,
+    hash: formData.remarks || null,
   };
 
   const { error } = await supabase
@@ -146,6 +148,36 @@ export async function updatePayoutStatus(formData: {
 
   revalidatePath("/admin/payouts");
   revalidatePath("/admin/dashboard");
+  revalidatePath("/agent/payouts");
+  return { success: true };
+}
+
+export async function updateBankDetails(formData: {
+  bankName: string;
+  accountNumber: string;
+  ifscCode: string;
+}) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Unauthenticated" };
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      bank_name: formData.bankName,
+      account_number: formData.accountNumber,
+      ifsc_code: formData.ifscCode,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", user.id);
+
+  if (error) {
+    return { error: error.message };
+  }
+
   revalidatePath("/agent/payouts");
   return { success: true };
 }

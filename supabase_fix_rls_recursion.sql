@@ -67,7 +67,7 @@ CREATE POLICY "profiles_update_owner_policy" ON public.profiles
   USING (id = auth.uid())
   WITH CHECK (
     id = auth.uid() AND (
-      (role::text = (SELECT role::text FROM public.profiles WHERE id = auth.uid())) OR public.is_admin(auth.uid())
+      (role::text = 'AGENT') OR public.is_admin(auth.uid())
     )
   );
 

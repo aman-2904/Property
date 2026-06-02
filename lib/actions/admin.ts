@@ -290,6 +290,40 @@ export async function toggleAgentActive(agentId: string, isActive: boolean) {
   return { success: true };
 }
 
+export async function updateCommissionStatus(
+  commissionId: string,
+  status: "approved" | "rejected"
+) {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Unauthenticated" };
+  }
+
+  const updateData: any = {
+    status,
+    approved_by: user.id,
+    approved_at: new Date().toISOString(),
+  };
+
+  const { error } = await supabase
+    .from("commissions")
+    .update(updateData)
+    .eq("id", commissionId);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/admin/dashboard");
+  return { success: true };
+}
+
+
 // ─── GLOBAL SEARCH ───────────────────────────────────────────────────────────
 
 export async function globalSearch(query: string) {
