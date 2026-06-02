@@ -73,14 +73,13 @@ export function SearchFilter({
               paddingRight: "2.5rem",
             }}
           >
-            <option value="" className="bg-card text-foreground">
+            <option value="">
               {filterPlaceholder}
             </option>
             {filterOptions.map((opt) => (
               <option
                 key={opt.value}
                 value={opt.value}
-                className="bg-card text-foreground"
               >
                 {opt.label}
               </option>

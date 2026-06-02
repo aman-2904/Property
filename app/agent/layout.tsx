@@ -1,7 +1,15 @@
 import * as React from "react";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/dashboard/sidebar";
+import fs from "fs";
+
+function logToFile(msg: string) {
+  try {
+    const logPath = "d:/software/Property/middleware_log.txt";
+    fs.appendFileSync(logPath, `[${new Date().toISOString()}] [AgentLayout] ${msg}\n`);
+  } catch (e) {}
+}
 
 export default async function AgentLayout({
   children,
@@ -9,27 +17,39 @@ export default async function AgentLayout({
   children: React.ReactNode;
 }) {
   const supabase = createClient();
+  const adminSupabase = createAdminClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
+  logToFile(`User checking: ${user ? user.email : "null"}`);
+
   if (!user) {
+    logToFile(`No user found, redirecting to /login`);
     redirect("/login");
   }
 
-  const { data: profile } = await supabase
+  const { data: profile, error } = await adminSupabase
     .from("profiles")
     .select("role")
     .eq("id", user.id)
     .single();
 
-  // Only redirect if profile was fetched and role is definitively wrong.
-  // Do NOT redirect when profile is null — the session cookie may still be
-  // propagating (race condition after login).
-  if (profile && profile.role !== "AGENT") {
+  if (error) {
+    logToFile(`Error querying profile: ${error.message}`);
+  } else {
+    logToFile(`Profile queried, role: ${profile?.role}`);
+  }
+
+  const role = profile?.role?.toUpperCase();
+  if (profile && role !== "AGENT") {
+    logToFile(`Role is ${role}, not AGENT. Redirecting to /admin/dashboard`);
     redirect("/admin/dashboard");
   }
+
+  logToFile(`Allowing access to AgentLayout`);
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -45,3 +65,4 @@ export default async function AgentLayout({
     </div>
   );
 }
+

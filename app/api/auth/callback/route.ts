@@ -44,7 +44,8 @@ export async function GET(request: Request) {
           .eq("id", user.id)
           .single();
 
-        if (profile?.role === "admin") {
+        const role = profile?.role?.toUpperCase();
+        if (role === "SUPER_ADMIN" || role === "ADMIN") {
           return NextResponse.redirect(`${origin}/admin/dashboard`);
         } else {
           return NextResponse.redirect(`${origin}/agent/dashboard`);

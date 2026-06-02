@@ -120,10 +120,10 @@ export function PayoutForm({ balance, hasBankDetails }: PayoutFormProps) {
             backgroundRepeat: "no-repeat",
           }}
         >
-          <option value="" className="bg-card text-foreground">Choose method...</option>
-          <option value="Bank Transfer" className="bg-card text-foreground">Bank Transfer (ACH)</option>
-          <option value="USDT (TRC-20)" className="bg-card text-foreground">USDT (TRC-20) Crypto</option>
-          <option value="PayPal" className="bg-card text-foreground">PayPal</option>
+          <option value="">Choose method...</option>
+          <option value="Bank Transfer">Bank Transfer (ACH)</option>
+          <option value="USDT (TRC-20)">USDT (TRC-20) Crypto</option>
+          <option value="PayPal">PayPal</option>
         </select>
         {errors.paymentMethod && (
           <p className="text-xs text-destructive pl-1">{errors.paymentMethod.message}</p>

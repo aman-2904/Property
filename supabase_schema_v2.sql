@@ -820,8 +820,34 @@ TO authenticated
 USING (auth.uid() = id) 
 WITH CHECK (auth.uid() = id);
 
-CREATE POLICY "Allow full access for super admin / admin" 
-ON public.profiles FOR ALL 
+CREATE POLICY "Allow admin insert access for super admin / admin" 
+ON public.profiles FOR INSERT 
+TO authenticated 
+WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM public.profiles 
+    WHERE id = auth.uid() AND role IN ('SUPER_ADMIN'::public.user_role, 'ADMIN'::public.user_role)
+  )
+);
+
+CREATE POLICY "Allow admin update access for super admin / admin" 
+ON public.profiles FOR UPDATE 
+TO authenticated 
+USING (
+  EXISTS (
+    SELECT 1 FROM public.profiles 
+    WHERE id = auth.uid() AND role IN ('SUPER_ADMIN'::public.user_role, 'ADMIN'::public.user_role)
+  )
+)
+WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM public.profiles 
+    WHERE id = auth.uid() AND role IN ('SUPER_ADMIN'::public.user_role, 'ADMIN'::public.user_role)
+  )
+);
+
+CREATE POLICY "Allow admin delete access for super admin / admin" 
+ON public.profiles FOR DELETE 
 TO authenticated 
 USING (
   EXISTS (
@@ -829,6 +855,7 @@ USING (
     WHERE id = auth.uid() AND role IN ('SUPER_ADMIN'::public.user_role, 'ADMIN'::public.user_role)
   )
 );
+
 
 -- 2. Wallets Policies
 CREATE POLICY "Allow read for wallet owners" 

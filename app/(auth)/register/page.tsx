@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion } from "framer-motion";
-import { User, Lock, Mail, Users, Loader2, AlertCircle, CheckCircle } from "lucide-react";
+import { User, Lock, Mail, Users, Loader2, AlertCircle, CheckCircle, Shield } from "lucide-react";
 import { signUp } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +16,7 @@ const registerSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   referralCode: z.string().optional().or(z.literal("")),
+  role: z.enum(["AGENT", "ADMIN"]),
 });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
@@ -24,11 +25,14 @@ export default function RegisterPage() {
   const router = useRouter();
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState(false);
+  const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
   const [isPending, startTransition] = React.useTransition();
 
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -37,8 +41,11 @@ export default function RegisterPage() {
       email: "",
       password: "",
       referralCode: "",
+      role: "AGENT",
     },
   });
+
+  const watchRole = watch("role");
 
   const onSubmit = (data: RegisterFormValues) => {
     setError(null);
@@ -48,8 +55,15 @@ export default function RegisterPage() {
         setError(res.error);
       } else {
         setSuccess(true);
+        if (res && res.message) {
+          setSuccessMessage(res.message);
+        }
         setTimeout(() => {
-          router.push("/login");
+          if (res && res.redirectUrl) {
+            router.push(res.redirectUrl);
+          } else {
+            router.push("/login");
+          }
         }, 3000);
       }
     });
@@ -84,7 +98,9 @@ export default function RegisterPage() {
           <div>
             <p className="font-semibold">Registration Complete!</p>
             <p className="text-xs text-emerald-400 mt-1">
-              Please check your email to verify your address, then log in. Redirecting...
+              {successMessage || (watchRole === "AGENT"
+                ? "Your account has been created. Redirecting to agent dashboard..."
+                : "Your admin account has been created. Redirecting to login...")}
             </p>
           </div>
         </div>
@@ -160,6 +176,41 @@ export default function RegisterPage() {
           </div>
           {errors.password && (
             <p className="text-xs text-destructive pl-1">{errors.password.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
+            Sign Up As
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setValue("role", "AGENT")}
+              disabled={isPending || success}
+              className={cn(
+                "flex flex-col items-center justify-center p-3 rounded-xl border border-border/50 bg-muted/10 hover:bg-muted/20 transition-all gap-1.5 cursor-pointer text-muted-foreground",
+                watchRole === "AGENT" && "border-primary/50 bg-primary/10 text-primary"
+              )}
+            >
+              <User className="h-5 w-5" />
+              <span className="text-xs font-bold">Agent</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setValue("role", "ADMIN")}
+              disabled={isPending || success}
+              className={cn(
+                "flex flex-col items-center justify-center p-3 rounded-xl border border-border/50 bg-muted/10 hover:bg-muted/20 transition-all gap-1.5 cursor-pointer text-muted-foreground",
+                watchRole === "ADMIN" && "border-primary/50 bg-primary/10 text-primary"
+              )}
+            >
+              <Shield className="h-5 w-5" />
+              <span className="text-xs font-bold">Admin</span>
+            </button>
+          </div>
+          {errors.role && (
+            <p className="text-xs text-destructive pl-1">{errors.role.message}</p>
           )}
         </div>
 

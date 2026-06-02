@@ -1,6 +1,6 @@
 import * as React from "react";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { EarningsChart } from "@/components/charts/earnings-chart";
 import { DataTable } from "@/components/tables/data-table";
@@ -15,8 +15,10 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 
+
 export default async function AgentDashboardPage() {
   const supabase = createClient();
+  const adminSupabase = createAdminClient();
 
   const {
     data: { user },
@@ -26,8 +28,8 @@ export default async function AgentDashboardPage() {
     redirect("/login");
   }
 
-  // 1. Fetch profile details
-  const { data: profile } = await supabase
+  // 1. Fetch profile details using admin client to bypass RLS recursion
+  const { data: profile } = await adminSupabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
@@ -36,6 +38,7 @@ export default async function AgentDashboardPage() {
   if (!profile) {
     redirect("/login");
   }
+
 
   // 2. Fetch financial balances (using synced wallet)
   const { totalEarned, balance, paid } = await getAgentBalance(user.id);

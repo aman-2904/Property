@@ -1,6 +1,6 @@
 import * as React from "react";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { getDownlineTree, getAgentTeamAnalytics } from "@/lib/actions/network";
 import { TreeVisualizer } from "@/components/network-tree/tree-visualizer";
 import { ReferralCard } from "@/components/dashboard/referral-card";
@@ -11,6 +11,7 @@ import { Users, Activity, Award, User, Layers } from "lucide-react";
 
 export default async function AgentNetworkPage() {
   const supabase = createClient();
+  const adminSupabase = createAdminClient();
 
   const {
     data: { user },
@@ -20,8 +21,8 @@ export default async function AgentNetworkPage() {
     redirect("/login");
   }
 
-  // 1. Fetch agent profile
-  const { data: profile } = await supabase
+  // 1. Fetch agent profile using admin client to bypass RLS recursion
+  const { data: profile } = await adminSupabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
@@ -30,6 +31,7 @@ export default async function AgentNetworkPage() {
   if (!profile) {
     redirect("/login");
   }
+
 
   // 2. Fetch downline tree (Agent is restricted to 3 levels max)
   const downlineTree = await getDownlineTree(user.id, 3);

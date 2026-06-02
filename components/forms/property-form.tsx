@@ -220,9 +220,9 @@ export function PropertyForm({ property, onSuccess }: PropertyFormProps) {
             disabled={isPending}
             className="w-full px-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all text-foreground cursor-pointer"
           >
-            <option value="available" className="bg-card text-foreground">Available</option>
-            <option value="sold" className="bg-card text-foreground">Sold</option>
-            <option value="draft" className="bg-card text-foreground">Draft (Archived)</option>
+            <option value="available">Available</option>
+            <option value="sold">Sold</option>
+            <option value="draft">Draft (Archived)</option>
           </select>
         </div>
 

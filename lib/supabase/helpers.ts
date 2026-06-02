@@ -29,7 +29,7 @@ export async function requireRole(allowedRoles: UserRole[]) {
     throw new Error("Unauthenticated: Please sign in to proceed.");
   }
 
-  const userRole = profile.role as UserRole;
+  const userRole = (profile.role as string).toUpperCase() as UserRole;
 
   if (!allowedRoles.includes(userRole)) {
     throw new Error(`Unauthorized: This operation requires one of [${allowedRoles.join(", ")}] roles.`);

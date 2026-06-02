@@ -1,0 +1,141 @@
+[2026-06-02T09:14:33.993Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:14:34.462Z] [DashboardRouter] Error fetching profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:14:34.462Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: none) to /agent/dashboard
+[2026-06-02T09:14:34.972Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:14:35.141Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:14:35.216Z] [AgentLayout] Error querying profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:14:35.216Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T09:14:35.461Z] [AgentLayout] Error querying profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:14:35.462Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T09:14:36.922Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:14:37.093Z] [DashboardRouter] Error fetching profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:14:37.094Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: none) to /agent/dashboard
+[2026-06-02T09:14:43.506Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:14:43.703Z] [AgentLayout] Error querying profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:14:43.704Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T09:14:47.073Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:14:47.255Z] [DashboardRouter] Error fetching profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:14:47.256Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: none) to /agent/dashboard
+[2026-06-02T09:14:51.146Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:14:51.317Z] [DashboardRouter] Error fetching profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:14:51.317Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: none) to /agent/dashboard
+[2026-06-02T09:14:52.793Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:14:52.989Z] [AgentLayout] Error querying profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:14:52.989Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T09:14:53.229Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:14:53.491Z] [AgentLayout] Error querying profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:14:53.492Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T09:14:55.469Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:14:55.643Z] [DashboardRouter] Error fetching profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:14:55.643Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: none) to /agent/dashboard
+[2026-06-02T09:14:57.152Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:14:57.326Z] [AgentLayout] Error querying profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:14:57.326Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T09:14:57.428Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:14:57.595Z] [AgentLayout] Error querying profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:14:57.595Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T09:14:58.761Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:14:58.950Z] [AgentLayout] Error querying profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:14:58.951Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T09:14:59.821Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:14:59.991Z] [DashboardRouter] Error fetching profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:14:59.992Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: none) to /agent/dashboard
+[2026-06-02T09:15:01.087Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:15:01.271Z] [AgentLayout] Error querying profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:15:01.271Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T09:15:01.323Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:15:01.495Z] [AgentLayout] Error querying profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:15:01.496Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T09:16:28.788Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:16:29.058Z] [DashboardRouter] Error fetching profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:16:29.058Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: none) to /agent/dashboard
+[2026-06-02T09:16:29.608Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:16:29.807Z] [AgentLayout] Error querying profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:16:29.807Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T09:16:31.596Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:16:31.762Z] [DashboardRouter] Error fetching profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:16:31.762Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: none) to /agent/dashboard
+[2026-06-02T09:17:01.651Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:17:01.844Z] [DashboardRouter] Error fetching profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:17:01.844Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: none) to /agent/dashboard
+[2026-06-02T09:17:37.362Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:17:37.819Z] [AgentLayout] Error querying profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:17:37.820Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T09:17:37.987Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:17:38.178Z] [AgentLayout] Error querying profile: infinite recursion detected in policy for relation "profiles"
+[2026-06-02T09:17:38.178Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T09:17:45.122Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:17:45.313Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:17:45.314Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:17:49.398Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:17:49.572Z] [AgentLayout] Profile queried, role: ADMIN
+[2026-06-02T09:17:49.572Z] [AgentLayout] Role is ADMIN, not AGENT. Redirecting to /admin/dashboard
+[2026-06-02T09:18:23.993Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:18:24.074Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:18:24.276Z] [AgentLayout] Profile queried, role: ADMIN
+[2026-06-02T09:18:24.277Z] [AgentLayout] Role is ADMIN, not AGENT. Redirecting to /admin/dashboard
+[2026-06-02T09:18:24.809Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:18:24.809Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:18:40.018Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:18:40.231Z] [AgentLayout] Profile queried, role: ADMIN
+[2026-06-02T09:18:40.231Z] [AgentLayout] Role is ADMIN, not AGENT. Redirecting to /admin/dashboard
+[2026-06-02T09:18:41.901Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:18:42.076Z] [AgentLayout] Profile queried, role: ADMIN
+[2026-06-02T09:18:42.077Z] [AgentLayout] Role is ADMIN, not AGENT. Redirecting to /admin/dashboard
+[2026-06-02T09:18:42.182Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:18:42.359Z] [AgentLayout] Profile queried, role: ADMIN
+[2026-06-02T09:18:42.359Z] [AgentLayout] Role is ADMIN, not AGENT. Redirecting to /admin/dashboard
+[2026-06-02T09:18:42.448Z] [AgentLayout] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:18:42.621Z] [AgentLayout] Profile queried, role: ADMIN
+[2026-06-02T09:18:42.622Z] [AgentLayout] Role is ADMIN, not AGENT. Redirecting to /admin/dashboard
+[2026-06-02T09:23:28.727Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:23:28.921Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:23:28.921Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:31:04.050Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:31:04.319Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:31:04.320Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:31:06.267Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:31:06.457Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:31:06.457Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:31:07.921Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:31:08.143Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:31:08.143Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:31:10.190Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:31:10.378Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:31:10.379Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:31:12.580Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:31:12.774Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:31:12.774Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:31:14.487Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:31:14.746Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:31:14.746Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:31:15.985Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:31:16.205Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:31:16.206Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:31:18.021Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:31:18.259Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:31:18.259Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:31:19.951Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:31:20.148Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:31:20.148Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:31:27.387Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:31:27.661Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:31:27.661Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:31:29.022Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:31:29.205Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:31:29.205Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:31:36.102Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:31:36.266Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:31:36.267Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:32:31.077Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:32:31.277Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:32:31.277Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:32:31.995Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:32:32.199Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:32:32.199Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:33:04.418Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:33:04.778Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:33:04.779Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T09:33:13.099Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T09:33:13.264Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T09:33:13.264Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/dashboard/sidebar";
 
 export default async function AdminLayout({
@@ -9,6 +9,7 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const supabase = createClient();
+  const adminSupabase = createAdminClient();
 
   const {
     data: { user },
@@ -18,19 +19,17 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
-  const { data: profile } = await supabase
+  const { data: profile } = await adminSupabase
     .from("profiles")
     .select("role")
     .eq("id", user.id)
     .single();
 
-  // Only redirect if profile was fetched and role is definitively wrong.
-  // Do NOT redirect when profile is null — the session cookie may still be
-  // propagating (race condition after login). The middleware already blocks
-  // unauthenticated users, so null here is a transient state, not a security issue.
-  if (profile && profile.role !== "SUPER_ADMIN" && profile.role !== "ADMIN") {
+  const role = profile?.role?.toUpperCase();
+  if (profile && role !== "SUPER_ADMIN" && role !== "ADMIN") {
     redirect("/agent/dashboard");
   }
+
 
   return (
     <div className="min-h-screen bg-background">

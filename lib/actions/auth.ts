@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
 export async function login(formData: any) {
   const supabase = createClient();
@@ -28,27 +29,32 @@ export async function login(formData: any) {
 
 export async function signUp(formData: any) {
   const supabase = createClient();
+  const adminSupabase = createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
 
-  const { email, password, fullName, referralCode } = formData;
+  const { email, password, fullName, referralCode, role } = formData;
 
   // 1. Check if this is the first user in profiles (to allow signup without code)
-  const { count, error: countError } = await supabase
+  const { count, error: countError } = await adminSupabase
     .from("profiles")
     .select("id", { count: "exact", head: true });
 
   if (countError) {
+    console.error("Signup check countError:", countError);
     return { error: "Failed to verify database state. Please try again." };
   }
 
   let uplineId: string | null = null;
 
-  if (count && count > 0) {
-    // Platform is initialized, a valid referral code is required
+  if (count && count > 0 && role === "AGENT") {
+    // Platform is initialized, a valid referral code is required for AGENTS
     if (!referralCode || referralCode.trim() === "") {
-      return { error: "A valid referral code from your sponsor is required to register." };
+      return { error: "A valid referral code from your sponsor is required to register as an Agent." };
     }
 
-    const { data: sponsor, error: sponsorError } = await supabase
+    const { data: sponsor, error: sponsorError } = await adminSupabase
       .from("profiles")
       .select("id, is_active")
       .eq("referral_code", referralCode.trim().toUpperCase())
@@ -66,7 +72,7 @@ export async function signUp(formData: any) {
   }
 
   // 2. Perform Supabase Sign Up
-  const { error: signUpError } = await supabase.auth.signUp({
+  const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -82,7 +88,49 @@ export async function signUp(formData: any) {
     return { error: signUpError.message };
   }
 
-  return { success: true };
+  // 3. Update the role in profiles if specified and not the first user
+  if (signUpData?.user && role && ["AGENT", "ADMIN"].includes(role)) {
+    const adminSupabase = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    
+    // Check if user has role SUPER_ADMIN (first user is SUPER_ADMIN, keep it)
+    const { data: profile } = await adminSupabase
+      .from("profiles")
+      .select("role")
+      .eq("id", signUpData.user.id)
+      .single();
+
+    if (profile && profile.role !== "SUPER_ADMIN") {
+      const { error: roleError } = await adminSupabase
+        .from("profiles")
+        .update({ role })
+        .eq("id", signUpData.user.id);
+        
+      if (roleError) {
+        console.error("Failed to update user role to", role, ":", roleError.message);
+      }
+    }
+  }
+
+  if (role === "AGENT") {
+    // Attempt auto-login for agent
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    
+    if (signInError) {
+      console.warn("Auto-login failed:", signInError.message);
+      return { success: true, redirectUrl: "/login", message: "Account created! Please check your email to verify your email, then log in." };
+    }
+    
+    revalidatePath("/", "layout");
+    return { success: true, redirectUrl: "/agent/dashboard", message: "Account created! Logging you in..." };
+  }
+
+  return { success: true, redirectUrl: "/login", message: "Admin account created! Please check your email to verify your email, then log in." };
 }
 
 export async function forgotPassword(email: string, origin: string) {

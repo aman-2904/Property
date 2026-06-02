@@ -6,6 +6,7 @@
   :root {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
+    color-scheme: dark;
     
     /* We default to dark mode for that immersive premium look, but support light mode */
     --card: 240 10% 4.5%;
@@ -31,6 +32,8 @@
   .light {
     --background: 0 0% 99%;
     --foreground: 240 10% 3.9%;
+    color-scheme: light;
+    
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;

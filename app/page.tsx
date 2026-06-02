@@ -20,9 +20,10 @@ export default async function LandingPage() {
       .eq("id", user.id)
       .single();
 
-    if (profile?.role === "SUPER_ADMIN" || profile?.role === "ADMIN") {
+    const role = profile?.role?.toUpperCase();
+    if (role === "SUPER_ADMIN" || role === "ADMIN") {
       redirect("/admin/dashboard");
-    } else if (profile?.role === "AGENT") {
+    } else if (role === "AGENT") {
       redirect("/agent/dashboard");
     }
   }

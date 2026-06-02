@@ -43,12 +43,12 @@ export const ModalContent = React.forwardRef<
           {...props}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 15 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 15 }}
+            initial={{ opacity: 0, scale: 0.95, x: "-50%", y: "-45%" }}
+            animate={{ opacity: 1, scale: 1, x: "-50%", y: "-50%" }}
+            exit={{ opacity: 0, scale: 0.95, x: "-50%", y: "-45%" }}
             transition={{ duration: 0.2, ease: "easeOut" }}
             className={cn(
-              "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 rounded-2xl p-6 shadow-2xl glass-premium duration-200 md:w-full",
+              "fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg gap-4 rounded-2xl p-6 shadow-2xl bg-card text-foreground border border-border/50 duration-200 md:w-full",
               className
             )}
           >

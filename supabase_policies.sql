@@ -37,11 +37,20 @@ CREATE POLICY "profiles_update_policy" ON public.profiles
   USING (id = auth.uid())
   WITH CHECK (id = auth.uid() AND role = (SELECT role FROM public.profiles WHERE id = auth.uid()));
 
--- SUPER_ADMIN and ADMIN have full access to manage profiles
-CREATE POLICY "profiles_admin_policy" ON public.profiles
-  FOR ALL TO authenticated
+-- SUPER_ADMIN and ADMIN have access to manage profiles (split to prevent infinite recursion on SELECT)
+CREATE POLICY "profiles_admin_insert_policy" ON public.profiles
+  FOR INSERT TO authenticated
+  WITH CHECK (public.get_auth_user_role() IN ('SUPER_ADMIN', 'ADMIN'));
+
+CREATE POLICY "profiles_admin_update_policy" ON public.profiles
+  FOR UPDATE TO authenticated
   USING (public.get_auth_user_role() IN ('SUPER_ADMIN', 'ADMIN'))
   WITH CHECK (public.get_auth_user_role() IN ('SUPER_ADMIN', 'ADMIN'));
+
+CREATE POLICY "profiles_admin_delete_policy" ON public.profiles
+  FOR DELETE TO authenticated
+  USING (public.get_auth_user_role() IN ('SUPER_ADMIN', 'ADMIN'));
+
 
 ----------------------------------------------------
 -- 2. WALLETS POLICIES
@@ -218,4 +227,4 @@ CREATE POLICY "logs_select_policy" ON public.activity_logs
 -- Agents and other users can write to activity logs (to record actions)
 CREATE POLICY "logs_insert_policy" ON public.activity_logs
   FOR INSERT TO authenticated
-  WITH CHECK (user_id = auth.uid());
+  WITH CHECK (actor_id = auth.uid());

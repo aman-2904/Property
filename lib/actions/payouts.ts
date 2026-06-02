@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function getPayouts(agentId?: string) {
@@ -72,6 +72,7 @@ export async function requestPayout(formData: {
   paymentMethod?: string;
 }) {
   const supabase = createClient();
+  const adminSupabase = createAdminClient();
 
   const {
     data: { user },
@@ -79,12 +80,13 @@ export async function requestPayout(formData: {
 
   if (!user) return { error: "Unauthenticated" };
 
-  // 1. Validate bank details are present on profile
-  const { data: profile } = await supabase
+  // 1. Validate bank details are present on profile using admin client to bypass RLS recursion
+  const { data: profile } = await adminSupabase
     .from("profiles")
     .select("bank_name, account_number, ifsc_code")
     .eq("id", user.id)
     .single();
+
 
   if (!profile || !profile.bank_name || !profile.account_number || !profile.ifsc_code) {
     return { error: "Bank details (Bank Name, Account Number, and IFSC Code) are mandatory for withdrawals. Please update them in Settings." };
