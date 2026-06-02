@@ -343,3 +343,45 @@
 [2026-06-02T11:07:44.484Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
 [2026-06-02T11:07:44.683Z] [AgentLayout] Profile queried, role: AGENT
 [2026-06-02T11:07:44.683Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T11:08:13.679Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T11:08:13.864Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T11:08:13.865Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T14:29:11.085Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T14:29:11.599Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T14:29:11.600Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T14:29:29.319Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T14:29:29.515Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T14:29:29.516Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T17:47:04.573Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T17:47:04.991Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T17:47:04.992Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T17:47:11.894Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T17:47:12.070Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T17:47:12.071Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T17:48:42.401Z] [DashboardRouter] User checking: dheerajkr2205@gmail.com
+[2026-06-02T17:48:42.617Z] [DashboardRouter] Profile found, role: AGENT
+[2026-06-02T17:48:42.618Z] [DashboardRouter] Redirecting user dheerajkr2205@gmail.com (role: AGENT) to /agent/dashboard
+[2026-06-02T17:48:44.372Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T17:48:44.582Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T17:48:44.582Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T17:48:48.077Z] [DashboardRouter] User checking: dheerajkr2205@gmail.com
+[2026-06-02T17:48:48.246Z] [DashboardRouter] Profile found, role: AGENT
+[2026-06-02T17:48:48.247Z] [DashboardRouter] Redirecting user dheerajkr2205@gmail.com (role: AGENT) to /agent/dashboard
+[2026-06-02T17:48:49.048Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T17:48:49.216Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T17:48:49.217Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T17:48:49.282Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T17:48:49.464Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T17:48:49.465Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T17:49:35.193Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T17:49:35.369Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T17:49:35.370Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T17:49:37.267Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T17:49:37.455Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T17:49:37.455Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T17:51:09.657Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T17:51:09.999Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T17:51:09.999Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T18:54:46.682Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-02T18:54:47.060Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-02T18:54:47.060Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard

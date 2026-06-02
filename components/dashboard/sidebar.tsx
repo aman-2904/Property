@@ -18,6 +18,7 @@ import {
   MapPin,
   ClipboardList,
   BarChart3,
+  ArrowUpRight,
 } from "lucide-react";
 import { signOut } from "@/lib/actions/auth";
 import { ThemeToggle } from "./theme-toggle";
@@ -57,6 +58,9 @@ export function Sidebar({ role }: SidebarProps) {
     { label: "Overview", href: "/admin/dashboard", icon: LayoutDashboard },
     { label: "Properties", href: "/admin/properties", icon: Building2 },
     { label: "Agents", href: "/admin/agents", icon: Users },
+    { label: "Sales", href: "/admin/sales", icon: BarChart3 },
+    { label: "Commissions", href: "/admin/commissions", icon: Coins },
+    { label: "Withdrawals", href: "/admin/withdrawals", icon: ArrowUpRight },
     { label: "Payouts Requests", href: "/admin/payouts", icon: Coins },
     { label: "Visits Tracking", href: "/admin/visits", icon: MapPin },
     { label: "Activity Logs", href: "/admin/activity", icon: ClipboardList },

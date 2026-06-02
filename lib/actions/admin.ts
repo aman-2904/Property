@@ -234,6 +234,20 @@ export async function getRecentCommissions(limit = 10) {
   return data || [];
 }
 
+export async function getCommissionsWithDetails() {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("commissions")
+    .select("*, profiles:recipient_id(name, email), sales(sale_amount, properties(title))")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching commissions with details:", error);
+    return [];
+  }
+  return data || [];
+}
+
 export async function getActivityLogs(limit = 30) {
   const supabase = createClient();
   const { data, error } = await supabase
