@@ -24,7 +24,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         {payload.map((entry: any, i: number) => (
           <p key={i} className="text-xs font-semibold" style={{ color: entry.color }}>
             {entry.name === "volume"
-              ? `Volume: $${Number(entry.value).toLocaleString()}`
+              ? `Volume: $${Number(entry.value).toLocaleString("en-US")}`
               : `Sales: ${entry.value}`}
           </p>
         ))}

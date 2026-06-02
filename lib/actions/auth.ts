@@ -48,12 +48,7 @@ export async function signUp(formData: any) {
 
   let uplineId: string | null = null;
 
-  if (count && count > 0 && role === "AGENT") {
-    // Platform is initialized, a valid referral code is required for AGENTS
-    if (!referralCode || referralCode.trim() === "") {
-      return { error: "A valid referral code from your sponsor is required to register as an Agent." };
-    }
-
+  if (count && count > 0 && role === "AGENT" && referralCode && referralCode.trim() !== "") {
     const { data: sponsor, error: sponsorError } = await adminSupabase
       .from("profiles")
       .select("id, is_active")

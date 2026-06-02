@@ -31,7 +31,7 @@ const CustomTooltip = ({ active, payload }: any) => {
           {d.name}
         </p>
         <p className="text-sm font-bold text-foreground mt-1">
-          ${Number(d.value).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+          ${Number(d.value).toLocaleString("en-US", { minimumFractionDigits: 2 })}
         </p>
       </div>
     );

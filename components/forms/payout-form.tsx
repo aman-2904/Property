@@ -24,7 +24,7 @@ export function PayoutForm({ balance, hasBankDetails }: PayoutFormProps) {
     amount: z.coerce
       .number()
       .min(10, "Minimum withdrawal is $10")
-      .max(balance, `Maximum withdrawal is your current balance ($${balance.toLocaleString()})`),
+      .max(balance, `Maximum withdrawal is your current balance ($${balance.toLocaleString("en-US")})`),
     paymentMethod: z.string().min(1, "Please choose a payment method"),
   });
 

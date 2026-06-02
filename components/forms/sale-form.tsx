@@ -79,7 +79,7 @@ export function SaleForm({
         </span>
         <h4 className="font-bold text-foreground mt-0.5">{propertyTitle}</h4>
         <p className="text-xs text-primary font-semibold mt-1">
-          Base Listing Price: ${propertyPrice.toLocaleString()}
+          Base Listing Price: ${propertyPrice.toLocaleString("en-US")}
         </p>
       </div>
 

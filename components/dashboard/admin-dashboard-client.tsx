@@ -265,7 +265,7 @@ function GlobalSearchPanel({
                       <TrendingUp className="h-4 w-4 text-primary shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-semibold text-foreground truncate">{s.buyer_name}</p>
-                        <p className="text-[10px] text-muted-foreground">${Number(s.sale_amount).toLocaleString()}</p>
+                        <p className="text-[10px] text-muted-foreground">${Number(s.sale_amount).toLocaleString("en-US")}</p>
                       </div>
                       <StatusBadge status={s.status} />
                     </div>
@@ -539,7 +539,7 @@ export function AdminDashboardClient({
             Platform Overview
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Real-time operations center · {new Date().toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+            Real-time operations center · {new Date().toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
           </p>
         </div>
 
@@ -586,21 +586,21 @@ export function AdminDashboardClient({
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         <KpiCard
           title="Total Agents"
-          value={stats.totalAgents.toLocaleString()}
+          value={stats.totalAgents.toLocaleString("en-US")}
           icon={<Users className="h-4 w-4" />}
           color="bg-blue-500"
           subtitle="Registered agents"
         />
         <KpiCard
           title="Properties"
-          value={stats.totalProperties.toLocaleString()}
+          value={stats.totalProperties.toLocaleString("en-US")}
           icon={<Building2 className="h-4 w-4" />}
           color="bg-violet-500"
           subtitle="Active listings"
         />
         <KpiCard
           title="Approved Sales"
-          value={stats.totalSales.toLocaleString()}
+          value={stats.totalSales.toLocaleString("en-US")}
           icon={<TrendingUp className="h-4 w-4" />}
           color="bg-emerald-500"
           subtitle="Completed transactions"
@@ -759,7 +759,7 @@ export function AdminDashboardClient({
                     </td>
                     <td className="px-5 py-3.5 text-xs font-medium text-foreground/80">{s.properties?.title ?? "—"}</td>
                     <td className="px-5 py-3.5 text-xs text-foreground/80">{s.buyer_name}</td>
-                    <td className="px-5 py-3.5 text-xs font-bold text-foreground">${Number(s.sale_amount).toLocaleString()}</td>
+                    <td className="px-5 py-3.5 text-xs font-bold text-foreground">${Number(s.sale_amount).toLocaleString("en-US")}</td>
                     <td className="px-5 py-3.5 text-xs text-muted-foreground">{new Date(s.created_at).toLocaleDateString()}</td>
                     <td className="px-5 py-3.5">
                       <ActionButtons id={s.id} type="sale" status={s.status} />
@@ -787,7 +787,7 @@ export function AdminDashboardClient({
                   <tr key={w.id} className="hover:bg-muted/10 transition-colors">
                     <td className="px-5 py-3.5 text-xs font-semibold text-foreground">{w.profiles?.name ?? "—"}</td>
                     <td className="px-5 py-3.5 text-xs text-muted-foreground">{w.profiles?.email}</td>
-                    <td className="px-5 py-3.5 text-xs font-bold text-foreground">${Number(w.amount).toLocaleString()}</td>
+                    <td className="px-5 py-3.5 text-xs font-bold text-foreground">${Number(w.amount).toLocaleString("en-US")}</td>
                     <td className="px-5 py-3.5 text-xs text-muted-foreground">{new Date(w.created_at).toLocaleDateString()}</td>
                     <td className="px-5 py-3.5">
                       <ActionButtons id={w.id} type="withdrawal" status={w.status} />
@@ -825,7 +825,7 @@ export function AdminDashboardClient({
                         L{c.level}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-xs font-bold text-foreground">${Number(c.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                    <td className="px-5 py-3.5 text-xs font-bold text-foreground">${Number(c.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}</td>
                     <td className="px-5 py-3.5"><StatusBadge status={c.status} /></td>
                   </tr>
                 ))}

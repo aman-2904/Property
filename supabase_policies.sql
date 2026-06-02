@@ -25,6 +25,16 @@ $$ LANGUAGE sql SECURITY DEFINER;
 DROP POLICY IF EXISTS "profiles_select_policy" ON public.profiles;
 DROP POLICY IF EXISTS "profiles_update_policy" ON public.profiles;
 DROP POLICY IF EXISTS "profiles_admin_policy" ON public.profiles;
+DROP POLICY IF EXISTS "profiles_admin_insert_policy" ON public.profiles;
+DROP POLICY IF EXISTS "profiles_admin_update_policy" ON public.profiles;
+DROP POLICY IF EXISTS "profiles_admin_delete_policy" ON public.profiles;
+DROP POLICY IF EXISTS "Allow public read for active profiles" ON public.profiles;
+DROP POLICY IF EXISTS "Allow update for owners" ON public.profiles;
+DROP POLICY IF EXISTS "Allow update for owner profiles" ON public.profiles;
+DROP POLICY IF EXISTS "Allow admin full access" ON public.profiles;
+DROP POLICY IF EXISTS "Allow admin insert access for super admin / admin" ON public.profiles;
+DROP POLICY IF EXISTS "Allow admin update access for super admin / admin" ON public.profiles;
+DROP POLICY IF EXISTS "Allow admin delete access for super admin / admin" ON public.profiles;
 
 -- Agents can view all active agents (needed to build trees / browse sponsor networks)
 CREATE POLICY "profiles_select_policy" ON public.profiles
@@ -57,6 +67,7 @@ CREATE POLICY "profiles_admin_delete_policy" ON public.profiles
 ----------------------------------------------------
 DROP POLICY IF EXISTS "wallets_select_policy" ON public.wallets;
 DROP POLICY IF EXISTS "wallets_admin_policy" ON public.wallets;
+DROP POLICY IF EXISTS "Allow read for wallet owners" ON public.wallets;
 
 -- Agents can read only their own wallet ledger
 CREATE POLICY "wallets_select_policy" ON public.wallets
@@ -74,6 +85,10 @@ CREATE POLICY "wallets_admin_policy" ON public.wallets
 ----------------------------------------------------
 DROP POLICY IF EXISTS "properties_select_policy" ON public.properties;
 DROP POLICY IF EXISTS "properties_admin_policy" ON public.properties;
+DROP POLICY IF EXISTS "Allow authenticated users to read properties" ON public.properties;
+DROP POLICY IF EXISTS "Allow admins full access to properties" ON public.properties;
+DROP POLICY IF EXISTS "Allow read for all active properties" ON public.properties;
+DROP POLICY IF EXISTS "Allow full access for super admin / admin properties" ON public.properties;
 
 -- Agents can read all properties
 CREATE POLICY "properties_select_policy" ON public.properties
@@ -92,6 +107,13 @@ CREATE POLICY "properties_admin_policy" ON public.properties
 DROP POLICY IF EXISTS "sales_select_policy" ON public.sales;
 DROP POLICY IF EXISTS "sales_insert_policy" ON public.sales;
 DROP POLICY IF EXISTS "sales_admin_policy" ON public.sales;
+DROP POLICY IF EXISTS "Agents can view their own sales" ON public.sales;
+DROP POLICY IF EXISTS "Agents can insert their own sales" ON public.sales;
+DROP POLICY IF EXISTS "Admins can update sales" ON public.sales;
+DROP POLICY IF EXISTS "Admins can delete sales" ON public.sales;
+DROP POLICY IF EXISTS "Allow select for seller or admins" ON public.sales;
+DROP POLICY IF EXISTS "Allow insert for sellers" ON public.sales;
+DROP POLICY IF EXISTS "Allow full write for admins sales" ON public.sales;
 
 -- Agents can read their own registered sales
 CREATE POLICY "sales_select_policy" ON public.sales
@@ -114,6 +136,10 @@ CREATE POLICY "sales_admin_policy" ON public.sales
 ----------------------------------------------------
 DROP POLICY IF EXISTS "commissions_select_policy" ON public.commissions;
 DROP POLICY IF EXISTS "commissions_admin_policy" ON public.commissions;
+DROP POLICY IF EXISTS "Agents can view their own commissions" ON public.commissions;
+DROP POLICY IF EXISTS "Admins have full access to commissions" ON public.commissions;
+DROP POLICY IF EXISTS "Allow select for commission recipients or admins" ON public.commissions;
+DROP POLICY IF EXISTS "Allow full write for admins commissions" ON public.commissions;
 
 -- Agents can view their own earned commissions (direct and indirect overrides)
 CREATE POLICY "commissions_select_policy" ON public.commissions
@@ -132,6 +158,12 @@ CREATE POLICY "commissions_admin_policy" ON public.commissions
 DROP POLICY IF EXISTS "withdrawals_select_policy" ON public.withdrawals;
 DROP POLICY IF EXISTS "withdrawals_insert_policy" ON public.withdrawals;
 DROP POLICY IF EXISTS "withdrawals_admin_policy" ON public.withdrawals;
+DROP POLICY IF EXISTS "Agents can view their own payouts" ON public.withdrawals;
+DROP POLICY IF EXISTS "Agents can create payout requests" ON public.withdrawals;
+DROP POLICY IF EXISTS "Admins have full access to payouts" ON public.withdrawals;
+DROP POLICY IF EXISTS "Allow select for withdrawal owners or admins" ON public.withdrawals;
+DROP POLICY IF EXISTS "Allow insert for withdrawal owners" ON public.withdrawals;
+DROP POLICY IF EXISTS "Allow full write for admins withdrawals" ON public.withdrawals;
 
 -- Agents can select their own cashout history
 CREATE POLICY "withdrawals_select_policy" ON public.withdrawals
@@ -155,6 +187,9 @@ CREATE POLICY "withdrawals_admin_policy" ON public.withdrawals
 DROP POLICY IF EXISTS "visits_select_policy" ON public.visits;
 DROP POLICY IF EXISTS "visits_insert_policy" ON public.visits;
 DROP POLICY IF EXISTS "visits_admin_policy" ON public.visits;
+DROP POLICY IF EXISTS "Allow select for visit owner or admins" ON public.visits;
+DROP POLICY IF EXISTS "Allow insert for visit agents" ON public.visits;
+DROP POLICY IF EXISTS "Allow full write for admins visits" ON public.visits;
 
 -- Agents can read their own client visit history
 CREATE POLICY "visits_select_policy" ON public.visits
@@ -177,6 +212,7 @@ CREATE POLICY "visits_admin_policy" ON public.visits
 ----------------------------------------------------
 DROP POLICY IF EXISTS "promotions_select_policy" ON public.promotions;
 DROP POLICY IF EXISTS "promotions_admin_policy" ON public.promotions;
+DROP POLICY IF EXISTS "Allow select for promotion owners or admins" ON public.promotions;
 
 -- Agents can read their own promotion reward records
 CREATE POLICY "promotions_select_policy" ON public.promotions
@@ -195,6 +231,8 @@ CREATE POLICY "promotions_admin_policy" ON public.promotions
 DROP POLICY IF EXISTS "notifications_select_policy" ON public.notifications;
 DROP POLICY IF EXISTS "notifications_update_policy" ON public.notifications;
 DROP POLICY IF EXISTS "notifications_admin_policy" ON public.notifications;
+DROP POLICY IF EXISTS "Allow select/update for notification owners" ON public.notifications;
+DROP POLICY IF EXISTS "Allow update for notification owners" ON public.notifications;
 
 -- Users can read their own notifications
 CREATE POLICY "notifications_select_policy" ON public.notifications
@@ -218,6 +256,8 @@ CREATE POLICY "notifications_admin_policy" ON public.notifications
 ----------------------------------------------------
 DROP POLICY IF EXISTS "logs_select_policy" ON public.activity_logs;
 DROP POLICY IF EXISTS "logs_insert_policy" ON public.activity_logs;
+DROP POLICY IF EXISTS "Allow select/insert for log owners or admins" ON public.activity_logs;
+DROP POLICY IF EXISTS "Allow insert for active sessions logs" ON public.activity_logs;
 
 -- SUPER_ADMIN can view all activity logs, ADMIN can view logs
 CREATE POLICY "logs_select_policy" ON public.activity_logs

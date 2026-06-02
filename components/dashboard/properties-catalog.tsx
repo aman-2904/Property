@@ -198,7 +198,7 @@ export function PropertiesCatalog({ initialProperties }: PropertiesCatalogProps)
                         Listing Price
                       </span>
                       <span className="text-lg font-extrabold text-foreground">
-                        ${Number(prop.price).toLocaleString()}
+                        ${Number(prop.price).toLocaleString("en-US")}
                       </span>
                     </div>
                     <div className="flex flex-col items-end">
