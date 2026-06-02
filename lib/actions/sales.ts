@@ -103,3 +103,80 @@ export async function updateSaleStatus(
   revalidatePath("/agent/dashboard");
   return { success: true };
 }
+
+/**
+ * Returns a summary of an agent's sales for the Sales Management dashboard.
+ * Includes counts by status and commission totals.
+ */
+export async function getAgentSalesSummary(agentId: string) {
+  const supabase = createClient();
+
+  const { data: sales, error: salesError } = await supabase
+    .from("sales")
+    .select("id, status, sale_amount")
+    .eq("seller_id", agentId);
+
+  if (salesError || !sales) {
+    console.error("Error fetching agent sales summary:", salesError);
+    return {
+      total: 0,
+      pending: 0,
+      approved: 0,
+      rejected: 0,
+      totalCommission: 0,
+      pendingCommission: 0,
+    };
+  }
+
+  const total = sales.length;
+  const pending = sales.filter((s) => s.status === "pending_approval").length;
+  const approved = sales.filter((s) => s.status === "approved").length;
+  const rejected = sales.filter((s) => s.status === "rejected").length;
+
+  // Fetch commissions for this agent
+  const { data: commissions, error: commError } = await supabase
+    .from("commissions")
+    .select("amount, status")
+    .eq("agent_id", agentId);
+
+  if (commError) {
+    console.error("Error fetching agent commissions:", commError);
+  }
+
+  const totalCommission = commissions
+    ? commissions.reduce((sum, c) => sum + Number(c.amount), 0)
+    : 0;
+  const pendingCommission = commissions
+    ? commissions
+        .filter((c) => c.status === "pending")
+        .reduce((sum, c) => sum + Number(c.amount), 0)
+    : 0;
+
+  return { total, pending, approved, rejected, totalCommission, pendingCommission };
+}
+
+/**
+ * Fetches a single sale by ID, verifying it belongs to the requesting agent.
+ * Returns property details and associated commissions for the detail view.
+ */
+export async function getAgentSaleById(saleId: string, agentId: string) {
+  const supabase = createClient();
+
+  const { data: sale, error } = await supabase
+    .from("sales")
+    .select(
+      `*,
+      properties(id, title, location, price, image_urls, status),
+      commissions(id, amount, status, level, created_at)`
+    )
+    .eq("id", saleId)
+    .eq("seller_id", agentId)
+    .single();
+
+  if (error || !sale) {
+    console.error("Error fetching agent sale by ID:", error);
+    return null;
+  }
+
+  return sale;
+}

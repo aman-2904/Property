@@ -17,6 +17,7 @@ import {
   Coins,
   MapPin,
   ClipboardList,
+  BarChart3,
 } from "lucide-react";
 import { signOut } from "@/lib/actions/auth";
 import { ThemeToggle } from "./theme-toggle";
@@ -46,6 +47,7 @@ export function Sidebar({ role }: SidebarProps) {
   const agentItems: SidebarItem[] = [
     { label: "Dashboard", href: "/agent/dashboard", icon: LayoutDashboard },
     { label: "Properties & Sales", href: "/agent/properties", icon: Building2 },
+    { label: "Sales Management", href: "/agent/sales", icon: BarChart3 },
     { label: "My Downline", href: "/agent/network", icon: Network },
     { label: "My Payouts", href: "/agent/payouts", icon: DollarSign },
     { label: "Visit Logs", href: "/agent/visits", icon: MapPin },
