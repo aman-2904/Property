@@ -49,6 +49,7 @@ export function Sidebar({ role }: SidebarProps) {
     { label: "Dashboard", href: "/agent/dashboard", icon: LayoutDashboard },
     { label: "Properties & Sales", href: "/agent/properties", icon: Building2 },
     { label: "Sales Management", href: "/agent/sales", icon: BarChart3 },
+    { label: "My Commissions", href: "/agent/commissions", icon: Coins },
     { label: "My Downline", href: "/agent/network", icon: Network },
     { label: "My Payouts", href: "/agent/payouts", icon: DollarSign },
     { label: "Visit Logs", href: "/agent/visits", icon: MapPin },

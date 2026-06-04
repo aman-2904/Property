@@ -40,6 +40,7 @@ interface SaleDetail {
   buyer_name: string;
   buyer_phone?: string;
   sale_amount: number;
+  booking_amount: number;
   status: string;
   created_at: string;
   approved_at?: string | null;
@@ -317,10 +318,19 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
               value={<span className="font-mono text-xs">{sale.id}</span>}
             />
             <InfoRow
-              icon={<DollarSign className="h-3.5 w-3.5" />}
-              label="Sale Value"
+              icon={<Coins className="h-3.5 w-3.5 text-primary" />}
+              label="Booking Amount (Commission Base)"
               value={
                 <span className="text-xl font-extrabold text-foreground">
+                  ${Number(sale.booking_amount).toLocaleString("en-US")}
+                </span>
+              }
+            />
+            <InfoRow
+              icon={<DollarSign className="h-3.5 w-3.5" />}
+              label="Sale Value (Reference)"
+              value={
+                <span className="text-sm font-semibold text-muted-foreground">
                   ${Number(sale.sale_amount).toLocaleString("en-US")}
                 </span>
               }

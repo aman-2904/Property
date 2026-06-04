@@ -52,10 +52,19 @@ export function AgentDashboardClient({
       accessorKey: "buyer_name",
     },
     {
+      header: "Booking Amount",
+      accessorKey: "booking_amount",
+      render: (row: any) => (
+        <span className="font-semibold text-foreground">
+          ${Number(row.booking_amount).toLocaleString("en-US")}
+        </span>
+      ),
+    },
+    {
       header: "Sale Price",
       accessorKey: "sale_amount",
       render: (row: any) => (
-        <span className="font-semibold text-foreground">
+        <span className="text-xs text-muted-foreground">
           ${Number(row.sale_amount).toLocaleString("en-US")}
         </span>
       ),

@@ -8,6 +8,7 @@ export async function submitSale(formData: {
   buyerName: string;
   buyerPhone?: string;
   salePrice: number;
+  bookingAmount: number;
   documentUrl?: string;
 }) {
   const supabase = createClient();
@@ -20,13 +21,30 @@ export async function submitSale(formData: {
     return { error: "Unauthenticated" };
   }
 
+  // Validate booking amount
+  if (formData.bookingAmount === undefined || formData.bookingAmount === null || isNaN(formData.bookingAmount) || formData.bookingAmount <= 0) {
+    return { error: "Please enter a valid booking amount greater than 0." };
+  }
+
+  // Fetch property details to retrieve the admin-defined price
+  const { data: property, error: propertyError } = await supabase
+    .from("properties")
+    .select("price")
+    .eq("id", formData.propertyId)
+    .single();
+
+  if (propertyError || !property) {
+    return { error: "Property not found or invalid property ID." };
+  }
+
   const { error } = await supabase.from("sales").insert([
     {
       property_id: formData.propertyId,
       seller_id: user.id,
       buyer_name: formData.buyerName,
       buyer_phone: formData.buyerPhone || "N/A",
-      sale_amount: formData.salePrice,
+      sale_amount: property.price, // enforce admin price for reference
+      booking_amount: formData.bookingAmount, // store booking amount as commission base
       status: "pending_approval",
     },
   ]);
@@ -113,7 +131,7 @@ export async function getAgentSalesSummary(agentId: string) {
 
   const { data: sales, error: salesError } = await supabase
     .from("sales")
-    .select("id, status, sale_amount")
+    .select("id, status, sale_amount, booking_amount")
     .eq("seller_id", agentId);
 
   if (salesError || !sales) {
@@ -179,4 +197,23 @@ export async function getAgentSaleById(saleId: string, agentId: string) {
   }
 
   return sale;
+}
+
+/**
+ * Fetches all commissions distributed to a specific agent.
+ * Includes related sale price/booking amount and property title details.
+ */
+export async function getAgentCommissions(agentId: string) {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("commissions")
+    .select("*, sales(booking_amount, sale_amount, properties(title))")
+    .eq("recipient_id", agentId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching agent commissions:", error);
+    return [];
+  }
+  return data || [];
 }

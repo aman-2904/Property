@@ -45,6 +45,7 @@ interface SaleRow {
   buyer_name: string;
   buyer_phone?: string;
   sale_amount: number;
+  booking_amount: number;
   status: string;
   created_at: string;
   approved_at?: string | null;
@@ -64,6 +65,7 @@ interface SalesSummary {
 interface PropertyOption {
   id: string;
   title: string;
+  price: number;
 }
 
 interface AgentSalesClientProps {
@@ -125,6 +127,8 @@ function SubmitSaleModal({
     if (!form.buyerName.trim()) return setErrorMsg("Buyer name is required.");
     const price = parseFloat(form.salePrice);
     if (!price || price <= 0) return setErrorMsg("Enter a valid sale value.");
+    const booking = parseFloat(form.bookingAmount);
+    if (!booking || booking <= 0) return setErrorMsg("Enter a valid booking amount.");
 
     setIsLoading(true);
     const res = await submitSale({
@@ -132,6 +136,7 @@ function SubmitSaleModal({
       buyerName: form.buyerName.trim(),
       buyerPhone: form.buyerPhone.trim() || undefined,
       salePrice: price,
+      bookingAmount: booking,
     });
     setIsLoading(false);
 
@@ -164,14 +169,22 @@ function SubmitSaleModal({
               <label className={labelClass}>Property *</label>
               <select
                 value={form.propertyId}
-                onChange={(e) => setForm((f) => ({ ...f, propertyId: e.target.value }))}
+                onChange={(e) => {
+                  const selectedId = e.target.value;
+                  const property = properties.find((p) => p.id === selectedId);
+                  setForm((f) => ({
+                    ...f,
+                    propertyId: selectedId,
+                    salePrice: property ? String(property.price) : "",
+                  }));
+                }}
                 className={inputClass}
                 required
               >
                 <option value="">Select a property listing...</option>
                 {properties.map((p) => (
                   <option key={p.id} value={p.id}>
-                    {p.title}
+                    {p.title} (${Number(p.price).toLocaleString("en-US")})
                   </option>
                 ))}
               </select>
@@ -207,14 +220,12 @@ function SubmitSaleModal({
               <div className="space-y-1.5">
                 <label className={labelClass}>Sale Value *</label>
                 <input
-                  type="number"
-                  min="1"
-                  step="0.01"
-                  placeholder="45000000"
-                  value={form.salePrice}
-                  onChange={(e) => setForm((f) => ({ ...f, salePrice: e.target.value }))}
-                  className={inputClass}
-                  required
+                  type="text"
+                  placeholder="Select property first"
+                  value={form.salePrice ? `$${Number(form.salePrice).toLocaleString("en-US")}` : ""}
+                  className={cn(inputClass, "bg-muted/40 text-muted-foreground/80 cursor-not-allowed font-semibold border-muted/50")}
+                  readOnly
+                  disabled
                 />
               </div>
               <div className="space-y-1.5">
@@ -495,10 +506,19 @@ export function AgentSalesClient({
       ),
     },
     {
+      header: "Booking Amount",
+      accessorKey: "booking_amount",
+      render: (row: SaleRow) => (
+        <span className="font-bold text-foreground text-sm">
+          ${Number(row.booking_amount).toLocaleString("en-US")}
+        </span>
+      ),
+    },
+    {
       header: "Sale Value",
       accessorKey: "sale_amount",
       render: (row: SaleRow) => (
-        <span className="font-bold text-foreground text-sm">
+        <span className="text-xs text-muted-foreground">
           ${Number(row.sale_amount).toLocaleString("en-US")}
         </span>
       ),

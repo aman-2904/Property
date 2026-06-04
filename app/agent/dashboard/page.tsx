@@ -33,11 +33,11 @@ export default async function AgentDashboardPage() {
   // 3. Fetch total sales volume
   const { data: salesData } = await supabase
     .from("sales")
-    .select("sale_amount")
+    .select("booking_amount")
     .eq("seller_id", user.id)
     .eq("status", "approved");
 
-  const totalSalesVolume = salesData?.reduce((sum, item) => sum + Number(item.sale_amount), 0) || 0;
+  const totalSalesVolume = salesData?.reduce((sum, item) => sum + Number(item.booking_amount), 0) || 0;
 
   // 4. Fetch downline size (Direct referrals count)
   const { count: downlineCount } = await supabase

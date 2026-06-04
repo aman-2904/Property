@@ -123,11 +123,11 @@ export async function getAgentTeamAnalytics(agentId: string): Promise<TeamAnalyt
   // 4. Fetch sum of sales from all these team members
   const { data: sales } = await adminSupabase
     .from("sales")
-    .select("sale_amount")
+    .select("booking_amount")
     .in("seller_id", teamMemberIds)
     .eq("status", "approved");
 
-  const totalTeamSalesAmount = sales?.reduce((sum, s) => sum + Number(s.sale_amount), 0) || 0;
+  const totalTeamSalesAmount = sales?.reduce((sum, s) => sum + Number(s.booking_amount), 0) || 0;
 
   return {
     directReferralsCount: directCount || 0,

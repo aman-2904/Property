@@ -385,3 +385,168 @@
 [2026-06-02T18:54:46.682Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
 [2026-06-02T18:54:47.060Z] [DashboardRouter] Profile found, role: ADMIN
 [2026-06-02T18:54:47.060Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-02T21:35:46.198Z] [DashboardRouter] User checking: dheerajkr2205@gmail.com
+[2026-06-02T21:35:46.480Z] [DashboardRouter] Profile found, role: AGENT
+[2026-06-02T21:35:46.480Z] [DashboardRouter] Redirecting user dheerajkr2205@gmail.com (role: AGENT) to /agent/dashboard
+[2026-06-02T21:35:59.588Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T21:35:59.995Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T21:35:59.996Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T21:39:16.391Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T21:39:16.840Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T21:39:16.935Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T21:39:17.956Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T21:39:18.264Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T21:39:18.265Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T21:45:26.069Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T21:45:26.839Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T21:45:26.839Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T21:45:31.125Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T21:45:31.344Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T21:45:31.344Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T21:45:31.702Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T21:45:31.901Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T21:45:31.901Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T21:45:32.255Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T21:45:32.433Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T21:45:32.434Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T21:45:55.676Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T21:45:55.898Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T21:45:55.898Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T21:46:01.734Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T21:46:01.915Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T21:46:01.916Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-02T21:52:35.886Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-02T21:52:36.401Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-02T21:52:36.402Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T08:11:59.035Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-04T08:11:59.350Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-04T08:11:59.351Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-04T08:12:19.851Z] [DashboardRouter] User checking: dheerajkr2205@gmail.com
+[2026-06-04T08:12:20.166Z] [DashboardRouter] Profile found, role: AGENT
+[2026-06-04T08:12:20.166Z] [DashboardRouter] Redirecting user dheerajkr2205@gmail.com (role: AGENT) to /agent/dashboard
+[2026-06-04T08:12:25.934Z] [DashboardRouter] User checking: dheerajkumar8179@gmail.com
+[2026-06-04T08:12:25.973Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T08:12:26.139Z] [DashboardRouter] Profile found, role: ADMIN
+[2026-06-04T08:12:26.140Z] [DashboardRouter] Redirecting user dheerajkumar8179@gmail.com (role: ADMIN) to /admin/dashboard
+[2026-06-04T08:12:26.165Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T08:12:26.165Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T08:12:26.331Z] [DashboardRouter] User checking: dheerajkr2205@gmail.com
+[2026-06-04T08:12:26.522Z] [DashboardRouter] Profile found, role: AGENT
+[2026-06-04T08:12:26.523Z] [DashboardRouter] Redirecting user dheerajkr2205@gmail.com (role: AGENT) to /agent/dashboard
+[2026-06-04T08:12:27.389Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T08:12:27.558Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T08:12:27.559Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T08:12:27.673Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T08:12:27.874Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T08:12:27.875Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T08:13:48.294Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T08:13:48.582Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T08:13:48.582Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:14:38.664Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:14:38.844Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:14:38.844Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:14:39.001Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:14:39.221Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:14:39.221Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:14:47.923Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:14:48.116Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:14:48.116Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:14:51.994Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:14:52.182Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:14:52.183Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:16:10.980Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:16:11.178Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:16:11.179Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:16:46.572Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:16:46.775Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:16:46.775Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:16:48.681Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:16:48.873Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:16:48.874Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:18:37.627Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:18:37.811Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:18:37.811Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:21:07.795Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:21:08.000Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:21:08.000Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:21:16.187Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:21:16.373Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:21:16.374Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:21:31.706Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:21:31.888Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:21:31.889Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:21:38.431Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:21:38.595Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:21:38.596Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:21:47.584Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:21:47.772Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:21:47.772Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:22:00.402Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:22:00.673Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:22:00.674Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:22:07.711Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:22:07.905Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:22:07.905Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:22:17.699Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:22:17.879Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:22:17.880Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:22:28.913Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:22:29.084Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:22:29.084Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:22:37.481Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:22:37.650Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:22:37.651Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:22:52.799Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:22:53.223Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:22:53.224Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:23:02.109Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:23:02.310Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:23:02.310Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:23:07.395Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:23:07.570Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:23:07.570Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:23:18.608Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:23:18.830Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:23:18.830Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:23:27.160Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:23:27.350Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:23:27.351Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:23:32.763Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:23:32.948Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:23:32.949Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:24:19.663Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:24:19.854Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:24:19.855Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:26:54.290Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:26:54.513Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:26:54.513Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:27:26.892Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:27:27.072Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:27:27.073Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:27:28.960Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:27:29.145Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:27:29.145Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:27:47.622Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:27:47.806Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:27:47.807Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:27:59.289Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:27:59.468Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:27:59.469Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:29:48.746Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:29:48.954Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:29:48.955Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:29:56.490Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:29:56.655Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:29:56.655Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:30:02.963Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:30:03.122Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:30:03.122Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:30:03.298Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:30:03.493Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:30:03.494Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:30:08.403Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:30:08.569Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:30:08.569Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-04T09:30:08.639Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-04T09:30:08.821Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-04T09:30:08.822Z] [AgentLayout] Allowing access to AgentLayout

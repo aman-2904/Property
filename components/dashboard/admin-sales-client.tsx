@@ -16,6 +16,7 @@ interface Sale {
   buyer_name: string;
   buyer_phone: string;
   sale_amount: number;
+  booking_amount: number;
   status: string;
   created_at: string;
   properties: {
@@ -90,10 +91,10 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
     return matchesSearch && matchesFilter;
   });
 
-  // Calculate statistics
+  // Calculate statistics based on Booking Amount
   const totalVolume = sales
     .filter((s) => s.status === "approved")
-    .reduce((sum, s) => sum + Number(s.sale_amount), 0);
+    .reduce((sum, s) => sum + Number(s.booking_amount), 0);
   const approvedCount = sales.filter((s) => s.status === "approved").length;
   const pendingCount = sales.filter((s) => s.status === "pending_approval").length;
 
@@ -133,7 +134,7 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
   };
 
   const exportCSV = () => {
-    const headers = ["Agent", "Email", "Property", "Buyer", "Amount", "Status", "Date"];
+    const headers = ["Agent", "Email", "Property", "Buyer", "Booking Amount", "Sale Price", "Status", "Date"];
     const lines = [
       headers.join(","),
       ...filteredSales.map((s) => [
@@ -141,6 +142,7 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
         `"${String(s.profiles?.email ?? "").replace(/"/g, '""')}"`,
         `"${String(s.properties?.title ?? "").replace(/"/g, '""')}"`,
         `"${String(s.buyer_name ?? "").replace(/"/g, '""')}"`,
+        s.booking_amount,
         s.sale_amount,
         s.status,
         new Date(s.created_at).toISOString().split("T")[0]
@@ -184,10 +186,19 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
       ),
     },
     {
+      header: "Booking Amount",
+      accessorKey: "booking_amount",
+      render: (row: Sale) => (
+        <span className="font-bold text-foreground text-sm">
+          ${Number(row.booking_amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+        </span>
+      ),
+    },
+    {
       header: "Sale Price",
       accessorKey: "sale_amount",
       render: (row: Sale) => (
-        <span className="font-bold text-foreground">
+        <span className="text-xs text-muted-foreground">
           ${Number(row.sale_amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
         </span>
       ),
@@ -305,7 +316,7 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
         onOpenChange={setIsApproveOpen}
         onConfirm={handleApprove}
         title="Approve Sale Submission"
-        description={`Are you sure you want to approve the sale of "${selectedSale?.properties?.title}" to ${selectedSale?.buyer_name} for $${Number(selectedSale?.sale_amount).toLocaleString("en-US")}? This will distribute upline commission percentages immediately.`}
+        description={`Are you sure you want to approve the sale of "${selectedSale?.properties?.title}" to ${selectedSale?.buyer_name} with Booking Amount $${Number(selectedSale?.booking_amount).toLocaleString("en-US")} (Sale Price: $${Number(selectedSale?.sale_amount).toLocaleString("en-US")})? This will distribute upline commission percentages immediately based on the booking amount.`}
         confirmText="Approve Sale"
         variant="info"
         isLoading={isLoading}
@@ -317,7 +328,7 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
         onOpenChange={setIsRejectOpen}
         onConfirm={handleReject}
         title="Reject Sale Submission"
-        description={`Are you sure you want to reject the sale of "${selectedSale?.properties?.title}" to ${selectedSale?.buyer_name} for $${Number(selectedSale?.sale_amount).toLocaleString("en-US")}?`}
+        description={`Are you sure you want to reject the sale of "${selectedSale?.properties?.title}" to ${selectedSale?.buyer_name} with Booking Amount $${Number(selectedSale?.booking_amount).toLocaleString("en-US")}?`}
         confirmText="Reject Sale"
         variant="danger"
         isLoading={isLoading}

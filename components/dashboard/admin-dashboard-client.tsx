@@ -737,8 +737,8 @@ export function AdminDashboardClient({
             <button
               onClick={() => {
                 if (activeTab === "sales") {
-                  exportCSV(filteredSales, "sales", ["Agent", "Email", "Property", "Buyer", "Amount", "Status", "Date"],
-                    ["profiles.name", "profiles.email", "properties.title", "buyer_name", "sale_amount", "status", "created_at"]);
+                  exportCSV(filteredSales, "sales", ["Agent", "Email", "Property", "Buyer", "Booking Amount", "Sale Price", "Status", "Date"],
+                    ["profiles.name", "profiles.email", "properties.title", "buyer_name", "booking_amount", "sale_amount", "status", "created_at"]);
                 } else if (activeTab === "withdrawals") {
                   exportCSV(filteredWithdrawals, "withdrawals", ["Agent", "Email", "Amount", "Status", "Date"],
                     ["profiles.name", "profiles.email", "amount", "status", "created_at"]);
@@ -762,14 +762,14 @@ export function AdminDashboardClient({
             <table className="w-full border-collapse text-left text-sm">
               <thead>
                 <tr className="border-b border-border/40 bg-muted/20">
-                  {["Agent", "Property", "Buyer", "Amount", "Date", "Status / Action"].map((h) => (
+                  {["Agent", "Property", "Buyer", "Booking Amount", "Sale Price", "Date", "Status / Action"].map((h) => (
                     <th key={h} className="px-5 py-3.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/30">
                 {filteredSales.length === 0 ? (
-                  <tr><td colSpan={6} className="text-center py-10 text-xs text-muted-foreground">No sales found.</td></tr>
+                  <tr><td colSpan={7} className="text-center py-10 text-xs text-muted-foreground">No sales found.</td></tr>
                 ) : filteredSales.map((s) => (
                   <tr key={s.id} className="hover:bg-muted/10 transition-colors">
                     <td className="px-5 py-3.5">
@@ -780,7 +780,8 @@ export function AdminDashboardClient({
                     </td>
                     <td className="px-5 py-3.5 text-xs font-medium text-foreground/80">{s.properties?.title ?? "—"}</td>
                     <td className="px-5 py-3.5 text-xs text-foreground/80">{s.buyer_name}</td>
-                    <td className="px-5 py-3.5 text-xs font-bold text-foreground">${Number(s.sale_amount).toLocaleString("en-US")}</td>
+                    <td className="px-5 py-3.5 text-xs font-bold text-foreground">${Number(s.booking_amount).toLocaleString("en-US")}</td>
+                    <td className="px-5 py-3.5 text-xs text-muted-foreground/80 font-medium">${Number(s.sale_amount).toLocaleString("en-US")}</td>
                     <td className="px-5 py-3.5 text-xs text-muted-foreground" suppressHydrationWarning>{new Date(s.created_at).toLocaleDateString()}</td>
                     <td className="px-5 py-3.5">
                       <ActionButtons id={s.id} type="sale" status={s.status} />

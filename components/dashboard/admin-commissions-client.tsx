@@ -20,6 +20,7 @@ interface Commission {
   created_at: string;
   sales: {
     sale_amount: number;
+    booking_amount: number;
     properties: {
       title: string;
     } | null;
@@ -178,8 +179,11 @@ export function AdminCommissionsClient({ initialCommissions }: AdminCommissionsC
       render: (row: Commission) => (
         <div className="flex flex-col">
           <span className="font-medium text-foreground/80">{row.sales?.properties?.title || "—"}</span>
+          {row.sales?.booking_amount && (
+            <span className="text-[10px] text-muted-foreground">Booking Vol: ${Number(row.sales.booking_amount).toLocaleString("en-US")}</span>
+          )}
           {row.sales?.sale_amount && (
-            <span className="text-[10px] text-muted-foreground">Sale Vol: ${Number(row.sales.sale_amount).toLocaleString("en-US")}</span>
+            <span className="text-[9px] text-muted-foreground/60">Property Val: ${Number(row.sales.sale_amount).toLocaleString("en-US")}</span>
           )}
         </div>
       ),

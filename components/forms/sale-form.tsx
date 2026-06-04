@@ -13,6 +13,7 @@ const saleSchema = z.object({
   buyerName: z.string().min(2, "Buyer name must be at least 2 characters"),
   buyerPhone: z.string().min(6, "Please enter a valid phone number"),
   salePrice: z.coerce.number().min(1, "Sale price must be greater than 0"),
+  bookingAmount: z.coerce.number().min(1, "Booking amount must be greater than 0"),
   documentUrl: z.string().min(1, "Please upload the sales agreement/proof document"),
 });
 
@@ -46,6 +47,7 @@ export function SaleForm({
       buyerName: "",
       buyerPhone: "",
       salePrice: propertyPrice,
+      bookingAmount: "" as any,
       documentUrl: "",
     },
   });
@@ -59,7 +61,8 @@ export function SaleForm({
         propertyId,
         buyerName: data.buyerName,
         buyerPhone: data.buyerPhone,
-        salePrice: data.salePrice,
+        salePrice: propertyPrice,
+        bookingAmount: data.bookingAmount,
         documentUrl: data.documentUrl,
       });
 
@@ -136,17 +139,32 @@ export function SaleForm({
           Actual Sale Price ($)
         </label>
         <input
+          type="text"
+          value={`$${propertyPrice.toLocaleString("en-US")}`}
+          disabled
+          readOnly
+          className="w-full px-4 py-2.5 bg-muted/40 border border-border/50 rounded-xl text-sm outline-none transition-all font-semibold text-muted-foreground cursor-not-allowed"
+        />
+      </div>
+
+      {/* Booking Amount */}
+      <div className="space-y-1.5">
+        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
+          Booking Amount ($) *
+        </label>
+        <input
           type="number"
           step="0.01"
-          {...register("salePrice")}
+          {...register("bookingAmount")}
           disabled={isPending}
+          placeholder="e.g. 50000"
           className={cn(
             "w-full px-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all font-semibold",
-            errors.salePrice && "border-destructive/50"
+            errors.bookingAmount && "border-destructive/50"
           )}
         />
-        {errors.salePrice && (
-          <p className="text-xs text-destructive pl-1">{errors.salePrice.message}</p>
+        {errors.bookingAmount && (
+          <p className="text-xs text-destructive pl-1">{errors.bookingAmount.message}</p>
         )}
       </div>
 

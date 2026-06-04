@@ -38,13 +38,13 @@ export async function getAdminStats() {
       .eq("status", "approved"),
     supabase
       .from("sales")
-      .select("sale_amount")
+      .select("booking_amount")
       .eq("status", "approved"),
   ]);
 
   const totalCommissions = commData?.reduce((s, r) => s + Number(r.amount), 0) ?? 0;
   const totalWithdrawals = withdrawalData?.reduce((s, r) => s + Number(r.amount), 0) ?? 0;
-  const totalRevenue = revenueData?.reduce((s, r) => s + Number(r.sale_amount), 0) ?? 0;
+  const totalRevenue = revenueData?.reduce((s, r) => s + Number(r.booking_amount), 0) ?? 0;
 
   return {
     totalAgents: totalAgents ?? 0,
@@ -63,7 +63,7 @@ export async function getMonthlySalesTrend() {
 
   const { data, error } = await supabase
     .from("sales")
-    .select("sale_amount, created_at, status")
+    .select("booking_amount, created_at, status")
     .gte("created_at", new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString())
     .order("created_at", { ascending: true });
 
@@ -77,7 +77,7 @@ export async function getMonthlySalesTrend() {
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
     const label = d.toLocaleString("default", { month: "short", year: "2-digit" });
     if (!map[key]) map[key] = { month: label, volume: 0, count: 0 };
-    map[key].volume += Number(row.sale_amount);
+    map[key].volume += Number(row.booking_amount);
     map[key].count += 1;
   }
 
@@ -218,7 +218,7 @@ export async function getRecentCommissions(limit = 10) {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("commissions")
-    .select("*, profiles:recipient_id(name, email), sales(sale_amount, properties(title))")
+    .select("*, profiles:recipient_id(name, email), sales(booking_amount, sale_amount, properties(title))")
     .order("approved_at", { ascending: false, nullsFirst: false })
     .order("rowid", { ascending: false, referencedTable: undefined } as any)
     .limit(limit);
@@ -227,7 +227,7 @@ export async function getRecentCommissions(limit = 10) {
   if (error) {
     const { data: fallback } = await supabase
       .from("commissions")
-      .select("*, profiles:recipient_id(name, email), sales(sale_amount, properties(title))")
+      .select("*, profiles:recipient_id(name, email), sales(booking_amount, sale_amount, properties(title))")
       .limit(limit);
     return fallback || [];
   }
@@ -238,7 +238,7 @@ export async function getCommissionsWithDetails() {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("commissions")
-    .select("*, profiles:recipient_id(name, email), sales(sale_amount, properties(title))")
+    .select("*, profiles:recipient_id(name, email), sales(booking_amount, sale_amount, properties(title))")
     .order("created_at", { ascending: false });
 
   if (error) {

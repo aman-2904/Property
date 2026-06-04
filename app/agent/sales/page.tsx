@@ -29,10 +29,11 @@ export default async function AgentSalesPage() {
     getProperties(),
   ]);
 
-  // Map properties for filter dropdown
+  // Map properties for filter dropdown & modal
   const propertyOptions = (allProperties || []).map((p: any) => ({
     id: p.id,
     title: p.title,
+    price: p.price,
   }));
 
   return (
