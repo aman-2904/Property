@@ -130,11 +130,19 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <div className="mt-6 text-center text-sm text-muted-foreground">
-        Don&apos;t have an account?{" "}
-        <Link href="/register" className="text-primary hover:underline font-semibold">
-          Sign up
-        </Link>
+      <div className="mt-6 text-center text-sm text-muted-foreground space-y-3">
+        <div>
+          Don&apos;t have an account?{" "}
+          <Link href="/register" className="text-primary hover:underline font-semibold">
+            Sign up
+          </Link>
+        </div>
+        <div className="pt-3 border-t border-border/40 text-xs">
+          Are you an Admin?{" "}
+          <Link href="/admin/login" className="text-primary hover:underline font-semibold">
+            Admin Portal Sign In
+          </Link>
+        </div>
       </div>
     </motion.div>
   );

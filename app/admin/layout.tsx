@@ -3,11 +3,20 @@ import { redirect } from "next/navigation";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/dashboard/sidebar";
 
+import { headers } from "next/headers";
+
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const headerList = headers();
+  const pathname = headerList.get("x-pathname") || "";
+
+  if (pathname === "/admin/login" || pathname === "/admin/register") {
+    return <>{children}</>;
+  }
+
   const supabase = createClient();
   const adminSupabase = createAdminClient();
 
@@ -16,7 +25,7 @@ export default async function AdminLayout({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    redirect("/admin/login");
   }
 
   const { data: profile } = await adminSupabase

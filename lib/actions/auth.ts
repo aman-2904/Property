@@ -1,22 +1,51 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
-export async function login(formData: any) {
+export async function login(formData: any, isAdminLogin: boolean = false) {
   const supabase = createClient();
 
   const { email, password } = formData;
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data: authData, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
   if (error) {
     return { error: error.message };
+  }
+
+  if (!authData?.user) {
+    return { error: "Authentication failed. User session not created." };
+  }
+
+  const adminSupabase = createAdminClient();
+  const { data: profile, error: profileError } = await adminSupabase
+    .from("profiles")
+    .select("role")
+    .eq("id", authData.user.id)
+    .single();
+
+  if (profileError || !profile) {
+    await supabase.auth.signOut();
+    return { error: "Failed to retrieve user profile or role." };
+  }
+
+  const role = profile.role?.toUpperCase();
+  const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN";
+
+  if (isAdminLogin && !isAdmin) {
+    await supabase.auth.signOut();
+    return { error: "Access Denied: Agents must log in at the agent portal" };
+  }
+
+  if (!isAdminLogin && isAdmin) {
+    await supabase.auth.signOut();
+    return { error: "Access Denied: Admins must log in at the admin portal" };
   }
 
   revalidatePath("/", "layout");
@@ -34,7 +63,13 @@ export async function signUp(formData: any) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  const { email, password, fullName, referralCode, role } = formData;
+  const { email, password, fullName, referralCode, role, secretKey } = formData;
+
+  if (role === "ADMIN") {
+    if (secretKey !== "RSADMIN26") {
+      return { error: "Access Denied: Invalid Admin Secret Key." };
+    }
+  }
 
   // 1. Check if this is the first user in profiles (to allow signup without code)
   const { count, error: countError } = await adminSupabase

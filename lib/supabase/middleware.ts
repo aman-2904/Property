@@ -11,17 +11,20 @@ function logToFile(msg: string) {
 }
 
 export async function updateSession(request: NextRequest) {
+  const pathName = request.nextUrl.pathname;
+  logToFile(`Incoming request path: ${pathName}`);
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", pathName);
+
   let response = NextResponse.next({
     request: {
-      headers: request.headers,
+      headers: requestHeaders,
     },
   });
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  const pathName = request.nextUrl.pathname;
-  logToFile(`Incoming request path: ${pathName}`);
 
   if (!supabaseUrl || !supabaseAnonKey) {
     logToFile(`Missing Supabase env vars`);
@@ -35,7 +38,13 @@ export async function updateSession(request: NextRequest) {
       },
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-        response = NextResponse.next({ request });
+        const requestHeaders = new Headers(request.headers);
+        requestHeaders.set("x-pathname", pathName);
+        response = NextResponse.next({
+          request: {
+            headers: requestHeaders,
+          },
+        });
         cookiesToSet.forEach(({ name, value, options }) =>
           response.cookies.set(name, value, options)
         );
@@ -54,10 +63,20 @@ export async function updateSession(request: NextRequest) {
   // NOT here. Doing role checks in middleware can cause redirect loops
   // when the profile query returns null due to RLS or timing issues.
 
-  if (pathName.startsWith("/admin") || pathName.startsWith("/agent") || pathName === "/dashboard") {
+  const isAgentRoute = pathName.startsWith("/agent");
+  const isAdminRoute = pathName.startsWith("/admin");
+  const isDashboardRoute = pathName === "/dashboard";
+  const isAdminLogin = pathName === "/admin/login" || pathName === "/admin/register";
+
+  if ((isAdminRoute && !isAdminLogin) || isAgentRoute || isDashboardRoute) {
     if (!user) {
-      logToFile(`Redirecting unauthenticated user from ${pathName} to /login`);
-      return NextResponse.redirect(new URL("/login", request.url));
+      if (isAdminRoute) {
+        logToFile(`Redirecting unauthenticated user from ${pathName} to /admin/login`);
+        return NextResponse.redirect(new URL("/admin/login", request.url));
+      } else {
+        logToFile(`Redirecting unauthenticated user from ${pathName} to /login`);
+        return NextResponse.redirect(new URL("/login", request.url));
+      }
     }
   }
 
@@ -72,7 +91,14 @@ export async function updateSession(request: NextRequest) {
   // ── Redirect logged-in users away from auth pages ──────────────────────────
   // Send to /dashboard which reliably resolves the correct portal
   // based on role in a fresh server-rendered request.
-  if (user && (pathName === "/login" || pathName === "/register" || pathName === "/forgot-password")) {
+  if (
+    user &&
+    (pathName === "/login" ||
+      pathName === "/admin/login" ||
+      pathName === "/admin/register" ||
+      pathName === "/register" ||
+      pathName === "/forgot-password")
+  ) {
     logToFile(`Redirecting logged-in user ${user.email} from ${pathName} to /dashboard`);
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
