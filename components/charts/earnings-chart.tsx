@@ -58,7 +58,7 @@ export function EarningsChart({ data }: EarningsChartProps) {
             fontSize={11}
             tickLine={false}
             axisLine={false}
-            tickFormatter={(value) => `$${value}`}
+            tickFormatter={(value) => `₹${value}`}
             dx={-10}
           />
           <Tooltip
@@ -69,7 +69,7 @@ export function EarningsChart({ data }: EarningsChartProps) {
               color: "#fff",
               fontFamily: "var(--font-outfit)",
             }}
-            formatter={(value: any) => [`$${Number(value).toFixed(2)}`, "Earned"]}
+            formatter={(value: any) => [`₹${Number(value).toFixed(2)}`, "Earned"]}
           />
           <Area
             type="monotone"

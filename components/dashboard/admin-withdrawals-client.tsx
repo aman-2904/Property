@@ -187,7 +187,7 @@ export function AdminWithdrawalsClient({ initialPayouts }: AdminWithdrawalsClien
       accessorKey: "amount",
       render: (row: Payout) => (
         <span className="font-bold text-foreground">
-          ${Number(row.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+          ₹{Number(row.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
         </span>
       ),
     },
@@ -267,21 +267,21 @@ export function AdminWithdrawalsClient({ initialPayouts }: AdminWithdrawalsClien
       <div className="grid gap-4 md:grid-cols-3">
         <KpiCard
           title="Total Paid Out"
-          value={`$${totalWithdrawn.toLocaleString("en-US", { maximumFractionDigits: 2 })}`}
+          value={`₹${totalWithdrawn.toLocaleString("en-US", { maximumFractionDigits: 2 })}`}
           icon={<ArrowUpRight className="h-4 w-4 text-emerald-500" />}
           color="bg-emerald-500"
           subtitle="Approved withdrawals"
         />
         <KpiCard
           title="Pending Cashouts"
-          value={`$${pendingVolume.toLocaleString("en-US", { maximumFractionDigits: 2 })}`}
+          value={`₹${pendingVolume.toLocaleString("en-US", { maximumFractionDigits: 2 })}`}
           icon={<Clock className="h-4 w-4 text-amber-500" />}
           color="bg-amber-500"
           subtitle="Pending cashouts"
         />
         <KpiCard
           title="Rejected Withdrawals"
-          value={`$${rejectedVolume.toLocaleString("en-US", { maximumFractionDigits: 2 })}`}
+          value={`₹${rejectedVolume.toLocaleString("en-US", { maximumFractionDigits: 2 })}`}
           icon={<Ban className="h-4 w-4 text-rose-500" />}
           color="bg-rose-500"
           subtitle="Rejected payout requests"
@@ -336,7 +336,7 @@ export function AdminWithdrawalsClient({ initialPayouts }: AdminWithdrawalsClien
                   Transfer Details
                 </span>
                 <p className="font-bold text-foreground mt-0.5">
-                  Amount: ${Number(selectedPayout?.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  Amount: ₹{Number(selectedPayout?.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </p>
                 <div className="text-xs text-muted-foreground space-y-0.5">
                   <p>Recipient: {selectedPayout?.profiles?.name}</p>
@@ -385,7 +385,7 @@ export function AdminWithdrawalsClient({ initialPayouts }: AdminWithdrawalsClien
         onOpenChange={setIsRejectOpen}
         onConfirm={handleReject}
         title="Reject Withdrawal Request"
-        description={`Are you sure you want to reject the withdrawal request of $${Number(selectedPayout?.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })} for ${selectedPayout?.profiles?.name}?`}
+        description={`Are you sure you want to reject the withdrawal request of ₹${Number(selectedPayout?.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })} for ${selectedPayout?.profiles?.name}?`}
         confirmText="Reject Request"
         variant="danger"
         isLoading={isLoading}

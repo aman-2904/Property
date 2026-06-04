@@ -7,7 +7,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { updateSaleStatus } from "@/lib/actions/sales";
 import { updatePaymentStatus } from "@/lib/actions/admin";
-import { Check, X, CheckCircle, Loader2, DollarSign, TrendingUp, Clock, Download } from "lucide-react";
+import { Check, X, CheckCircle, Loader2, IndianRupee, TrendingUp, Clock, Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -97,7 +97,7 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
       triggerToast(`Error: ${res.error}`, false);
     } else {
       setIsApprovePaymentOpen(false);
-      triggerToast(`Payment of $${selectedPayment.amount.toLocaleString()} approved!`);
+      triggerToast(`Payment of ₹${selectedPayment.amount.toLocaleString()} approved!`);
       router.refresh();
     }
   };
@@ -112,7 +112,7 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
       triggerToast(`Error: ${res.error}`, false);
     } else {
       setIsRejectPaymentOpen(false);
-      triggerToast(`Payment of $${selectedPayment.amount.toLocaleString()} rejected.`);
+      triggerToast(`Payment of ₹${selectedPayment.amount.toLocaleString()} rejected.`);
       router.refresh();
     }
   };
@@ -229,7 +229,7 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
       header: "Property Value",
       render: (row: Sale) => (
         <span className="font-semibold text-foreground">
-          ${Number(row.sale_amount).toLocaleString("en-US", { minimumFractionDigits: 0 })}
+          ₹{Number(row.sale_amount).toLocaleString("en-US", { minimumFractionDigits: 0 })}
         </span>
       ),
     },
@@ -243,10 +243,10 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
         return (
           <div className="flex flex-col">
             <span className="font-bold text-emerald-400">
-              ${totalPaid.toLocaleString("en-US")}
+              ₹{totalPaid.toLocaleString("en-US")}
             </span>
             <span className={cn("text-xs font-medium", remaining === 0 ? "text-muted-foreground/60 line-through" : "text-amber-500")}>
-              Bal: ${remaining.toLocaleString("en-US")}
+              Bal: ₹{remaining.toLocaleString("en-US")}
             </span>
           </div>
         );
@@ -262,7 +262,7 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
               <div key={p.id} className="flex items-center justify-between gap-2 p-1.5 rounded-xl bg-muted/20 border border-border/30 text-xs animate-in fade-in duration-200">
                 <div className="flex flex-col">
                   <span className="font-bold text-foreground">
-                    ${Number(p.amount).toLocaleString("en-US")}
+                    ₹{Number(p.amount).toLocaleString("en-US")}
                   </span>
                   <span className="text-[9px] text-muted-foreground">
                     {new Date(p.created_at).toLocaleDateString()}
@@ -357,8 +357,8 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
       <div className="grid gap-4 md:grid-cols-3">
         <KpiCard
           title="Total Approved Volume"
-          value={`$${totalVolume.toLocaleString("en-US", { maximumFractionDigits: 0 })}`}
-          icon={<DollarSign className="h-4 w-4 text-emerald-500" />}
+          value={`₹${totalVolume.toLocaleString("en-US", { maximumFractionDigits: 0 })}`}
+          icon={<IndianRupee className="h-4 w-4 text-emerald-500" />}
           color="bg-emerald-500"
           subtitle="Total volume of closed sales"
         />
@@ -418,7 +418,7 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
         onOpenChange={setIsApproveOpen}
         onConfirm={handleApprove}
         title="Approve Sale Submission"
-        description={`Are you sure you want to approve the sale of "${selectedSale?.properties?.title}" to ${selectedSale?.buyer_name} with Booking Amount $${Number(selectedSale?.booking_amount).toLocaleString("en-US")} (Sale Price: $${Number(selectedSale?.sale_amount).toLocaleString("en-US")})? This will distribute upline commission percentages immediately based on the booking amount.`}
+        description={`Are you sure you want to approve the sale of "${selectedSale?.properties?.title}" to ${selectedSale?.buyer_name} with Booking Amount ₹${Number(selectedSale?.booking_amount).toLocaleString("en-US")} (Sale Price: ₹{Number(selectedSale?.sale_amount).toLocaleString("en-US")})? This will distribute upline commission percentages immediately based on the booking amount.`}
         confirmText="Approve Sale"
         variant="info"
         isLoading={isLoading}
@@ -430,7 +430,7 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
         onOpenChange={setIsRejectOpen}
         onConfirm={handleReject}
         title="Reject Sale Submission"
-        description={`Are you sure you want to reject the sale of "${selectedSale?.properties?.title}" to ${selectedSale?.buyer_name} with Booking Amount $${Number(selectedSale?.booking_amount).toLocaleString("en-US")}?`}
+        description={`Are you sure you want to reject the sale of "${selectedSale?.properties?.title}" to ${selectedSale?.buyer_name} with Booking Amount ₹${Number(selectedSale?.booking_amount).toLocaleString("en-US")}?`}
         confirmText="Reject Sale"
         variant="danger"
         isLoading={isLoading}
@@ -442,7 +442,7 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
         onOpenChange={setIsApprovePaymentOpen}
         onConfirm={handleApprovePayment}
         title="Approve Payment"
-        description={`Are you sure you want to approve the payment of $${Number(selectedPayment?.amount).toLocaleString("en-US")} for "${selectedPayment?.propertyTitle}" by buyer ${selectedPayment?.buyerName}? This will distribute upline commission percentages immediately based on this payment amount.`}
+        description={`Are you sure you want to approve the payment of ₹${Number(selectedPayment?.amount).toLocaleString("en-US")} for "${selectedPayment?.propertyTitle}" by buyer ${selectedPayment?.buyerName}? This will distribute upline commission percentages immediately based on this payment amount.`}
         confirmText="Approve Payment"
         variant="info"
         isLoading={isLoading}
@@ -454,7 +454,7 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
         onOpenChange={setIsRejectPaymentOpen}
         onConfirm={handleRejectPayment}
         title="Reject Payment"
-        description={`Are you sure you want to reject the payment of $${Number(selectedPayment?.amount).toLocaleString("en-US")} for "${selectedPayment?.propertyTitle}" by buyer ${selectedPayment?.buyerName}?`}
+        description={`Are you sure you want to reject the payment of ₹${Number(selectedPayment?.amount).toLocaleString("en-US")} for "${selectedPayment?.propertyTitle}" by buyer ${selectedPayment?.buyerName}?`}
         confirmText="Reject Payment"
         variant="danger"
         isLoading={isLoading}

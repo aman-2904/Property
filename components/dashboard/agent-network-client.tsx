@@ -101,7 +101,7 @@ export function AgentNetworkClient({
           />
           <StatsCard
             title="Team Sales Volume"
-            value={`$${teamStats.totalTeamSalesAmount.toLocaleString("en-US")}`}
+            value={`₹${teamStats.totalTeamSalesAmount.toLocaleString("en-US")}`}
             icon={<Award className="h-5 w-5" />}
             description="Approved override transactions"
           />

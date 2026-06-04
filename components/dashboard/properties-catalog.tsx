@@ -120,9 +120,9 @@ export function PropertiesCatalog({ initialProperties }: PropertiesCatalogProps)
           <div className="flex items-center gap-1.5">
             {[
               { value: "all", label: "All Prices" },
-              { value: "under-500k", label: "Under $500K" },
-              { value: "500k-1m", label: "$500K - $1M" },
-              { value: "over-1m", label: "Over $1M" },
+              { value: "under-500k", label: "Under ₹500K" },
+              { value: "500k-1m", label: "₹500K - ₹1M" },
+              { value: "over-1m", label: "Over ₹1M" },
             ].map((opt) => (
               <button
                 key={opt.value}
@@ -198,7 +198,7 @@ export function PropertiesCatalog({ initialProperties }: PropertiesCatalogProps)
                         Listing Price
                       </span>
                       <span className="text-lg font-extrabold text-foreground">
-                        ${Number(prop.price).toLocaleString("en-US")}
+                        ₹{Number(prop.price).toLocaleString("en-US")}
                       </span>
                     </div>
                     <div className="flex flex-col items-end">

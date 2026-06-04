@@ -185,7 +185,7 @@ function SubmitSaleModal({
                 <option value="">Select a property listing...</option>
                 {properties.map((p) => (
                   <option key={p.id} value={p.id}>
-                    {p.title} (${Number(p.price).toLocaleString("en-US")})
+                    {p.title} (₹{Number(p.price).toLocaleString("en-US")})
                   </option>
                 ))}
               </select>
@@ -223,7 +223,7 @@ function SubmitSaleModal({
                 <input
                   type="text"
                   placeholder="Select property first"
-                  value={form.salePrice ? `$${Number(form.salePrice).toLocaleString("en-US")}` : ""}
+                  value={form.salePrice ? `₹${Number(form.salePrice).toLocaleString("en-US")}` : ""}
                   className={cn(inputClass, "bg-muted/40 text-muted-foreground/80 cursor-not-allowed font-semibold border-muted/50")}
                   readOnly
                   disabled
@@ -513,7 +513,7 @@ export function AgentSalesClient({
       accessorKey: "sale_amount",
       render: (row: SaleRow) => (
         <span className="font-semibold text-foreground text-sm">
-          ${Number(row.sale_amount).toLocaleString("en-US")}
+          ₹{Number(row.sale_amount).toLocaleString("en-US")}
         </span>
       ),
     },
@@ -526,7 +526,7 @@ export function AgentSalesClient({
         return (
           <div className="flex flex-col">
             <span className="font-bold text-emerald-400 text-sm">
-              ${totalPaid.toLocaleString("en-US")}
+              ₹{totalPaid.toLocaleString("en-US")}
             </span>
             {totalPaid < Number(row.sale_amount) && (
               <span className="text-[9px] text-muted-foreground">
@@ -546,7 +546,7 @@ export function AgentSalesClient({
         const remaining = Math.max(0, Number(row.sale_amount) - totalPaid);
         return (
           <span className={cn("text-sm font-semibold", remaining === 0 ? "text-muted-foreground/60 line-through" : "text-amber-500")}>
-            ${remaining.toLocaleString("en-US")}
+            ₹{remaining.toLocaleString("en-US")}
           </span>
         );
       },
@@ -559,7 +559,7 @@ export function AgentSalesClient({
           return <span className="text-xs text-muted-foreground italic">Pending approval</span>;
         return (
           <span className="font-semibold text-violet-400 text-sm">
-            ${comm.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+            ₹{comm.toLocaleString("en-US", { minimumFractionDigits: 2 })}
           </span>
         );
       },
@@ -667,14 +667,14 @@ export function AgentSalesClient({
         />
         <StatsCard
           title="Total Commission"
-          value={`$${summary.totalCommission.toLocaleString("en-US", { minimumFractionDigits: 0 })}`}
+          value={`₹${summary.totalCommission.toLocaleString("en-US", { minimumFractionDigits: 0 })}`}
           icon={<Coins className="h-5 w-5" />}
           description="Lifetime earnings"
           className="border-violet-500/20"
         />
         <StatsCard
           title="Pending Commission"
-          value={`$${summary.pendingCommission.toLocaleString("en-US", { minimumFractionDigits: 0 })}`}
+          value={`₹${summary.pendingCommission.toLocaleString("en-US", { minimumFractionDigits: 0 })}`}
           icon={<TrendingUp className="h-5 w-5" />}
           description="Awaiting approval"
           className="border-primary/20"

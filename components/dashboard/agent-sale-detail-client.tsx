@@ -274,7 +274,7 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
     }
 
     if (val > remainingBalance) {
-      setErrorMsg(`Payment amount cannot exceed the remaining balance of $${remainingBalance.toLocaleString()}.`);
+      setErrorMsg(`Payment amount cannot exceed the remaining balance of ₹${remainingBalance.toLocaleString()}.`);
       return;
     }
 
@@ -344,27 +344,27 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Property Value"
-          value={`$${Number(sale.sale_amount).toLocaleString("en-US")}`}
+          value={`₹${Number(sale.sale_amount).toLocaleString("en-US")}`}
           icon={<DollarSign className="h-5 w-5" />}
           description="Listing reference price"
         />
         <StatsCard
           title="Total Paid"
-          value={`$${totalPaid.toLocaleString("en-US")}`}
+          value={`₹${totalPaid.toLocaleString("en-US")}`}
           icon={<CheckCircle className="h-5 w-5 text-emerald-400" />}
           description="Approved payments sum"
           className="border-emerald-500/20"
         />
         <StatsCard
           title="Remaining Balance"
-          value={`$${remainingBalance.toLocaleString("en-US")}`}
+          value={`₹${remainingBalance.toLocaleString("en-US")}`}
           icon={<Clock className="h-5 w-5 text-amber-500" />}
           description={isFullyPaid ? "Fully Paid" : "Balance to pay"}
           className={cn("border-amber-500/20", remainingBalance === 0 && "opacity-75")}
         />
         <StatsCard
           title="My Commission"
-          value={`$${sellerCommission.toLocaleString("en-US", { minimumFractionDigits: 0 })}`}
+          value={`₹${sellerCommission.toLocaleString("en-US", { minimumFractionDigits: 0 })}`}
           icon={<Coins className="h-5 w-5 text-violet-400" />}
           description="Your direct sales share"
           className="border-violet-500/20"
@@ -402,7 +402,7 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
               <InfoRow
                 icon={<DollarSign className="h-3.5 w-3.5" />}
                 label="Listed Price"
-                value={`$${Number(sale.properties.price).toLocaleString("en-US")}`}
+                value={`₹${Number(sale.properties.price).toLocaleString("en-US")}`}
               />
             )}
             {sale.properties?.status && (
@@ -426,7 +426,7 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
               label="Booking Amount (First Payment)"
               value={
                 <span className="text-xl font-extrabold text-foreground">
-                  ${Number(sale.booking_amount).toLocaleString("en-US")}
+                  ₹{Number(sale.booking_amount).toLocaleString("en-US")}
                 </span>
               }
             />
@@ -478,7 +478,7 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
                         {p.id.substring(0, 8)}...
                       </td>
                       <td className="px-3 py-2.5 font-bold text-foreground">
-                        ${Number(p.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                        ₹{Number(p.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
                       </td>
                       <td className="px-3 py-2.5">
                         <StatusBadge status={p.status} />
@@ -519,7 +519,7 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
                       Your Commission (Seller)
                     </p>
                     <p className="text-2xl font-extrabold text-primary mt-0.5">
-                      ${sellerCommission.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                      ₹{sellerCommission.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                     </p>
                   </div>
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
@@ -532,7 +532,7 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
                       Total Network Commissions
                     </p>
                     <p className="text-lg font-bold text-violet-400 mt-0.5">
-                      ${totalCommission.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                      ₹{totalCommission.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                     </p>
                   </div>
                   <Coins className="h-5 w-5 text-violet-400" />
@@ -562,7 +562,7 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
                           </span>
                         </td>
                         <td className="px-3 py-2.5 font-bold text-foreground">
-                          ${Number(c.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                          ₹{Number(c.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
                         </td>
                         <td className="px-3 py-2.5">
                           <StatusBadge status={c.status} />
@@ -662,7 +662,7 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
                   Remaining Balance
                 </label>
                 <div className="text-lg font-bold text-amber-500 pl-1">
-                  ${remainingBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  ₹{remainingBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                 </div>
               </div>
 
@@ -672,7 +672,7 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
                 </label>
                 <div className="relative">
                   <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-semibold">
-                    $
+                    ₹
                   </span>
                   <input
                     type="number"

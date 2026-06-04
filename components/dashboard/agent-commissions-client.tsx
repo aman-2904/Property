@@ -95,12 +95,12 @@ export function AgentCommissionsClient({ initialCommissions }: AgentCommissionsC
           <div className="flex items-center gap-2 mt-0.5">
             {row.sales?.booking_amount && (
               <span className="text-[10px] text-muted-foreground">
-                Booking: ${Number(row.sales.booking_amount).toLocaleString("en-US")}
+                Booking: ₹{Number(row.sales.booking_amount).toLocaleString("en-US")}
               </span>
             )}
             {row.sales?.sale_amount && (
               <span className="text-[9px] text-muted-foreground/60">
-                Sale: ${Number(row.sales.sale_amount).toLocaleString("en-US")}
+                Sale: ₹{Number(row.sales.sale_amount).toLocaleString("en-US")}
               </span>
             )}
           </div>
@@ -133,7 +133,7 @@ export function AgentCommissionsClient({ initialCommissions }: AgentCommissionsC
       accessorKey: "amount",
       render: (row: Commission) => (
         <span className="font-bold text-foreground text-sm">
-          ${Number(row.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+          ₹{Number(row.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
         </span>
       ),
     },
@@ -174,28 +174,28 @@ export function AgentCommissionsClient({ initialCommissions }: AgentCommissionsC
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         <KpiCard
           title="Total Earned"
-          value={`$${totalEarned.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          value={`₹${totalEarned.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           icon={<Coins className="h-5 w-5 text-emerald-500" />}
           color="bg-emerald-500"
           subtitle="Approved or paid balances"
         />
         <KpiCard
           title="Pending Audits"
-          value={`$${pendingVolume.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          value={`₹${pendingVolume.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           icon={<Clock className="h-5 w-5 text-amber-500" />}
           color="bg-amber-500"
           subtitle="Commissions awaiting review"
         />
         <KpiCard
           title="Direct Sales Earnings"
-          value={`$${directEarned.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          value={`₹${directEarned.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           icon={<TrendingUp className="h-5 w-5 text-blue-500" />}
           color="bg-blue-500"
           subtitle="From your own direct sales"
         />
         <KpiCard
           title="MLM Overrides"
-          value={`$${networkEarned.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          value={`₹${networkEarned.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           icon={<BarChart3 className="h-5 w-5 text-violet-500" />}
           color="bg-violet-500"
           subtitle="From team sponsor levels"

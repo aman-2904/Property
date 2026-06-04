@@ -115,7 +115,7 @@ export function AdminPayoutsClient({ initialPayouts }: AdminPayoutsClientProps) 
       accessorKey: "amount",
       render: (row: Payout) => (
         <span className="font-bold text-foreground">
-          ${Number(row.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+          ₹{Number(row.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
         </span>
       ),
     },
@@ -228,7 +228,7 @@ export function AdminPayoutsClient({ initialPayouts }: AdminPayoutsClientProps) 
                   Transfer Details
                 </span>
                 <p className="font-bold text-foreground mt-0.5">
-                  Amount: ${Number(selectedPayout?.amount).toLocaleString("en-US")}
+                  Amount: ₹{Number(selectedPayout?.amount).toLocaleString("en-US")}
                 </p>
                 <div className="text-xs text-muted-foreground space-y-0.5">
                   <p>Recipient: {selectedPayout?.profiles?.name}</p>
@@ -277,7 +277,7 @@ export function AdminPayoutsClient({ initialPayouts }: AdminPayoutsClientProps) 
         onOpenChange={setIsRejectOpen}
         onConfirm={handleReject}
         title="Reject Withdrawal Request"
-        description={`Are you sure you want to reject the withdrawal request of $${Number(selectedPayout?.amount).toLocaleString("en-US")} for ${selectedPayout?.profiles?.name}?`}
+        description={`Are you sure you want to reject the withdrawal request of ₹${Number(selectedPayout?.amount).toLocaleString("en-US")} for ${selectedPayout?.profiles?.name}?`}
         confirmText="Reject Request"
         variant="danger"
         isLoading={isLoading}

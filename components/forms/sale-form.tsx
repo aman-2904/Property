@@ -82,7 +82,7 @@ export function SaleForm({
         </span>
         <h4 className="font-bold text-foreground mt-0.5">{propertyTitle}</h4>
         <p className="text-xs text-primary font-semibold mt-1">
-          Base Listing Price: ${propertyPrice.toLocaleString("en-US")}
+          Base Listing Price: ₹{propertyPrice.toLocaleString("en-US")}
         </p>
       </div>
 
@@ -136,11 +136,11 @@ export function SaleForm({
       {/* Sale Price */}
       <div className="space-y-1.5">
         <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
-          Actual Sale Price ($)
+          Actual Sale Price (₹)
         </label>
         <input
           type="text"
-          value={`$${propertyPrice.toLocaleString("en-US")}`}
+          value={`₹${propertyPrice.toLocaleString("en-US")}`}
           disabled
           readOnly
           className="w-full px-4 py-2.5 bg-muted/40 border border-border/50 rounded-xl text-sm outline-none transition-all font-semibold text-muted-foreground cursor-not-allowed"
@@ -150,7 +150,7 @@ export function SaleForm({
       {/* Booking Amount */}
       <div className="space-y-1.5">
         <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
-          Booking Amount ($) *
+          Booking Amount (₹) *
         </label>
         <input
           type="number"

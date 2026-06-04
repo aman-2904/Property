@@ -180,10 +180,10 @@ export function AdminCommissionsClient({ initialCommissions }: AdminCommissionsC
         <div className="flex flex-col">
           <span className="font-medium text-foreground/80">{row.sales?.properties?.title || "—"}</span>
           {row.sales?.booking_amount && (
-            <span className="text-[10px] text-muted-foreground">Booking Vol: ${Number(row.sales.booking_amount).toLocaleString("en-US")}</span>
+            <span className="text-[10px] text-muted-foreground">Booking Vol: ₹{Number(row.sales.booking_amount).toLocaleString("en-US")}</span>
           )}
           {row.sales?.sale_amount && (
-            <span className="text-[9px] text-muted-foreground/60">Property Val: ${Number(row.sales.sale_amount).toLocaleString("en-US")}</span>
+            <span className="text-[9px] text-muted-foreground/60">Property Val: ₹{Number(row.sales.sale_amount).toLocaleString("en-US")}</span>
           )}
         </div>
       ),
@@ -209,7 +209,7 @@ export function AdminCommissionsClient({ initialCommissions }: AdminCommissionsC
       accessorKey: "amount",
       render: (row: Commission) => (
         <span className="font-bold text-foreground">
-          ${Number(row.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+          ₹{Number(row.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
         </span>
       ),
     },
@@ -258,21 +258,21 @@ export function AdminCommissionsClient({ initialCommissions }: AdminCommissionsC
       <div className="grid gap-4 md:grid-cols-3">
         <KpiCard
           title="Total Commissions Pool"
-          value={`$${totalDistributed.toLocaleString("en-US", { maximumFractionDigits: 2 })}`}
+          value={`₹${totalDistributed.toLocaleString("en-US", { maximumFractionDigits: 2 })}`}
           icon={<CoinsIcon className="h-4 w-4 text-violet-500" />}
           color="bg-violet-500"
           subtitle="Overall distributed commissions"
         />
         <KpiCard
           title="Approved Commissions"
-          value={`$${approvedVolume.toLocaleString("en-US", { maximumFractionDigits: 2 })}`}
+          value={`₹${approvedVolume.toLocaleString("en-US", { maximumFractionDigits: 2 })}`}
           icon={<CheckCircle className="h-4 w-4 text-emerald-500" />}
           color="bg-emerald-500"
           subtitle="Commission balance credited"
         />
         <KpiCard
           title="Pending Audits"
-          value={`$${pendingVolume.toLocaleString("en-US", { maximumFractionDigits: 2 })}`}
+          value={`₹${pendingVolume.toLocaleString("en-US", { maximumFractionDigits: 2 })}`}
           icon={<Clock className="h-4 w-4 text-amber-500" />}
           color="bg-amber-500"
           subtitle="Commissions awaiting review"
@@ -321,7 +321,7 @@ export function AdminCommissionsClient({ initialCommissions }: AdminCommissionsC
         onOpenChange={setIsApproveOpen}
         onConfirm={handleApprove}
         title="Approve Commission"
-        description={`Are you sure you want to approve and release the commission of $${Number(selectedCommission?.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })} to ${selectedCommission?.profiles?.name}?`}
+        description={`Are you sure you want to approve and release the commission of ₹${Number(selectedCommission?.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })} to ${selectedCommission?.profiles?.name}?`}
         confirmText="Approve & Release"
         variant="info"
         isLoading={isLoading}
@@ -333,7 +333,7 @@ export function AdminCommissionsClient({ initialCommissions }: AdminCommissionsC
         onOpenChange={setIsRejectOpen}
         onConfirm={handleReject}
         title="Reject Commission"
-        description={`Are you sure you want to reject the commission of $${Number(selectedCommission?.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })} for ${selectedCommission?.profiles?.name}?`}
+        description={`Are you sure you want to reject the commission of ₹${Number(selectedCommission?.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })} for ${selectedCommission?.profiles?.name}?`}
         confirmText="Reject Commission"
         variant="danger"
         isLoading={isLoading}

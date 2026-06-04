@@ -18,7 +18,7 @@ import {
   TrendingUp,
   Coins,
   ArrowUpRight,
-  DollarSign,
+  IndianRupee,
   Bell,
   Search,
   X,
@@ -265,7 +265,7 @@ function GlobalSearchPanel({
                       <TrendingUp className="h-4 w-4 text-primary shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-semibold text-foreground truncate">{s.buyer_name}</p>
-                        <p className="text-[10px] text-muted-foreground">${Number(s.sale_amount).toLocaleString("en-US")}</p>
+                        <p className="text-[10px] text-muted-foreground">₹{Number(s.sale_amount).toLocaleString("en-US")}</p>
                       </div>
                       <StatusBadge status={s.status} />
                     </div>
@@ -629,22 +629,22 @@ export function AdminDashboardClient({
         />
         <KpiCard
           title="Commissions"
-          value={`$${(stats.totalCommissions / 1000).toFixed(1)}k`}
+          value={`₹${(stats.totalCommissions / 1000).toFixed(1)}k`}
           icon={<Coins className="h-4 w-4" />}
           color="bg-amber-500"
           subtitle="Distributed to network"
         />
         <KpiCard
           title="Withdrawals"
-          value={`$${(stats.totalWithdrawals / 1000).toFixed(1)}k`}
+          value={`₹${(stats.totalWithdrawals / 1000).toFixed(1)}k`}
           icon={<ArrowUpRight className="h-4 w-4" />}
           color="bg-rose-500"
           subtitle="Paid out to agents"
         />
         <KpiCard
           title="Total Revenue"
-          value={`$${(stats.totalRevenue / 1000).toFixed(1)}k`}
-          icon={<DollarSign className="h-4 w-4" />}
+          value={`₹${(stats.totalRevenue / 1000).toFixed(1)}k`}
+          icon={<IndianRupee className="h-4 w-4" />}
           color="bg-primary"
           subtitle="Platform volume"
         />
@@ -780,8 +780,8 @@ export function AdminDashboardClient({
                     </td>
                     <td className="px-5 py-3.5 text-xs font-medium text-foreground/80">{s.properties?.title ?? "—"}</td>
                     <td className="px-5 py-3.5 text-xs text-foreground/80">{s.buyer_name}</td>
-                    <td className="px-5 py-3.5 text-xs font-bold text-foreground">${Number(s.booking_amount).toLocaleString("en-US")}</td>
-                    <td className="px-5 py-3.5 text-xs text-muted-foreground/80 font-medium">${Number(s.sale_amount).toLocaleString("en-US")}</td>
+                    <td className="px-5 py-3.5 text-xs font-bold text-foreground">₹{Number(s.booking_amount).toLocaleString("en-US")}</td>
+                    <td className="px-5 py-3.5 text-xs text-muted-foreground/80 font-medium">₹{Number(s.sale_amount).toLocaleString("en-US")}</td>
                     <td className="px-5 py-3.5 text-xs text-muted-foreground" suppressHydrationWarning>{new Date(s.created_at).toLocaleDateString()}</td>
                     <td className="px-5 py-3.5">
                       <ActionButtons id={s.id} type="sale" status={s.status} />
@@ -809,7 +809,7 @@ export function AdminDashboardClient({
                   <tr key={w.id} className="hover:bg-muted/10 transition-colors">
                     <td className="px-5 py-3.5 text-xs font-semibold text-foreground">{w.profiles?.name ?? "—"}</td>
                     <td className="px-5 py-3.5 text-xs text-muted-foreground">{w.profiles?.email}</td>
-                    <td className="px-5 py-3.5 text-xs font-bold text-foreground">${Number(w.amount).toLocaleString("en-US")}</td>
+                    <td className="px-5 py-3.5 text-xs font-bold text-foreground">₹{Number(w.amount).toLocaleString("en-US")}</td>
                     <td className="px-5 py-3.5 text-xs text-muted-foreground" suppressHydrationWarning>{new Date(w.created_at).toLocaleDateString()}</td>
                     <td className="px-5 py-3.5">
                       <ActionButtons id={w.id} type="withdrawal" status={w.status} />
@@ -847,7 +847,7 @@ export function AdminDashboardClient({
                         L{c.level}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-xs font-bold text-foreground">${Number(c.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}</td>
+                    <td className="px-5 py-3.5 text-xs font-bold text-foreground">₹{Number(c.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}</td>
                     <td className="px-5 py-3.5">
                       <ActionButtons id={c.id} type="commission" status={c.status} />
                     </td>

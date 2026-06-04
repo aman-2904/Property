@@ -6,7 +6,7 @@ import { EarningsChart } from "@/components/charts/earnings-chart";
 import { DataTable } from "@/components/tables/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
-  DollarSign,
+  IndianRupee,
   TrendingUp,
   Award,
   Users,
@@ -56,7 +56,7 @@ export function AgentDashboardClient({
       accessorKey: "booking_amount",
       render: (row: any) => (
         <span className="font-semibold text-foreground">
-          ${Number(row.booking_amount).toLocaleString("en-US")}
+          ₹{Number(row.booking_amount).toLocaleString("en-US")}
         </span>
       ),
     },
@@ -65,7 +65,7 @@ export function AgentDashboardClient({
       accessorKey: "sale_amount",
       render: (row: any) => (
         <span className="text-xs text-muted-foreground">
-          ${Number(row.sale_amount).toLocaleString("en-US")}
+          ₹{Number(row.sale_amount).toLocaleString("en-US")}
         </span>
       ),
     },
@@ -105,19 +105,19 @@ export function AgentDashboardClient({
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           title="Available Balance"
-          value={`$${balance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
-          icon={<DollarSign className="h-5 w-5" />}
+          value={`₹${balance.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          icon={<IndianRupee className="h-5 w-5" />}
           description="Ready for payout request"
         />
         <StatsCard
           title="Total Earnings"
-          value={`$${totalEarned.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          value={`₹${totalEarned.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
           icon={<TrendingUp className="h-5 w-5" />}
-          description={`Withdrawn: $${paid.toLocaleString("en-US")}`}
+          description={`Withdrawn: ₹${paid.toLocaleString("en-US")}`}
         />
         <StatsCard
           title="Direct Sales Volume"
-          value={`$${totalSalesVolume.toLocaleString("en-US")}`}
+          value={`₹${totalSalesVolume.toLocaleString("en-US")}`}
           icon={<Building className="h-5 w-5" />}
           description="Approved transactions"
         />

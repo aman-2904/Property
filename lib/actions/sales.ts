@@ -284,7 +284,7 @@ export async function submitAdditionalPayment(saleId: string, amount: number) {
   const remainingBalance = Number(sale.sale_amount) - totalPaid;
 
   if (amount > remainingBalance) {
-    return { error: `Payment amount exceeds the remaining balance of $${remainingBalance.toLocaleString()}.` };
+    return { error: `Payment amount exceeds the remaining balance of ₹${remainingBalance.toLocaleString()}.` };
   }
 
   // Insert additional payment record

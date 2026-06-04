@@ -44,7 +44,7 @@ export function AgentPayoutsClient({
       accessorKey: "amount",
       render: (row: any) => (
         <span className="font-bold text-foreground">
-          ${Number(row.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+          ₹{Number(row.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
         </span>
       ),
     },
@@ -83,21 +83,21 @@ export function AgentPayoutsClient({
       <div className="grid gap-6 md:grid-cols-3">
         <StatsCard
           title="Withdrawable Balance"
-          value={`$${balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}`}
+          value={`₹${balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}`}
           icon={<Wallet className="h-5 w-5" />}
           description="Available for immediate withdrawal"
         />
         <StatsCard
           title="Pending Cashouts"
-          value={`$${(pendingHold ?? 0).toLocaleString("en-US", { minimumFractionDigits: 2 })}`}
+          value={`₹${(pendingHold ?? 0).toLocaleString("en-US", { minimumFractionDigits: 2 })}`}
           icon={<ArrowUpRight className="h-5 w-5" />}
           description="Awaiting admin processing"
         />
         <StatsCard
           title="Total Withdrawn"
-          value={`$${paid.toLocaleString("en-US", { minimumFractionDigits: 2 })}`}
+          value={`₹${paid.toLocaleString("en-US", { minimumFractionDigits: 2 })}`}
           icon={<Coins className="h-5 w-5" />}
-          description={`Accumulated earnings: $${totalEarned.toLocaleString("en-US")}`}
+          description={`Accumulated earnings: ₹${totalEarned.toLocaleString("en-US")}`}
         />
       </div>
 
@@ -146,7 +146,7 @@ export function AgentPayoutsClient({
             columns={columns}
             data={payouts}
             emptyTitle="No payout records"
-            emptyDescription="You haven't requested any payouts yet. Once you accumulate $10.00 in commissions, you can submit withdrawal requests."
+            emptyDescription="You haven't requested any payouts yet. Once you accumulate ₹10.00 in commissions, you can submit withdrawal requests."
           />
         </div>
       </div>

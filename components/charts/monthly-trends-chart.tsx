@@ -24,7 +24,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         {payload.map((entry: any, i: number) => (
           <p key={i} className="text-xs font-semibold" style={{ color: entry.color }}>
             {entry.name === "volume"
-              ? `Volume: $${Number(entry.value).toLocaleString("en-US")}`
+              ? `Volume: ₹${Number(entry.value).toLocaleString("en-US")}`
               : `Sales: ${entry.value}`}
           </p>
         ))}
@@ -72,7 +72,7 @@ export function MonthlyTrendsChart({ data }: MonthlyTrendsChartProps) {
             fontSize={10}
             tickLine={false}
             axisLine={false}
-            tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+            tickFormatter={(v) => `₹${(v / 1000).toFixed(0)}k`}
           />
           <YAxis
             yAxisId="right"

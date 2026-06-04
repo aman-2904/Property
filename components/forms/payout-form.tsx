@@ -23,8 +23,8 @@ export function PayoutForm({ balance, hasBankDetails }: PayoutFormProps) {
   const payoutSchema = z.object({
     amount: z.coerce
       .number()
-      .min(10, "Minimum withdrawal is $10")
-      .max(balance, `Maximum withdrawal is your current balance ($${balance.toLocaleString("en-US")})`),
+      .min(10, "Minimum withdrawal is ₹10")
+      .max(balance, `Maximum withdrawal is your current balance (₹${balance.toLocaleString("en-US")})`),
     paymentMethod: z.string().min(1, "Please choose a payment method"),
   });
 
@@ -88,7 +88,7 @@ export function PayoutForm({ balance, hasBankDetails }: PayoutFormProps) {
 
       <div className="space-y-1.5">
         <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
-          Withdrawal Amount ($)
+          Withdrawal Amount (₹)
         </label>
         <input
           type="number"
@@ -147,7 +147,7 @@ export function PayoutForm({ balance, hasBankDetails }: PayoutFormProps) {
 
       {balance < 10 && hasBankDetails && (
         <p className="text-[10px] text-muted-foreground text-center">
-          You must have a balance of at least $10.00 to request a payout.
+          You must have a balance of at least ₹10.00 to request a payout.
         </p>
       )}
     </form>

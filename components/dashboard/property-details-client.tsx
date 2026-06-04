@@ -145,7 +145,7 @@ export function PropertyDetailsClient({ property, isAdmin = false }: PropertyDet
                   Listing Price
                 </span>
                 <span className="text-2xl font-extrabold text-foreground mt-0.5 block">
-                  ${price.toLocaleString("en-US")}
+                  ₹{price.toLocaleString("en-US")}
                 </span>
               </div>
               <div>
@@ -167,7 +167,7 @@ export function PropertyDetailsClient({ property, isAdmin = false }: PropertyDet
                     Total Override Pool
                   </span>
                   <span className="text-lg font-extrabold text-foreground">
-                    ${totalCommissionPool.toLocaleString("en-US", { maximumFractionDigits: 2 })}
+                    ₹{totalCommissionPool.toLocaleString("en-US", { maximumFractionDigits: 2 })}
                   </span>
                 </div>
               </div>
@@ -216,7 +216,7 @@ export function PropertyDetailsClient({ property, isAdmin = false }: PropertyDet
                     <div className="flex flex-col items-end">
                       <span className="font-bold text-primary">{s.percent}%</span>
                       <span className="text-[10px] text-muted-foreground font-medium">
-                        ${dollarAmt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        ₹{dollarAmt.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                     </div>
                   </div>
