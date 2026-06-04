@@ -166,7 +166,7 @@ BEGIN
     comm_pool := NEW.amount * (prop_record.total_commission_percent / 100.00);
     
     -- 2. Calculate Direct Commission for Seller (Level 0)
-    direct_comm := comm_pool * (prop_record.seller_percent / 100.00);
+    direct_comm := NEW.amount * (prop_record.seller_percent / 100.00);
     
     IF direct_comm > 0.00 THEN
       INSERT INTO public.commissions (sale_id, recipient_id, level, percent, amount, status, approved_by, approved_at, payment_id)
@@ -188,7 +188,7 @@ BEGIN
         lvl_pct := public.get_property_level_percent(sale_record.property_id, i);
         
         IF lvl_pct > 0.00 THEN
-          upline_comm := comm_pool * (lvl_pct / 100.00);
+          upline_comm := NEW.amount * (lvl_pct / 100.00);
           
           INSERT INTO public.commissions (sale_id, recipient_id, level, percent, amount, status, approved_by, approved_at, payment_id)
           VALUES (NEW.sale_id, curr_upline_id, i, lvl_pct, upline_comm, 'pending'::public.commission_status, NULL, NULL, NEW.id);
@@ -214,11 +214,6 @@ BEGIN
           approved_by = NEW.approved_by,
           approved_at = NEW.approved_at
       WHERE id = NEW.sale_id;
-
-      -- Update property status to sold
-      UPDATE public.properties 
-      SET status = 'sold'::public.property_status 
-      WHERE id = sale_record.property_id;
       
       -- Recalculation logic trigger (via updating status to approved) will run and update sales count and promotions.
     END IF;
@@ -248,11 +243,6 @@ BEGIN
           approved_by = NULL,
           approved_at = NULL
       WHERE id = NEW.sale_id;
-
-      -- Revert property status back to available
-      UPDATE public.properties 
-      SET status = 'available'::public.property_status 
-      WHERE id = sale_record.property_id;
     END IF;
   END IF;
   

@@ -675,7 +675,7 @@ BEGIN
     comm_pool := NEW.sale_amount * (prop_record.total_commission_percent / 100.00);
     
     -- 3. Calculate Direct Commission for Seller (Level 0)
-    direct_comm := comm_pool * (prop_record.seller_percent / 100.00);
+    direct_comm := NEW.booking_amount * (prop_record.seller_percent / 100.00);
     
     IF direct_comm > 0.00 THEN
       INSERT INTO public.commissions (sale_id, recipient_id, level, percent, amount, status, approved_by, approved_at)
@@ -697,7 +697,7 @@ BEGIN
         lvl_pct := public.get_property_level_percent(NEW.property_id, i);
         
         IF lvl_pct > 0.00 THEN
-          upline_comm := comm_pool * (lvl_pct / 100.00);
+          upline_comm := NEW.booking_amount * (lvl_pct / 100.00);
           
           INSERT INTO public.commissions (sale_id, recipient_id, level, percent, amount, status, approved_by, approved_at)
           VALUES (NEW.id, curr_upline_id, i, lvl_pct, upline_comm, 'pending'::public.commission_status, NULL, NULL);
@@ -707,11 +707,6 @@ BEGIN
       curr_upline_id := next_upline_id;
     END LOOP;
 
-    -- Update property status to sold
-    UPDATE public.properties 
-    SET status = 'sold'::public.property_status 
-    WHERE id = NEW.property_id;
-
   -- Handle transition back / cancellation / rejection of the sale
   ELSIF NEW.status = 'rejected'::public.sale_status AND OLD.status = 'approved'::public.sale_status THEN
     -- Cancel/reject commissions
@@ -720,11 +715,6 @@ BEGIN
         approved_by = NEW.approved_by, 
         approved_at = NEW.approved_at
     WHERE sale_id = NEW.id;
-
-    -- Revert property status back to available
-    UPDATE public.properties 
-    SET status = 'available'::public.property_status 
-    WHERE id = NEW.property_id;
   END IF;
   
   RETURN NEW;
