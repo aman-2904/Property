@@ -7,6 +7,8 @@ import { StatsCard } from "@/components/dashboard/stats-card";
 import { DataTable } from "@/components/tables/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Wallet, Coins, ArrowUpRight } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-states";
+
 
 interface AgentPayoutsClientProps {
   balance: number;
@@ -142,12 +144,62 @@ export function AgentPayoutsClient({
               History of withdrawal requests and status records
             </p>
           </div>
-          <DataTable
-            columns={columns}
-            data={payouts}
-            emptyTitle="No payout records"
-            emptyDescription="You haven't requested any payouts yet. Once you accumulate ₹10.00 in commissions, you can submit withdrawal requests."
-          />
+          {payouts.length === 0 ? (
+            <EmptyState
+              title="No payout records"
+              description="You haven't requested any payouts yet. Once you accumulate ₹10.00 in commissions, you can submit withdrawal requests."
+            />
+          ) : (
+            <>
+              <div className="hidden md:block">
+                <DataTable
+                  columns={columns}
+                  data={payouts}
+                  emptyTitle="No payout records"
+                  emptyDescription="You haven't requested any payouts yet. Once you accumulate ₹10.00 in commissions, you can submit withdrawal requests."
+                />
+              </div>
+
+              <div className="block md:hidden space-y-4">
+                {payouts.map((payout) => (
+                  <div
+                    key={payout.id}
+                    className="p-5 rounded-2xl border border-border/40 bg-zinc-950/20 glass-premium space-y-3"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Amount</span>
+                        <span className="font-bold text-foreground text-base">
+                          ₹{Number(payout.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                        </span>
+                      </div>
+                      <StatusBadge status={payout.status} />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 text-xs border-t border-border/20 pt-3">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-muted-foreground text-[9px] uppercase tracking-wider font-semibold">Request Date</span>
+                        <span className="text-foreground/80 font-medium" suppressHydrationWarning>
+                          {new Date(payout.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-muted-foreground text-[9px] uppercase tracking-wider font-semibold">Method</span>
+                        <span className="text-foreground/80 font-medium">{payout.method}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col gap-0.5 border-t border-border/20 pt-3">
+                      <span className="text-muted-foreground text-[9px] uppercase tracking-wider font-semibold">Tx Hash / Reference</span>
+                      <span className="font-mono text-[10px] text-muted-foreground break-all">
+                        {payout.hash || "Processing..."}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

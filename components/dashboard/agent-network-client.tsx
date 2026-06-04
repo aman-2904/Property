@@ -7,6 +7,8 @@ import { StatsCard } from "@/components/dashboard/stats-card";
 import { DataTable } from "@/components/tables/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Users, Activity, Award, User, Layers } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-states";
+
 
 interface AgentNetworkClientProps {
   profile: any;
@@ -86,7 +88,7 @@ export function AgentNetworkClient({
 
       {/* Analytics & Referral link Grid */}
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 grid gap-6 grid-cols-2">
+        <div className="lg:col-span-2 grid gap-6 grid-cols-1 sm:grid-cols-2">
           <StatsCard
             title="Direct Referrals"
             value={teamStats.directReferralsCount}
@@ -148,12 +150,62 @@ export function AgentNetworkClient({
               Directory of all agents registered under your network branch.
             </p>
           </div>
-          <DataTable
-            columns={columns}
-            data={downlineList}
-            emptyTitle="No downline members"
-            emptyDescription="There are no agent profiles registered under your network link yet."
-          />
+          {downlineList.length === 0 ? (
+            <EmptyState
+              title="No downline members"
+              description="There are no agent profiles registered under your network link yet."
+            />
+          ) : (
+            <>
+              <div className="hidden md:block">
+                <DataTable
+                  columns={columns}
+                  data={downlineList}
+                  emptyTitle="No downline members"
+                  emptyDescription="There are no agent profiles registered under your network link yet."
+                />
+              </div>
+
+              <div className="block md:hidden space-y-4">
+                {downlineList.map((member) => (
+                  <div
+                    key={member.id}
+                    className="p-5 rounded-2xl border border-border/40 bg-zinc-950/20 glass-premium space-y-3"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-foreground text-sm">{member.name}</span>
+                        <span className="text-[11px] text-muted-foreground">{member.email}</span>
+                      </div>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-md border text-[9px] font-extrabold uppercase tracking-wide bg-primary/5 text-primary border-primary/20">
+                        {rankTitles[member.promotion_level] || "Rookie Agent"}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3 text-xs border-t border-border/20 pt-3">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-muted-foreground text-[9px] uppercase tracking-wider font-semibold">Depth</span>
+                        <span className="text-foreground/80 font-medium">Level {member.level_depth}</span>
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-muted-foreground text-[9px] uppercase tracking-wider font-semibold">Directs</span>
+                        <span className="text-foreground/80 font-medium">{member.direct_sales_count}</span>
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-muted-foreground text-[9px] uppercase tracking-wider font-semibold">Downline</span>
+                        <span className="text-foreground/80 font-medium">{member.group_sales_count}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between items-center border-t border-border/20 pt-3 text-xs">
+                      <span className="text-muted-foreground text-[9px] uppercase tracking-wider font-semibold">Status</span>
+                      <StatusBadge status={member.is_active ? "active" : "suspended"} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Upline Sponsor Listing */}
