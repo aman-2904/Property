@@ -7,7 +7,7 @@ import * as z from "zod";
 import { FileUpload } from "@/components/ui/file-upload";
 import { Loader2, AlertCircle, Trash2, FileText, PlusCircle, Check } from "lucide-react";
 import { createProperty, updateProperty, PropertyData } from "@/lib/actions/properties";
-import { cn } from "@/lib/utils";
+import { cn, numberToIndianWords } from "@/lib/utils";
 
 const propertyFormSchema = z
   .object({
@@ -102,6 +102,7 @@ export function PropertyForm({ property, onSuccess }: PropertyFormProps) {
 
   const image_urls = watch("image_urls") || [];
   const brochure_url = watch("brochure_url");
+  const priceValue = watch("price");
 
   // Add uploaded image url to list
   const handleImageUploadComplete = (url: string) => {
@@ -205,6 +206,11 @@ export function PropertyForm({ property, onSuccess }: PropertyFormProps) {
                 errors.price && "border-destructive/50"
               )}
             />
+            {priceValue && Number(priceValue) > 0 && (
+              <p className="text-[10px] text-muted-foreground font-semibold pl-1 leading-tight mt-1 animate-in fade-in duration-200">
+                {numberToIndianWords(Number(priceValue))}
+              </p>
+            )}
             {errors.price && (
               <p className="text-xs text-destructive pl-1">{errors.price.message}</p>
             )}

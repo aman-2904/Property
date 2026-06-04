@@ -9,7 +9,7 @@ import { PropertyData } from "@/lib/actions/properties";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { cn, numberToIndianWords } from "@/lib/utils";
 
 interface PropertiesCatalogProps {
   initialProperties: PropertyData[];
@@ -199,6 +199,9 @@ export function PropertiesCatalog({ initialProperties }: PropertiesCatalogProps)
                       </span>
                       <span className="text-lg font-extrabold text-foreground">
                         ₹{Number(prop.price).toLocaleString("en-US")}
+                      </span>
+                      <span className="text-[9px] text-muted-foreground font-semibold mt-0.5 leading-tight">
+                        {numberToIndianWords(Number(prop.price))}
                       </span>
                     </div>
                     <div className="flex flex-col items-end">

@@ -30,6 +30,7 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -40,6 +41,16 @@ export default function RegisterPage() {
       referralCode: "",
     },
   });
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get("ref");
+      if (ref) {
+        setValue("referralCode", ref.trim().toUpperCase());
+      }
+    }
+  }, [setValue]);
 
   const onSubmit = (data: RegisterFormValues) => {
     setError(null);

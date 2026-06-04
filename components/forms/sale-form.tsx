@@ -7,7 +7,7 @@ import * as z from "zod";
 import { FileUpload } from "@/components/ui/file-upload";
 import { Loader2, AlertCircle } from "lucide-react";
 import { submitSale } from "@/lib/actions/sales";
-import { cn } from "@/lib/utils";
+import { cn, numberToIndianWords } from "@/lib/utils";
 
 const saleSchema = z.object({
   buyerName: z.string().min(2, "Buyer name must be at least 2 characters"),
@@ -53,6 +53,7 @@ export function SaleForm({
   });
 
   const documentUrl = watch("documentUrl");
+  const bookingAmountValue = watch("bookingAmount");
 
   const onSubmit = (data: SaleFormValues) => {
     setError(null);
@@ -83,6 +84,9 @@ export function SaleForm({
         <h4 className="font-bold text-foreground mt-0.5">{propertyTitle}</h4>
         <p className="text-xs text-primary font-semibold mt-1">
           Base Listing Price: ₹{propertyPrice.toLocaleString("en-US")}
+        </p>
+        <p className="text-[10px] text-muted-foreground font-semibold leading-tight">
+          {numberToIndianWords(propertyPrice)}
         </p>
       </div>
 
@@ -145,6 +149,9 @@ export function SaleForm({
           readOnly
           className="w-full px-4 py-2.5 bg-muted/40 border border-border/50 rounded-xl text-sm outline-none transition-all font-semibold text-muted-foreground cursor-not-allowed"
         />
+        <p className="text-[10px] text-muted-foreground font-semibold pl-1 leading-tight">
+          {numberToIndianWords(propertyPrice)}
+        </p>
       </div>
 
       {/* Booking Amount */}
@@ -163,6 +170,11 @@ export function SaleForm({
             errors.bookingAmount && "border-destructive/50"
           )}
         />
+        {bookingAmountValue && Number(bookingAmountValue) > 0 && (
+          <p className="text-[10px] text-muted-foreground font-semibold pl-1 leading-tight mt-1 animate-in fade-in duration-200">
+            {numberToIndianWords(Number(bookingAmountValue))}
+          </p>
+        )}
         {errors.bookingAmount && (
           <p className="text-xs text-destructive pl-1">{errors.bookingAmount.message}</p>
         )}

@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { cn, numberToIndianWords } from "@/lib/utils";
 
 interface PropertyDetailsClientProps {
   property: PropertyData;
@@ -146,6 +146,9 @@ export function PropertyDetailsClient({ property, isAdmin = false }: PropertyDet
                 </span>
                 <span className="text-2xl font-extrabold text-foreground mt-0.5 block">
                   ₹{price.toLocaleString("en-US")}
+                </span>
+                <span className="text-[10px] text-muted-foreground font-semibold mt-0.5 leading-tight block">
+                  {numberToIndianWords(price)}
                 </span>
               </div>
               <div>

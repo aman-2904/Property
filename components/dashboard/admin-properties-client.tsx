@@ -140,7 +140,7 @@ export function AdminPropertiesClient({
       accessorKey: "price",
       render: (row: PropertyData) => (
         <span className="font-semibold text-foreground">
-          ${Number(row.price).toLocaleString("en-US")}
+          ₹{Number(row.price).toLocaleString("en-US")}
         </span>
       ),
     },
