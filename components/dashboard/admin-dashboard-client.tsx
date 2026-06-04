@@ -733,7 +733,6 @@ export function AdminDashboardClient({
               </select>
             </div>
 
-            {/* Export CSV */}
             <button
               onClick={() => {
                 if (activeTab === "sales") {
@@ -747,7 +746,7 @@ export function AdminDashboardClient({
                     ["profiles.name", "profiles.email", "amount", "level", "status"]);
                 }
               }}
-              className="inline-flex h-8 items-center gap-1.5 rounded-xl border border-border/40 bg-muted/20 px-3 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-all"
+              className="inline-flex h-8 items-center gap-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white px-3 text-xs font-semibold transition-all shadow-lg shadow-emerald-600/10 border-0"
             >
               <Download className="h-3 w-3" />
               Export
