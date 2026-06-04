@@ -334,7 +334,7 @@ export function AdminVisitsClient({ initialVisits, analytics }: AdminVisitsClien
 
             <button
               onClick={handleExportCSV}
-              className="h-10 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold flex items-center gap-2 text-xs transition-all active:scale-[0.98] shadow-lg shadow-emerald-600/10 border-0"
+              className="h-10 px-4 rounded-xl bg-zinc-900 border border-border/50 hover:bg-zinc-800 text-foreground font-semibold flex items-center gap-2 text-xs transition-all active:scale-[0.98]"
             >
               <Download className="h-4 w-4" />
               Export CSV
