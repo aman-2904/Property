@@ -32,8 +32,10 @@ BEGIN
     -- 3. Calculate Direct Commission for Seller (Level 0)
     direct_comm := comm_pool * (prop_record.seller_percent / 100.00);
     
-    INSERT INTO public.commissions (sale_id, recipient_id, level, percent, amount, status, approved_by, approved_at)
-    VALUES (NEW.id, NEW.seller_id, 0, prop_record.seller_percent, direct_comm, 'pending'::public.commission_status, NULL, NULL);
+    IF direct_comm > 0.00 THEN
+      INSERT INTO public.commissions (sale_id, recipient_id, level, percent, amount, status, approved_by, approved_at)
+      VALUES (NEW.id, NEW.seller_id, 0, prop_record.seller_percent, direct_comm, 'pending'::public.commission_status, NULL, NULL);
+    END IF;
 
     -- Increment direct sales count for seller
     UPDATE public.profiles 
