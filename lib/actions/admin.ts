@@ -370,3 +370,40 @@ export async function globalSearch(query: string) {
     properties: properties || [],
   };
 }
+
+export async function updatePaymentStatus(
+  paymentId: string,
+  status: "approved" | "rejected"
+) {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Unauthenticated" };
+  }
+
+  const { data: payment, error } = await supabase
+    .from("sale_payments")
+    .update({
+      status,
+      approved_by: user.id,
+      approved_at: new Date().toISOString(),
+    })
+    .eq("id", paymentId)
+    .select("sale_id")
+    .single();
+
+  if (error || !payment) {
+    return { error: error?.message || "Failed to update payment status" };
+  }
+
+  revalidatePath("/admin/dashboard");
+  revalidatePath("/admin/sales");
+  revalidatePath("/agent/dashboard");
+  revalidatePath("/agent/sales");
+  revalidatePath(`/agent/sales/${payment.sale_id}`);
+  return { success: true };
+}

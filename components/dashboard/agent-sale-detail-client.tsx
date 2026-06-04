@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { StatsCard } from "@/components/dashboard/stats-card";
 import {
   ArrowLeft,
   Building2,
@@ -20,8 +21,23 @@ import {
   Calendar,
   Hash,
   TrendingUp,
+  Plus,
+  Loader2,
+  AlertCircle,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { submitAdditionalPayment } from "@/lib/actions/sales";
+import { useRouter } from "next/navigation";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalTitle,
+  ModalPortal,
+  ModalOverlay,
+  ModalFooter,
+} from "@/components/ui/modal-system";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -54,6 +70,7 @@ interface SaleDetail {
     image_urls?: string[];
   } | null;
   commissions?: CommissionItem[];
+  sale_payments?: { id: string; amount: number; status: string; created_at: string }[];
 }
 
 interface AgentSaleDetailClientProps {
@@ -222,6 +239,13 @@ function ApprovalTimeline({ sale }: { sale: SaleDetail }) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
+  const router = useRouter();
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [amount, setAmount] = React.useState("");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = React.useState<string | null>(null);
+
   const totalCommission = sale.commissions
     ? sale.commissions.reduce((s, c) => s + Number(c.amount), 0)
     : 0;
@@ -231,6 +255,46 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
         .filter((c) => c.level === 0)
         .reduce((s, c) => s + Number(c.amount), 0)
     : 0;
+
+  const approvedPayments = (sale.sale_payments || [])
+    .filter((p) => p.status === "approved");
+  const totalPaid = approvedPayments.reduce((s, p) => s + Number(p.amount), 0);
+  const remainingBalance = Math.max(0, Number(sale.sale_amount) - totalPaid);
+  const isFullyPaid = totalPaid >= Number(sale.sale_amount);
+
+  const handleSubmitPayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    const val = Number(amount);
+    if (isNaN(val) || val <= 0) {
+      setErrorMsg("Please enter a valid amount greater than 0.");
+      return;
+    }
+
+    if (val > remainingBalance) {
+      setErrorMsg(`Payment amount cannot exceed the remaining balance of $${remainingBalance.toLocaleString()}.`);
+      return;
+    }
+
+    setIsSubmitting(true);
+    const res = await submitAdditionalPayment(sale.id, val);
+    setIsSubmitting(true); // wait, let's keep it true until router.refresh resolves, or false.
+    setIsSubmitting(false);
+
+    if (res && res.error) {
+      setErrorMsg(res.error);
+    } else {
+      setSuccessMsg("Payment submitted successfully and is pending admin approval!");
+      setAmount("");
+      setTimeout(() => {
+        setIsOpen(false);
+        setSuccessMsg(null);
+        router.refresh();
+      }, 2000);
+    }
+  };
 
   return (
     <div className="space-y-8">
@@ -263,8 +327,48 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
           </p>
         </div>
         <div className="flex items-center gap-2.5 shrink-0">
+          {sale.status === "approved" && !isFullyPaid && (
+            <button
+              onClick={() => setIsOpen(true)}
+              className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-[0.98]"
+            >
+              <Plus className="h-4 w-4" />
+              Submit Payment
+            </button>
+          )}
           <StatusBadge status={sale.status} className="text-sm px-3 py-1" />
         </div>
+      </div>
+
+      {/* KPI Cards Grid */}
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+        <StatsCard
+          title="Property Value"
+          value={`$${Number(sale.sale_amount).toLocaleString("en-US")}`}
+          icon={<DollarSign className="h-5 w-5" />}
+          description="Listing reference price"
+        />
+        <StatsCard
+          title="Total Paid"
+          value={`$${totalPaid.toLocaleString("en-US")}`}
+          icon={<CheckCircle className="h-5 w-5 text-emerald-400" />}
+          description="Approved payments sum"
+          className="border-emerald-500/20"
+        />
+        <StatsCard
+          title="Remaining Balance"
+          value={`$${remainingBalance.toLocaleString("en-US")}`}
+          icon={<Clock className="h-5 w-5 text-amber-500" />}
+          description={isFullyPaid ? "Fully Paid" : "Balance to pay"}
+          className={cn("border-amber-500/20", remainingBalance === 0 && "opacity-75")}
+        />
+        <StatsCard
+          title="My Commission"
+          value={`$${sellerCommission.toLocaleString("en-US", { minimumFractionDigits: 0 })}`}
+          icon={<Coins className="h-5 w-5 text-violet-400" />}
+          description="Your direct sales share"
+          className="border-violet-500/20"
+        />
       </div>
 
       {/* Main grid */}
@@ -319,19 +423,10 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
             />
             <InfoRow
               icon={<Coins className="h-3.5 w-3.5 text-primary" />}
-              label="Booking Amount (Commission Base)"
+              label="Booking Amount (First Payment)"
               value={
                 <span className="text-xl font-extrabold text-foreground">
                   ${Number(sale.booking_amount).toLocaleString("en-US")}
-                </span>
-              }
-            />
-            <InfoRow
-              icon={<DollarSign className="h-3.5 w-3.5" />}
-              label="Sale Value (Reference)"
-              value={
-                <span className="text-sm font-semibold text-muted-foreground">
-                  ${Number(sale.sale_amount).toLocaleString("en-US")}
                 </span>
               }
             />
@@ -358,6 +453,57 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
               label="Current Status"
               value={<StatusBadge status={sale.status} />}
             />
+          </SectionCard>
+
+          {/* Payment History */}
+          <SectionCard title="Payment History" icon={<Clock className="h-4 w-4" />}>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-border/40 bg-muted/20">
+                    {["Payment ID", "Amount", "Status", "Submitted Date"].map((h) => (
+                      <th
+                        key={h}
+                        className="px-3 py-2.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                      >
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/20">
+                  {(sale.sale_payments || []).map((p) => (
+                    <tr key={p.id} className="hover:bg-muted/10 transition-colors">
+                      <td className="px-3 py-2.5 font-mono text-[11px] text-muted-foreground">
+                        {p.id.substring(0, 8)}...
+                      </td>
+                      <td className="px-3 py-2.5 font-bold text-foreground">
+                        ${Number(p.amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                      </td>
+                      <td className="px-3 py-2.5">
+                        <StatusBadge status={p.status} />
+                      </td>
+                      <td className="px-3 py-2.5 text-xs text-muted-foreground text-left">
+                        {new Date(p.created_at).toLocaleString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </td>
+                    </tr>
+                  ))}
+                  {(sale.sale_payments || []).length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="px-3 py-8 text-center text-xs text-muted-foreground">
+                        No payments recorded.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </SectionCard>
 
           {/* Commission Breakdown */}
@@ -442,7 +588,7 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
                   No commissions distributed yet
                 </p>
                 <p className="text-xs text-muted-foreground/60 mt-1">
-                  Commissions are distributed automatically once the sale is approved.
+                  Commissions are distributed automatically once payments are approved.
                 </p>
               </div>
             </SectionCard>
@@ -501,6 +647,87 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
           </div>
         </div>
       </div>
+
+      {/* Submit Payment Modal */}
+      <Modal open={isOpen} onOpenChange={setIsOpen}>
+        <ModalPortal>
+          <ModalOverlay />
+          <ModalContent isOpen={isOpen} className="max-w-md">
+            <ModalHeader>
+              <ModalTitle>Submit Additional Payment</ModalTitle>
+            </ModalHeader>
+            <form onSubmit={handleSubmitPayment} className="mt-5 space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
+                  Remaining Balance
+                </label>
+                <div className="text-lg font-bold text-amber-500 pl-1">
+                  ${remainingBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
+                  Payment Amount *
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-semibold">
+                    $
+                  </span>
+                  <input
+                    type="number"
+                    min="0.01"
+                    max={remainingBalance}
+                    step="0.01"
+                    placeholder="Enter payment amount"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    className="w-full h-10 pl-8 pr-4 rounded-xl border border-border/50 bg-background/50 text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-semibold"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Feedback messages */}
+              {errorMsg && (
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-xs font-semibold">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  {errorMsg}
+                </div>
+              )}
+              {successMsg && (
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-xs font-semibold">
+                  <CheckCircle className="h-4 w-4 shrink-0" />
+                  {successMsg}
+                </div>
+              )}
+
+              <ModalFooter className="pt-2 flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(false)}
+                  disabled={isSubmitting}
+                  className="inline-flex h-10 items-center justify-center rounded-xl border border-input px-4 text-sm font-medium hover:bg-muted transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Plus className="h-4 w-4" />
+                  )}
+                  {isSubmitting ? "Submitting..." : "Submit Payment"}
+                </button>
+              </ModalFooter>
+            </form>
+          </ModalContent>
+        </ModalPortal>
+      </Modal>
     </div>
   );
 }

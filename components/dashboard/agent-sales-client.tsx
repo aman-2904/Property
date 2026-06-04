@@ -50,7 +50,8 @@ interface SaleRow {
   created_at: string;
   approved_at?: string | null;
   properties?: { title: string; location?: string } | null;
-  commissions?: { amount: number; status: string }[];
+  commissions?: { amount: number; status: string; recipient_id?: string }[];
+  sale_payments?: { amount: number; status: string; created_at: string }[];
 }
 
 interface SalesSummary {
@@ -464,7 +465,9 @@ export function AgentSalesClient({
   // ── Commission helper ──────────────────────────────────────────────────────
   const getCommission = (sale: SaleRow) => {
     if (!sale.commissions || sale.commissions.length === 0) return null;
-    const total = sale.commissions.reduce((s, c) => s + Number(c.amount), 0);
+    const total = sale.commissions
+      .filter((c) => !c.recipient_id || c.recipient_id === sale.seller_id)
+      .reduce((s, c) => s + Number(c.amount), 0);
     return total;
   };
 
@@ -506,22 +509,47 @@ export function AgentSalesClient({
       ),
     },
     {
-      header: "Booking Amount",
-      accessorKey: "booking_amount",
+      header: "Property Value",
+      accessorKey: "sale_amount",
       render: (row: SaleRow) => (
-        <span className="font-bold text-foreground text-sm">
-          ${Number(row.booking_amount).toLocaleString("en-US")}
+        <span className="font-semibold text-foreground text-sm">
+          ${Number(row.sale_amount).toLocaleString("en-US")}
         </span>
       ),
     },
     {
-      header: "Sale Value",
-      accessorKey: "sale_amount",
-      render: (row: SaleRow) => (
-        <span className="text-xs text-muted-foreground">
-          ${Number(row.sale_amount).toLocaleString("en-US")}
-        </span>
-      ),
+      header: "Paid Amount",
+      render: (row: SaleRow) => {
+        const approvedPayments = (row.sale_payments || [])
+          .filter((p) => p.status === "approved");
+        const totalPaid = approvedPayments.reduce((s, p) => s + Number(p.amount), 0);
+        return (
+          <div className="flex flex-col">
+            <span className="font-bold text-emerald-400 text-sm">
+              ${totalPaid.toLocaleString("en-US")}
+            </span>
+            {totalPaid < Number(row.sale_amount) && (
+              <span className="text-[9px] text-muted-foreground">
+                {(row.sale_payments || []).filter((p) => p.status === "pending_approval").length} pending
+              </span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      header: "Remaining Balance",
+      render: (row: SaleRow) => {
+        const approvedPayments = (row.sale_payments || [])
+          .filter((p) => p.status === "approved");
+        const totalPaid = approvedPayments.reduce((s, p) => s + Number(p.amount), 0);
+        const remaining = Math.max(0, Number(row.sale_amount) - totalPaid);
+        return (
+          <span className={cn("text-sm font-semibold", remaining === 0 ? "text-muted-foreground/60 line-through" : "text-amber-500")}>
+            ${remaining.toLocaleString("en-US")}
+          </span>
+        );
+      },
     },
     {
       header: "Commission",

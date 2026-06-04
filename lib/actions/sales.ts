@@ -37,24 +37,47 @@ export async function submitSale(formData: {
     return { error: "Property not found or invalid property ID." };
   }
 
-  const { error } = await supabase.from("sales").insert([
-    {
-      property_id: formData.propertyId,
-      seller_id: user.id,
-      buyer_name: formData.buyerName,
-      buyer_phone: formData.buyerPhone || "N/A",
-      sale_amount: property.price, // enforce admin price for reference
-      booking_amount: formData.bookingAmount, // store booking amount as commission base
-      status: "pending_approval",
-    },
-  ]);
+  // 1. Insert overall sale transaction
+  const { data: saleData, error: saleError } = await supabase
+    .from("sales")
+    .insert([
+      {
+        property_id: formData.propertyId,
+        seller_id: user.id,
+        buyer_name: formData.buyerName,
+        buyer_phone: formData.buyerPhone || "N/A",
+        sale_amount: property.price, // enforce admin price for reference
+        booking_amount: formData.bookingAmount, // initial reference
+        status: "pending_approval",
+      },
+    ])
+    .select("id")
+    .single();
 
-  if (error) {
-    return { error: error.message };
+  if (saleError || !saleData) {
+    return { error: saleError?.message || "Failed to submit sale record" };
+  }
+
+  // 2. Insert initial booking payment record
+  const { error: paymentError } = await supabase
+    .from("sale_payments")
+    .insert([
+      {
+        sale_id: saleData.id,
+        amount: formData.bookingAmount,
+        status: "pending_approval",
+      },
+    ]);
+
+  if (paymentError) {
+    // Clean up parent sale record to maintain data integrity
+    await supabase.from("sales").delete().eq("id", saleData.id);
+    return { error: paymentError.message };
   }
 
   revalidatePath("/agent/properties");
   revalidatePath("/agent/dashboard");
+  revalidatePath("/agent/sales");
   return { success: true };
 }
 
@@ -62,7 +85,7 @@ export async function getAgentSales(agentId: string) {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("sales")
-    .select("*, properties(title, image_urls)")
+    .select("*, properties(title, image_urls), commissions(amount, status, recipient_id), sale_payments(*)")
     .eq("seller_id", agentId)
     .order("created_at", { ascending: false });
 
@@ -77,7 +100,7 @@ export async function getSalesWithDetails() {
   const supabase = createClient();
   const { data, error } = await supabase
     .from("sales")
-    .select("*, properties(title), profiles:seller_id(name, email)")
+    .select("*, properties(title), profiles:seller_id(name, email), sale_payments(*)")
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -101,12 +124,12 @@ export async function updateSaleStatus(
     return { error: "Unauthenticated" };
   }
 
+  // Update sale status
   const updateData: any = {
     status,
+    approved_by: user.id,
+    approved_at: new Date().toISOString(),
   };
-
-  updateData.approved_by = user.id;
-  updateData.approved_at = new Date().toISOString();
 
   const { error } = await supabase
     .from("sales")
@@ -117,8 +140,34 @@ export async function updateSaleStatus(
     return { error: error.message };
   }
 
+  // Sync with sale_payments: Find pending payments and set their status accordingly
+  const { data: payments } = await supabase
+    .from("sale_payments")
+    .select("id, status")
+    .eq("sale_id", saleId);
+
+  if (payments && payments.length > 0) {
+    const paymentIdsToUpdate = status === "rejected" 
+      ? payments.map((p: any) => p.id) // Reject all payments if sale is rejected
+      : payments.filter((p: any) => p.status === "pending_approval").map((p: any) => p.id); // Approve only pending payments if sale is approved
+
+    if (paymentIdsToUpdate.length > 0) {
+      await supabase
+        .from("sale_payments")
+        .update({
+          status: status,
+          approved_by: user.id,
+          approved_at: new Date().toISOString()
+        })
+        .in("id", paymentIdsToUpdate);
+    }
+  }
+
   revalidatePath("/admin/dashboard");
+  revalidatePath("/admin/sales");
   revalidatePath("/agent/dashboard");
+  revalidatePath("/agent/sales");
+  revalidatePath(`/agent/sales/${saleId}`);
   return { success: true };
 }
 
@@ -185,7 +234,8 @@ export async function getAgentSaleById(saleId: string, agentId: string) {
     .select(
       `*,
       properties(id, title, location, price, image_urls, status),
-      commissions(id, amount, status, level, created_at)`
+      commissions(id, amount, status, level, created_at),
+      sale_payments(*)`
     )
     .eq("id", saleId)
     .eq("seller_id", agentId)
@@ -197,6 +247,64 @@ export async function getAgentSaleById(saleId: string, agentId: string) {
   }
 
   return sale;
+}
+
+export async function submitAdditionalPayment(saleId: string, amount: number) {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Unauthenticated" };
+  }
+
+  if (amount === undefined || amount === null || isNaN(amount) || amount <= 0) {
+    return { error: "Please enter a valid payment amount greater than 0." };
+  }
+
+  // Fetch parent sale and its payments
+  const { data: sale, error: saleError } = await supabase
+    .from("sales")
+    .select("*, properties(price), sale_payments(amount, status)")
+    .eq("id", saleId)
+    .single();
+
+  if (saleError || !sale) {
+    return { error: "Sale record not found." };
+  }
+
+  // Calculate total paid (approved) and remaining balance
+  const payments = sale.sale_payments || [];
+  const totalPaid = payments
+    .filter((p: any) => p.status === "approved")
+    .reduce((sum: number, p: any) => sum + Number(p.amount), 0);
+  
+  const remainingBalance = Number(sale.sale_amount) - totalPaid;
+
+  if (amount > remainingBalance) {
+    return { error: `Payment amount exceeds the remaining balance of $${remainingBalance.toLocaleString()}.` };
+  }
+
+  // Insert additional payment record
+  const { error: paymentError } = await supabase
+    .from("sale_payments")
+    .insert([
+      {
+        sale_id: saleId,
+        amount: amount,
+        status: "pending_approval",
+      },
+    ]);
+
+  if (paymentError) {
+    return { error: paymentError.message };
+  }
+
+  revalidatePath("/agent/sales");
+  revalidatePath(`/agent/sales/${saleId}`);
+  return { success: true };
 }
 
 /**

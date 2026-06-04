@@ -6,6 +6,7 @@ import { SearchFilter } from "@/components/tables/search-filter";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
 import { updateSaleStatus } from "@/lib/actions/sales";
+import { updatePaymentStatus } from "@/lib/actions/admin";
 import { Check, X, CheckCircle, Loader2, DollarSign, TrendingUp, Clock, Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -26,6 +27,12 @@ interface Sale {
     name: string;
     email: string;
   } | null;
+  sale_payments?: {
+    id: string;
+    amount: number;
+    status: string;
+    created_at: string;
+  }[];
 }
 
 interface AdminSalesClientProps {
@@ -72,10 +79,43 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
   const [search, setSearch] = React.useState("");
   const [filter, setFilter] = React.useState("");
   const [selectedSale, setSelectedSale] = React.useState<Sale | null>(null);
+  const [selectedPayment, setSelectedPayment] = React.useState<{ id: string; amount: number; buyerName: string; propertyTitle: string } | null>(null);
   const [isApproveOpen, setIsApproveOpen] = React.useState(false);
   const [isRejectOpen, setIsRejectOpen] = React.useState(false);
+  const [isApprovePaymentOpen, setIsApprovePaymentOpen] = React.useState(false);
+  const [isRejectPaymentOpen, setIsRejectPaymentOpen] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
   const [showToast, setShowToast] = React.useState<string | null>(null);
+
+  const handleApprovePayment = async () => {
+    if (!selectedPayment) return;
+    setIsLoading(true);
+    const res = await updatePaymentStatus(selectedPayment.id, "approved");
+    setIsLoading(false);
+
+    if (res && res.error) {
+      triggerToast(`Error: ${res.error}`, false);
+    } else {
+      setIsApprovePaymentOpen(false);
+      triggerToast(`Payment of $${selectedPayment.amount.toLocaleString()} approved!`);
+      router.refresh();
+    }
+  };
+
+  const handleRejectPayment = async () => {
+    if (!selectedPayment) return;
+    setIsLoading(true);
+    const res = await updatePaymentStatus(selectedPayment.id, "rejected");
+    setIsLoading(false);
+
+    if (res && res.error) {
+      triggerToast(`Error: ${res.error}`, false);
+    } else {
+      setIsRejectPaymentOpen(false);
+      triggerToast(`Payment of $${selectedPayment.amount.toLocaleString()} rejected.`);
+      router.refresh();
+    }
+  };
 
   React.useEffect(() => {
     setSales(initialSales);
@@ -186,22 +226,84 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
       ),
     },
     {
-      header: "Booking Amount",
-      accessorKey: "booking_amount",
+      header: "Property Value",
       render: (row: Sale) => (
-        <span className="font-bold text-foreground text-sm">
-          ${Number(row.booking_amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+        <span className="font-semibold text-foreground">
+          ${Number(row.sale_amount).toLocaleString("en-US", { minimumFractionDigits: 0 })}
         </span>
       ),
     },
     {
-      header: "Sale Price",
-      accessorKey: "sale_amount",
-      render: (row: Sale) => (
-        <span className="text-xs text-muted-foreground">
-          ${Number(row.sale_amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
-        </span>
-      ),
+      header: "Paid / Remaining",
+      render: (row: Sale) => {
+        const approvedPayments = (row.sale_payments || [])
+          .filter((p) => p.status === "approved");
+        const totalPaid = approvedPayments.reduce((s, p) => s + Number(p.amount), 0);
+        const remaining = Math.max(0, Number(row.sale_amount) - totalPaid);
+        return (
+          <div className="flex flex-col">
+            <span className="font-bold text-emerald-400">
+              ${totalPaid.toLocaleString("en-US")}
+            </span>
+            <span className={cn("text-xs font-medium", remaining === 0 ? "text-muted-foreground/60 line-through" : "text-amber-500")}>
+              Bal: ${remaining.toLocaleString("en-US")}
+            </span>
+          </div>
+        );
+      },
+    },
+    {
+      header: "Payments Status / Actions",
+      render: (row: Sale) => {
+        const payments = row.sale_payments || [];
+        return (
+          <div className="flex flex-col gap-1 min-w-[220px]">
+            {payments.map((p) => (
+              <div key={p.id} className="flex items-center justify-between gap-2 p-1.5 rounded-xl bg-muted/20 border border-border/30 text-xs animate-in fade-in duration-200">
+                <div className="flex flex-col">
+                  <span className="font-bold text-foreground">
+                    ${Number(p.amount).toLocaleString("en-US")}
+                  </span>
+                  <span className="text-[9px] text-muted-foreground">
+                    {new Date(p.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  {p.status === "pending_approval" ? (
+                    <>
+                      <button
+                        onClick={() => {
+                          setSelectedPayment({ id: p.id, amount: Number(p.amount), buyerName: row.buyer_name, propertyTitle: row.properties?.title || "" });
+                          setIsApprovePaymentOpen(true);
+                        }}
+                        className="p-1 rounded bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white border border-emerald-500/20 transition-all"
+                        title="Approve Payment"
+                      >
+                        <Check className="h-3 w-3" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedPayment({ id: p.id, amount: Number(p.amount), buyerName: row.buyer_name, propertyTitle: row.properties?.title || "" });
+                          setIsRejectPaymentOpen(true);
+                        }}
+                        className="p-1 rounded bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white border border-rose-500/20 transition-all"
+                        title="Reject Payment"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </>
+                  ) : (
+                    <StatusBadge status={p.status} className="text-[9px] px-1.5 py-0.5" />
+                  )}
+                </div>
+              </div>
+            ))}
+            {payments.length === 0 && (
+              <span className="text-xs text-muted-foreground italic">No payments</span>
+            )}
+          </div>
+        );
+      },
     },
     {
       header: "Date",
@@ -330,6 +432,30 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
         title="Reject Sale Submission"
         description={`Are you sure you want to reject the sale of "${selectedSale?.properties?.title}" to ${selectedSale?.buyer_name} with Booking Amount $${Number(selectedSale?.booking_amount).toLocaleString("en-US")}?`}
         confirmText="Reject Sale"
+        variant="danger"
+        isLoading={isLoading}
+      />
+
+      {/* Approve Payment Confirmation */}
+      <ConfirmationDialog
+        isOpen={isApprovePaymentOpen}
+        onOpenChange={setIsApprovePaymentOpen}
+        onConfirm={handleApprovePayment}
+        title="Approve Payment"
+        description={`Are you sure you want to approve the payment of $${Number(selectedPayment?.amount).toLocaleString("en-US")} for "${selectedPayment?.propertyTitle}" by buyer ${selectedPayment?.buyerName}? This will distribute upline commission percentages immediately based on this payment amount.`}
+        confirmText="Approve Payment"
+        variant="info"
+        isLoading={isLoading}
+      />
+
+      {/* Reject Payment Confirmation */}
+      <ConfirmationDialog
+        isOpen={isRejectPaymentOpen}
+        onOpenChange={setIsRejectPaymentOpen}
+        onConfirm={handleRejectPayment}
+        title="Reject Payment"
+        description={`Are you sure you want to reject the payment of $${Number(selectedPayment?.amount).toLocaleString("en-US")} for "${selectedPayment?.propertyTitle}" by buyer ${selectedPayment?.buyerName}?`}
+        confirmText="Reject Payment"
         variant="danger"
         isLoading={isLoading}
       />
