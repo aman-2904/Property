@@ -199,7 +199,8 @@ BEGIN
     END LOOP;
 
     -- 4. Credit Career Personal Rank-Based Incentive
-    PERFORM public.payment_incentive_credit(NEW);
+    -- PERFORM public.payment_incentive_credit(NEW);
+
 
     -- 5. If this is the FIRST approved payment for this sale:
     --    Mark sale as approved, increment direct sales, check career growth ranks, and mark property as sold.

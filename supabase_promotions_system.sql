@@ -155,7 +155,7 @@ BEGIN
        END LOOP;
 
        -- 4. Credit personal sale incentive to seller
-       PERFORM public.sale_incentive_credit(NEW);
+       -- PERFORM public.sale_incentive_credit(NEW);
      END IF;
   END IF;
   
