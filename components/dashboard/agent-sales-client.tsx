@@ -14,7 +14,7 @@ import {
   ModalOverlay,
   ModalFooter,
 } from "@/components/ui/modal-system";
-import { submitSale } from "@/lib/actions/sales";
+import { submitSale, submitAdditionalPayment } from "@/lib/actions/sales";
 import {
   BarChart3,
   Search,
@@ -33,8 +33,14 @@ import {
   ExternalLink,
   Calendar,
   X,
+  MapPin,
+  User,
+  Building2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, numberToIndianWords } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -298,6 +304,162 @@ function SubmitSaleModal({
   );
 }
 
+function SubmitPaymentModal({
+  open,
+  onOpenChange,
+  sale,
+  onSuccess,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  sale: SaleRow | null;
+  onSuccess: () => void;
+}) {
+  const [amount, setAmount] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (open) {
+      setAmount("");
+      setErrorMsg(null);
+      setSuccessMsg(null);
+    }
+  }, [open]);
+
+  if (!sale) return null;
+
+  const approvedPayments = (sale.sale_payments || [])
+    .filter((p) => p.status === "approved");
+  const totalPaid = approvedPayments.reduce((s, p) => s + Number(p.amount), 0);
+  const remainingBalance = Math.max(0, Number(sale.sale_amount) - totalPaid);
+
+  const resetForm = () => {
+    setAmount("");
+    setErrorMsg(null);
+    setSuccessMsg(null);
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onOpenChange(false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg(null);
+    setSuccessMsg(null);
+
+    const val = Number(amount);
+    if (isNaN(val) || val <= 0) {
+      setErrorMsg("Please enter a valid amount greater than 0.");
+      return;
+    }
+
+    if (val > remainingBalance) {
+      setErrorMsg(`Payment amount cannot exceed the remaining balance of ₹${remainingBalance.toLocaleString()}.`);
+      return;
+    }
+
+    setIsLoading(true);
+    const res = await submitAdditionalPayment(sale.id, val);
+    setIsLoading(false);
+
+    if (res && res.error) {
+      setErrorMsg(res.error);
+    } else {
+      setSuccessMsg("Payment submitted successfully and is pending admin approval!");
+      setTimeout(() => {
+        handleClose();
+        onSuccess();
+      }, 1800);
+    }
+  };
+
+  const inputClass =
+    "w-full h-10 px-4 rounded-xl border border-border/50 bg-background/50 text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all";
+  const labelClass = "text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1";
+
+  return (
+    <Modal open={open} onOpenChange={handleClose}>
+      <ModalPortal>
+        <ModalOverlay />
+        <ModalContent isOpen={open} className="max-w-md">
+          <ModalHeader>
+            <ModalTitle>Submit Additional Payment</ModalTitle>
+          </ModalHeader>
+          <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+            <div className="space-y-1.5">
+              <label className={labelClass}>Remaining Balance</label>
+              <div className="text-lg font-bold text-amber-500 pl-1">
+                ₹{remainingBalance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className={labelClass}>Payment Amount *</label>
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-semibold">
+                  ₹
+                </span>
+                <input
+                  type="number"
+                  min="0.01"
+                  max={remainingBalance}
+                  step="0.01"
+                  placeholder="Enter payment amount"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="w-full pl-8 pr-4 py-2 bg-background/50 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all font-semibold"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Feedback */}
+            {errorMsg && (
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-500 text-xs font-semibold">
+                <AlertCircle className="h-4 w-4 shrink-0" />
+                {errorMsg}
+              </div>
+            )}
+            {successMsg && (
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-xs font-semibold">
+                <CheckCircle className="h-4 w-4 shrink-0" />
+                {successMsg}
+              </div>
+            )}
+
+            <ModalFooter className="pt-2 flex gap-2">
+              <button
+                type="button"
+                onClick={handleClose}
+                disabled={isLoading}
+                className="inline-flex h-10 items-center justify-center rounded-xl border border-input px-4 text-sm font-medium hover:bg-muted transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50"
+              >
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Plus className="h-4 w-4" />
+                )}
+                {isLoading ? "Submitting..." : "Submit Payment"}
+              </button>
+            </ModalFooter>
+          </form>
+        </ModalContent>
+      </ModalPortal>
+    </Modal>
+  );
+}
+
 // ─── Track Approval Panel ─────────────────────────────────────────────────────
 
 function TrackApprovalPanel({
@@ -435,6 +597,8 @@ export function AgentSalesClient({
   const [dateTo, setDateTo] = React.useState("");
   const [submitOpen, setSubmitOpen] = React.useState(false);
   const [trackSale, setTrackSale] = React.useState<SaleRow | null>(null);
+  const [paymentSale, setPaymentSale] = React.useState<SaleRow | null>(null);
+  const [currentPage, setCurrentPage] = React.useState(1);
 
   // Reload on submit success (page refresh via router is cleanest)
   const handleSubmitSuccess = () => {
@@ -462,158 +626,18 @@ export function AgentSalesClient({
     });
   }, [initialSales, searchQuery, statusFilter, propertyFilter, dateFrom, dateTo]);
 
-  // ── Commission helper ──────────────────────────────────────────────────────
-  const getCommission = (sale: SaleRow) => {
-    if (!sale.commissions || sale.commissions.length === 0) return null;
-    const total = sale.commissions
-      .filter((c) => !c.recipient_id || c.recipient_id === sale.seller_id)
-      .reduce((s, c) => s + Number(c.amount), 0);
-    return total;
-  };
+  // Reset page when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilter, propertyFilter, dateFrom, dateTo]);
 
-  // ── Table columns ──────────────────────────────────────────────────────────
-  const columns = [
-    {
-      header: "Sale ID",
-      accessorKey: "id",
-      render: (row: SaleRow) => (
-        <span className="font-mono text-[10px] text-muted-foreground bg-muted/30 px-2 py-0.5 rounded-md">
-          {row.id.substring(0, 8)}…
-        </span>
-      ),
-    },
-    {
-      header: "Property",
-      accessorKey: "properties.title",
-      render: (row: SaleRow) => (
-        <div className="flex flex-col">
-          <span className="font-semibold text-foreground text-xs">
-            {row.properties?.title ?? "—"}
-          </span>
-          <span className="text-[10px] text-muted-foreground">
-            {row.properties?.location ?? ""}
-          </span>
-        </div>
-      ),
-    },
-    {
-      header: "Buyer",
-      accessorKey: "buyer_name",
-      render: (row: SaleRow) => (
-        <div className="flex flex-col">
-          <span className="font-semibold text-foreground text-xs">{row.buyer_name}</span>
-          {row.buyer_phone && (
-            <span className="text-[10px] text-muted-foreground">{row.buyer_phone}</span>
-          )}
-        </div>
-      ),
-    },
-    {
-      header: "Property Value",
-      accessorKey: "sale_amount",
-      render: (row: SaleRow) => (
-        <span className="font-semibold text-foreground text-sm">
-          ₹{Number(row.sale_amount).toLocaleString("en-US")}
-        </span>
-      ),
-    },
-    {
-      header: "Paid Amount",
-      render: (row: SaleRow) => {
-        const approvedPayments = (row.sale_payments || [])
-          .filter((p) => p.status === "approved");
-        const totalPaid = approvedPayments.reduce((s, p) => s + Number(p.amount), 0);
-        return (
-          <div className="flex flex-col">
-            <span className="font-bold text-emerald-400 text-sm">
-              ₹{totalPaid.toLocaleString("en-US")}
-            </span>
-            {totalPaid < Number(row.sale_amount) && (
-              <span className="text-[9px] text-muted-foreground">
-                {(row.sale_payments || []).filter((p) => p.status === "pending_approval").length} pending
-              </span>
-            )}
-          </div>
-        );
-      },
-    },
-    {
-      header: "Remaining Balance",
-      render: (row: SaleRow) => {
-        const approvedPayments = (row.sale_payments || [])
-          .filter((p) => p.status === "approved");
-        const totalPaid = approvedPayments.reduce((s, p) => s + Number(p.amount), 0);
-        const remaining = Math.max(0, Number(row.sale_amount) - totalPaid);
-        return (
-          <span className={cn("text-sm font-semibold", remaining === 0 ? "text-muted-foreground/60 line-through" : "text-amber-500")}>
-            ₹{remaining.toLocaleString("en-US")}
-          </span>
-        );
-      },
-    },
-    {
-      header: "Commission",
-      render: (row: SaleRow) => {
-        const comm = getCommission(row);
-        if (comm === null)
-          return <span className="text-xs text-muted-foreground italic">Pending approval</span>;
-        return (
-          <span className="font-semibold text-violet-400 text-sm">
-            ₹{comm.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-          </span>
-        );
-      },
-    },
-    {
-      header: "Date",
-      accessorKey: "created_at",
-      render: (row: SaleRow) => (
-        <span className="text-xs text-muted-foreground flex items-center gap-1">
-          <Calendar className="h-3 w-3" />
-          {new Date(row.created_at).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-          })}
-        </span>
-      ),
-    },
-    {
-      header: "Status",
-      accessorKey: "status",
-      render: (row: SaleRow) => <StatusBadge status={row.status} />,
-    },
-    {
-      header: "Actions",
-      render: (row: SaleRow) => (
-        <div className="flex items-center gap-1.5">
-          <Link
-            href={`/agent/sales/${row.id}`}
-            className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground transition-all"
-            title="View Details"
-          >
-            <Eye className="h-3.5 w-3.5" />
-          </Link>
-          {row.status === "pending_approval" && (
-            <Link
-              href={`/agent/sales/${row.id}`}
-              className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500/10 hover:bg-amber-500 text-amber-500 hover:text-white transition-all"
-              title="Edit Sale"
-            >
-              <Edit className="h-3.5 w-3.5" />
-            </Link>
-          )}
-          <button
-            onClick={() => setTrackSale(row)}
-            className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-violet-500/10 hover:bg-violet-500 text-violet-500 hover:text-white transition-all"
-            title="Track Approval"
-          >
-            <TrendingUp className="h-3.5 w-3.5" />
-          </button>
-        </div>
-      ),
-    },
-  ];
+  // Calculate Paginated List
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(filteredSales.length / itemsPerPage);
+  const paginatedSales = React.useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredSales.slice(start, start + itemsPerPage);
+  }, [filteredSales, currentPage]);
 
   return (
     <div className="space-y-8">
@@ -629,7 +653,7 @@ export function AgentSalesClient({
         </div>
         <button
           onClick={() => setSubmitOpen(true)}
-          className="inline-flex items-center gap-2 h-11 px-5 rounded-2xl bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 active:scale-[0.98] shrink-0"
+          className="inline-flex items-center gap-2 h-11 px-5 rounded-2xl bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/95 transition-all shadow-lg shadow-primary/20 active:scale-[0.98] shrink-0"
         >
           <Plus className="h-4 w-4" />
           Submit New Sale
@@ -771,13 +795,200 @@ export function AgentSalesClient({
         </p>
       </div>
 
-      {/* Table */}
-      <DataTable
-        columns={columns}
-        data={filteredSales}
-        emptyTitle="No sales found"
-        emptyDescription="No sales match your current filters. Try adjusting your search or click 'Submit New Sale' to record your first transaction."
-      />
+      {/* Cards List Layout */}
+      <div className="space-y-4">
+        {paginatedSales.map((sale) => {
+          const approvedPayments = (sale.sale_payments || [])
+            .filter((p) => p.status === "approved");
+          const totalPaid = approvedPayments.reduce((s, p) => s + Number(p.amount), 0);
+          const remaining = Math.max(0, Number(sale.sale_amount) - totalPaid);
+          const comm = (() => {
+            if (!sale.commissions || sale.commissions.length === 0) return null;
+            return sale.commissions
+              .filter((c) => !c.recipient_id || c.recipient_id === sale.seller_id)
+              .reduce((sum, c) => sum + Number(c.amount), 0);
+          })();
+
+          // Determine badge
+          let badgeText = "Pending Approval";
+          let badgeStyle = "bg-blue-500/10 text-blue-400 border-blue-500/20";
+          if (sale.status === "approved") {
+            if (remaining === 0) {
+              badgeText = "Fully Paid";
+              badgeStyle = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+            } else {
+              badgeText = "Partial Payment";
+              badgeStyle = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+            }
+          } else if (sale.status === "rejected") {
+            badgeText = "Rejected";
+            badgeStyle = "bg-rose-500/10 text-rose-400 border-rose-500/20";
+          }
+
+          return (
+            <motion.div
+              key={sale.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="rounded-3xl border border-border/40 p-6 bg-zinc-950/20 glass-premium hover:border-primary/30 transition-all duration-300 space-y-6 shadow-xl relative"
+            >
+              {/* Top: title and location */}
+              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                <div className="space-y-1.5">
+                  <h3 className="text-xl font-bold tracking-tight text-foreground">
+                    {sale.properties?.title ?? "Property Sale"}
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                    {sale.properties?.location && (
+                      <span className="flex items-center gap-1">
+                        <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
+                        {sale.properties.location}
+                      </span>
+                    )}
+                    <span className="flex items-center gap-1">
+                      <User className="h-3.5 w-3.5 text-primary shrink-0" />
+                      Buyer: <strong className="text-foreground">{sale.buyer_name}</strong>
+                      {sale.buyer_phone && ` (${sale.buyer_phone})`}
+                    </span>
+                  </div>
+                </div>
+                <div className={cn("inline-flex items-center px-3 py-1 rounded-full text-[11px] font-extrabold border shrink-0 self-start sm:self-auto uppercase tracking-wide", badgeStyle)}>
+                  {badgeText}
+                </div>
+              </div>
+
+              {/* Grid for Price, Paid, Remaining, Commission */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Property Price */}
+                <div className="bg-muted/10 border border-border/30 rounded-2xl p-4 flex flex-col justify-between min-h-[80px]">
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
+                    Property Price
+                  </span>
+                  <div>
+                    <span className="text-lg font-extrabold text-foreground mt-1 block">
+                      ₹{Number(sale.sale_amount).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                    </span>
+                    <span className="text-[9px] text-muted-foreground font-semibold block mt-0.5 leading-tight">
+                      {numberToIndianWords(sale.sale_amount)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Total Paid */}
+                <div className="bg-muted/10 border border-border/30 rounded-2xl p-4 flex flex-col justify-between min-h-[80px]">
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
+                    Total Paid
+                  </span>
+                  <span className="text-lg font-extrabold text-emerald-400 mt-1">
+                    ₹{totalPaid.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+
+                {/* Remaining Amount */}
+                <div className="bg-muted/10 border border-border/30 rounded-2xl p-4 flex flex-col justify-between min-h-[80px]">
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
+                    Remaining Amount
+                  </span>
+                  <span className={cn("text-lg font-extrabold mt-1", remaining > 0 ? "text-amber-500" : "text-muted-foreground/60 line-through")}>
+                    ₹{remaining.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+
+                {/* Commission */}
+                <div className="bg-muted/10 border border-border/30 rounded-2xl p-4 flex flex-col justify-between min-h-[80px]">
+                  <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">
+                    Commission
+                  </span>
+                  {comm === null ? (
+                    <span className="text-xs font-semibold text-muted-foreground/60 italic mt-2">
+                      Pending Approval
+                    </span>
+                  ) : (
+                    <span className="text-lg font-extrabold text-violet-400 mt-1">
+                      ₹{comm.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Bottom: actions */}
+              <div className="flex flex-col sm:flex-row items-center gap-3 pt-4 border-t border-border/30 w-full justify-between">
+                {sale.status === "approved" && remaining > 0 ? (
+                  <button
+                    onClick={() => setPaymentSale(sale)}
+                    className="w-full sm:w-auto h-11 flex items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground font-bold text-sm hover:bg-primary/95 transition-all shadow-lg shadow-primary/20 active:scale-[0.99] px-6"
+                  >
+                    <Plus className="h-4 w-4" />
+                    + Add New Sale (Partial Payment)
+                  </button>
+                ) : sale.status === "pending_approval" ? (
+                  <button
+                    onClick={() => setTrackSale(sale)}
+                    className="w-full sm:w-auto h-11 flex items-center justify-center gap-2 rounded-xl bg-violet-600 text-white font-bold text-sm hover:bg-violet-700 transition-all shadow-lg shadow-violet-600/20 active:scale-[0.99] px-6"
+                  >
+                    <TrendingUp className="h-4 w-4" />
+                    Track Approval
+                  </button>
+                ) : sale.status === "approved" && remaining === 0 ? (
+                  <div className="w-full sm:w-auto h-11 flex items-center justify-center gap-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold text-sm px-6 cursor-default">
+                    <CheckCircle className="h-4 w-4" />
+                    Fully Paid
+                  </div>
+                ) : (
+                  <div className="w-full sm:w-auto h-11 flex items-center justify-center gap-2 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 font-bold text-sm px-6 cursor-default">
+                    <XCircle className="h-4 w-4" />
+                    Rejected
+                  </div>
+                )}
+
+                <Link
+                  href={`/agent/sales/${sale.id}`}
+                  className="w-full sm:w-auto h-11 flex items-center justify-center gap-1.5 rounded-xl border border-border/60 hover:bg-muted text-foreground font-semibold text-sm transition-all px-6"
+                >
+                  <Eye className="h-4 w-4" />
+                  View Previous Sales
+                </Link>
+              </div>
+            </motion.div>
+          );
+        })}
+
+        {filteredSales.length === 0 && (
+          <div className="flex flex-col items-center justify-center p-12 text-center border border-dashed border-border/50 rounded-3xl min-h-[300px] bg-zinc-950/10 glass-premium">
+            <Building2 className="h-10 w-10 text-muted-foreground/50 mb-3" />
+            <p className="font-semibold text-foreground">No sales found</p>
+            <p className="text-xs text-muted-foreground mt-1">Try resetting search keyword or filter options</p>
+          </div>
+        )}
+      </div>
+
+      {/* Pagination Footer */}
+      {totalPages > 1 && (
+        <div className="pt-4 border-t border-border/40 flex items-center justify-between">
+          <span className="text-xs text-muted-foreground font-medium">
+            Page {currentPage} of {totalPages} ({filteredSales.length} sales)
+          </span>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-all disabled:opacity-40 disabled:pointer-events-none"
+            >
+              <ChevronLeft className="h-4.5 w-4.5" />
+            </button>
+            
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/60 hover:bg-muted text-muted-foreground hover:text-foreground transition-all disabled:opacity-40 disabled:pointer-events-none"
+            >
+              <ChevronRight className="h-4.5 w-4.5" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Submit Modal */}
       <SubmitSaleModal
@@ -786,6 +997,18 @@ export function AgentSalesClient({
         properties={properties}
         onSuccess={handleSubmitSuccess}
       />
+
+      {/* Submit Payment Modal */}
+      {paymentSale && (
+        <SubmitPaymentModal
+          open={!!paymentSale}
+          onOpenChange={(v) => {
+            if (!v) setPaymentSale(null);
+          }}
+          sale={paymentSale}
+          onSuccess={handleSubmitSuccess}
+        />
+      )}
 
       {/* Track Approval Panel */}
       {trackSale && (

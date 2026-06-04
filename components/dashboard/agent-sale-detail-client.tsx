@@ -26,7 +26,7 @@ import {
   AlertCircle,
   X,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, numberToIndianWords } from "@/lib/utils";
 import { submitAdditionalPayment } from "@/lib/actions/sales";
 import { useRouter } from "next/navigation";
 import {
@@ -346,7 +346,7 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
           title="Property Value"
           value={`₹${Number(sale.sale_amount).toLocaleString("en-US")}`}
           icon={<DollarSign className="h-5 w-5" />}
-          description="Listing reference price"
+          description={numberToIndianWords(sale.sale_amount)}
         />
         <StatsCard
           title="Total Paid"
@@ -402,7 +402,14 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
               <InfoRow
                 icon={<DollarSign className="h-3.5 w-3.5" />}
                 label="Listed Price"
-                value={`₹${Number(sale.properties.price).toLocaleString("en-US")}`}
+                value={
+                  <div className="flex flex-col">
+                    <span>₹{Number(sale.properties.price).toLocaleString("en-US")}</span>
+                    <span className="text-[10px] text-muted-foreground font-semibold mt-0.5 leading-tight">
+                      {numberToIndianWords(sale.properties.price)}
+                    </span>
+                  </div>
+                }
               />
             )}
             {sale.properties?.status && (
