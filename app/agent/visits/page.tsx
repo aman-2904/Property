@@ -4,7 +4,9 @@ import { createClient } from "@/lib/supabase/server";
 import { getProperties } from "@/lib/actions/properties";
 import { getVisits } from "@/lib/actions/visits";
 import { VisitForm } from "@/components/forms/visit-form";
+import { MobileVisitModal } from "@/components/forms/mobile-visit-modal";
 import { AgentVisitsClient } from "@/components/dashboard/agent-visits-client";
+
 
 export default async function AgentVisitsPage() {
   const supabase = createClient();
@@ -41,8 +43,8 @@ export default async function AgentVisitsPage() {
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
-        {/* Left column: Submit visit form */}
-        <div className="lg:col-span-1 p-6 rounded-3xl border border-border/40 bg-zinc-950/10 glass-premium h-fit">
+        {/* Left column: Submit visit form (Desktop only) */}
+        <div className="hidden lg:block lg:col-span-1 p-6 rounded-3xl border border-border/40 bg-zinc-950/10 glass-premium h-fit">
           <div className="mb-6">
             <h2 className="text-lg font-bold text-foreground">Log New Visit</h2>
             <p className="text-xs text-muted-foreground mt-0.5">
@@ -54,11 +56,17 @@ export default async function AgentVisitsPage() {
 
         {/* Right column: Logged visits list */}
         <div className="lg:col-span-2 space-y-4">
-          <div>
-            <h2 className="text-lg font-bold text-foreground">Logged Visit Records</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">
-              History of site visits you have registered for commissions tracking.
-            </p>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg font-bold text-foreground">Logged Visit Records</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                History of site visits you have registered for commissions tracking.
+              </p>
+            </div>
+            {/* Mobile-only Log Visit Button & Modal */}
+            <div className="block lg:hidden shrink-0">
+              <MobileVisitModal properties={mappedProperties} />
+            </div>
           </div>
           <AgentVisitsClient initialVisits={visits as any[]} />
         </div>

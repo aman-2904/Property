@@ -99,7 +99,7 @@ export function VisitForm({ properties, onSuccess }: VisitFormProps) {
         </div>
       )}
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="flex flex-col gap-6">
         {/* Customer Details */}
         <div className="space-y-4">
           <h3 className="text-sm font-bold text-foreground uppercase tracking-wider pl-1">
@@ -197,14 +197,14 @@ export function VisitForm({ properties, onSuccess }: VisitFormProps) {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="flex flex-col gap-6">
         {/* Visit Mode Toggle */}
         <div className="space-y-2">
           <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
             Visit Mode
           </label>
-          <div className="flex gap-4">
-            <label className="flex-1 flex items-center justify-between p-3.5 rounded-xl border border-border/50 bg-background/50 hover:bg-zinc-800/10 cursor-pointer transition-all">
+          <div className="flex flex-col gap-2.5">
+            <label className="flex items-center justify-between p-3.5 rounded-xl border border-border/50 bg-background/50 hover:bg-zinc-800/10 cursor-pointer transition-all">
               <span className="text-sm font-semibold text-foreground">Physical Site Visit</span>
               <input
                 type="radio"
@@ -213,7 +213,7 @@ export function VisitForm({ properties, onSuccess }: VisitFormProps) {
                 className="h-4 w-4 text-primary focus:ring-primary"
               />
             </label>
-            <label className="flex-1 flex items-center justify-between p-3.5 rounded-xl border border-border/50 bg-background/50 hover:bg-zinc-800/10 cursor-pointer transition-all">
+            <label className="flex items-center justify-between p-3.5 rounded-xl border border-border/50 bg-background/50 hover:bg-zinc-800/10 cursor-pointer transition-all">
               <span className="text-sm font-semibold text-foreground">Virtual Walkthrough</span>
               <input
                 type="radio"
