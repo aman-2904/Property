@@ -140,16 +140,30 @@ export async function updateSaleStatus(
     return { error: error.message };
   }
 
-  // Sync with sale_payments: Find pending payments and set their status accordingly
+  // Sync with sale_payments: Find payments and set their status accordingly
   const { data: payments } = await supabase
     .from("sale_payments")
-    .select("id, status")
+    .select("id, status, created_at")
     .eq("sale_id", saleId);
 
   if (payments && payments.length > 0) {
-    const paymentIdsToUpdate = status === "rejected" 
-      ? payments.map((p: any) => p.id) // Reject all payments if sale is rejected
-      : payments.filter((p: any) => p.status === "pending_approval").map((p: any) => p.id); // Approve only pending payments if sale is approved
+    let paymentIdsToUpdate: string[] = [];
+    if (status === "rejected") {
+      paymentIdsToUpdate = payments.filter((p: any) => p.status !== "rejected").map((p: any) => p.id);
+    } else {
+      // Approve pending payments
+      paymentIdsToUpdate = payments.filter((p: any) => p.status === "pending_approval").map((p: any) => p.id);
+      
+      // If there are no approved payments at all, approve the first payment (booking payment)
+      const hasApproved = payments.some((p: any) => p.status === "approved");
+      if (!hasApproved) {
+        // Find the oldest payment (booking payment)
+        const sorted = [...payments].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+        if (sorted.length > 0 && !paymentIdsToUpdate.includes(sorted[0].id)) {
+          paymentIdsToUpdate.push(sorted[0].id);
+        }
+      }
+    }
 
     if (paymentIdsToUpdate.length > 0) {
       await supabase

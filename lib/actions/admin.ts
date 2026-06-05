@@ -400,6 +400,37 @@ export async function updatePaymentStatus(
     return { error: error?.message || "Failed to update payment status" };
   }
 
+  if (status === "approved") {
+    // If approving a payment, the parent sale must be set to approved too
+    await supabase
+      .from("sales")
+      .update({
+        status: "approved",
+        approved_by: user.id,
+        approved_at: new Date().toISOString(),
+      })
+      .eq("id", payment.sale_id);
+  } else if (status === "rejected") {
+    // Check if there are any other approved payments for this sale
+    const { data: approvedPayments } = await supabase
+      .from("sale_payments")
+      .select("id")
+      .eq("sale_id", payment.sale_id)
+      .eq("status", "approved");
+
+    if (!approvedPayments || approvedPayments.length === 0) {
+      // No approved payments left for this sale, reject the parent sale too
+      await supabase
+        .from("sales")
+        .update({
+          status: "rejected",
+          approved_by: user.id,
+          approved_at: new Date().toISOString(),
+        })
+        .eq("id", payment.sale_id);
+    }
+  }
+
   revalidatePath("/admin/dashboard");
   revalidatePath("/admin/sales");
   revalidatePath("/agent/dashboard");

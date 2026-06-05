@@ -293,7 +293,32 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
                       </button>
                     </>
                   ) : (
-                    <StatusBadge status={p.status} className="text-[9px] px-1.5 py-0.5" />
+                    <>
+                      <StatusBadge status={p.status} className="text-[9px] px-1.5 py-0.5" />
+                      {p.status === "approved" ? (
+                        <button
+                          onClick={() => {
+                            setSelectedPayment({ id: p.id, amount: Number(p.amount), buyerName: row.buyer_name, propertyTitle: row.properties?.title || "" });
+                            setIsRejectPaymentOpen(true);
+                          }}
+                          className="p-1 rounded bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white border border-rose-500/20 transition-all"
+                          title="Reject Payment"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setSelectedPayment({ id: p.id, amount: Number(p.amount), buyerName: row.buyer_name, propertyTitle: row.properties?.title || "" });
+                            setIsApprovePaymentOpen(true);
+                          }}
+                          className="p-1 rounded bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white border border-emerald-500/20 transition-all"
+                          title="Approve Payment"
+                        >
+                          <Check className="h-3 w-3" />
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
@@ -320,30 +345,32 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
     {
       header: "Actions",
       render: (row: Sale) => {
-        if (row.status !== "pending_approval") return <span className="text-muted-foreground text-xs font-semibold">Processed</span>;
-
         return (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => {
-                setSelectedSale(row);
-                setIsApproveOpen(true);
-              }}
-              className="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white border border-emerald-500/20 transition-all"
-              title="Approve Sale"
-            >
-              <Check className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => {
-                setSelectedSale(row);
-                setIsRejectOpen(true);
-              }}
-              className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white border border-rose-500/20 transition-all"
-              title="Reject Sale"
-            >
-              <X className="h-4 w-4" />
-            </button>
+          <div className="flex items-center gap-2 justify-center">
+            {row.status !== "approved" && (
+              <button
+                onClick={() => {
+                  setSelectedSale(row);
+                  setIsApproveOpen(true);
+                }}
+                className="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white border border-emerald-500/20 transition-all"
+                title="Approve Sale"
+              >
+                <Check className="h-4 w-4" />
+              </button>
+            )}
+            {row.status !== "rejected" && (
+              <button
+                onClick={() => {
+                  setSelectedSale(row);
+                  setIsRejectOpen(true);
+                }}
+                className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white border border-rose-500/20 transition-all"
+                title="Reject Sale"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
           </div>
         );
       },

@@ -220,29 +220,31 @@ BEGIN
     END IF;
 
   -- Handle rejection / transition back of payment
-  ELSIF NEW.status = 'rejected'::public.sale_status AND OLD.status = 'approved'::public.sale_status THEN
+  ELSIF NEW.status = 'rejected'::public.sale_status THEN
     
-    -- Reject commissions associated with this payment
-    UPDATE public.commissions 
-    SET status = 'rejected'::public.commission_status, 
-        approved_by = NEW.approved_by, 
-        approved_at = NEW.approved_at
-    WHERE payment_id = NEW.id;
+    -- If it was previously approved, reject its commissions
+    IF OLD.status = 'approved'::public.sale_status THEN
+      UPDATE public.commissions 
+      SET status = 'rejected'::public.commission_status, 
+          approved_by = NEW.approved_by, 
+          approved_at = NEW.approved_at
+      WHERE payment_id = NEW.id;
+    END IF;
 
     -- Fetch parent sale record
     SELECT * INTO sale_record FROM public.sales WHERE id = NEW.sale_id;
 
-    -- If this was the ONLY approved payment, revert the sale status and property status
+    -- If there are no approved payments left for this sale:
     IF NOT EXISTS (
       SELECT 1 FROM public.sale_payments 
       WHERE sale_id = NEW.sale_id AND status = 'approved'::public.sale_status AND id != NEW.id
     ) THEN
       
-      -- Revert parent sale status
+      -- Update parent sale status to rejected
       UPDATE public.sales 
-      SET status = 'pending_approval'::public.sale_status,
-          approved_by = NULL,
-          approved_at = NULL
+      SET status = 'rejected'::public.sale_status,
+          approved_by = NEW.approved_by,
+          approved_at = NEW.approved_at
       WHERE id = NEW.sale_id;
     END IF;
   END IF;
