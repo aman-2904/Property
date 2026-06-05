@@ -164,24 +164,25 @@ export function TreeVisualizer({ data }: TreeVisualizerProps) {
 
   // Node rank coloring
   const getRankTheme = (rank: string) => {
-    const themes: Record<string, { stroke: string; bg: string; fill: string }> = {
-      Director: { stroke: "border-amber-500/50", bg: "from-amber-500/10 to-transparent", fill: "text-amber-500" },
-      Manager: { stroke: "border-violet-500/50", bg: "from-violet-500/10 to-transparent", fill: "text-violet-500" },
-      "Senior Agent": { stroke: "border-blue-500/50", bg: "from-blue-500/10 to-transparent", fill: "text-blue-500" },
+    const themes: Record<string, { strokeColor: string; textColor: string }> = {
+      Director: { strokeColor: "#f59e0b", textColor: "#f59e0b" },
+      Manager: { strokeColor: "#8b5cf6", textColor: "#8b5cf6" },
+      "Senior Agent": { strokeColor: "#3b82f6", textColor: "#3b82f6" },
+      "Rookie Agent": { strokeColor: "#10b981", textColor: "#10b981" },
     };
-    return themes[rank] || { stroke: "border-border/40", bg: "from-muted/10 to-transparent", fill: "text-muted-foreground" };
+    return themes[rank] || { strokeColor: "hsl(var(--border))", textColor: "hsl(var(--muted-foreground))" };
   };
 
   return (
     <div 
       ref={containerRef}
-      className="relative w-full h-[620px] rounded-3xl border border-border/40 bg-zinc-950/20 glass-premium overflow-hidden select-none"
+      className="relative w-full h-[620px] rounded-3xl border border-border/40 bg-card/40 glass-premium overflow-hidden select-none"
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
     >
       {/* Zoom / Reset Action Panel */}
-      <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 p-1.5 rounded-2xl border border-border/40 bg-zinc-950/80 glass-premium shadow-lg">
+      <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 p-1.5 rounded-2xl border border-border/40 bg-card/90 glass-premium shadow-lg">
         <button
           onClick={() => setZoom((z) => Math.min(2.5, z * 1.15))}
           className="flex h-9 w-9 items-center justify-center rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
@@ -215,9 +216,29 @@ export function TreeVisualizer({ data }: TreeVisualizerProps) {
         )}
         onMouseDown={handleMouseDown}
       >
+        {/* SVG definitions */}
+        <defs>
+          {/* Grid Pattern */}
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="hsl(var(--border))" strokeWidth="1" opacity="0.25" />
+          </pattern>
+          {/* Card hover glows */}
+          <linearGradient id="card-glow" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="hsl(var(--primary))" />
+            <stop offset="100%" stopColor="transparent" />
+          </linearGradient>
+          {/* Node drop shadow */}
+          <filter id="node-shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="8" stdDeviation="12" floodColor="#000000" floodOpacity="0.15" />
+          </filter>
+        </defs>
+
+        {/* Background Grid */}
+        <rect width="100%" height="100%" fill="url(#grid)" />
+
         <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
           
-          {/* 1. RENDER LINKS (Orthogonal connector lines) */}
+          {/* 1. RENDER LINKS (Smooth Cubic Bezier curve lines) */}
           {links.map(({ parentId, childId }) => {
             const parentCoords = coordsMap.get(parentId);
             const childCoords = coordsMap.get(childId);
@@ -231,18 +252,21 @@ export function TreeVisualizer({ data }: TreeVisualizerProps) {
             // Connect from parent card bottom (y+60) to child card top (y-60)
             const parentBottom = py + 60;
             const childTop = cy - 60;
-            const linkMidY = (parentBottom + childTop) / 2;
-            const linkPath = `M ${px} ${parentBottom} L ${px} ${linkMidY} L ${cx} ${linkMidY} L ${cx} ${childTop}`;
+            const linkPath = `M ${px} ${parentBottom} C ${px} ${parentBottom + 50}, ${cx} ${childTop - 50}, ${cx} ${childTop}`;
+
+            const isHighlighted = hoveredNode?.id === parentId || hoveredNode?.id === childId;
+            const strokeColor = isHighlighted ? "hsl(var(--primary))" : "hsl(var(--border))";
+            const strokeWidth = isHighlighted ? 2.5 : 1.5;
+            const opacity = isHighlighted ? "opacity-100" : "opacity-60";
 
             return (
               <path
                 key={`${parentId}-${childId}`}
                 d={linkPath}
                 fill="none"
-                stroke="var(--border)"
-                strokeWidth="2"
-                strokeDasharray="4 4"
-                className="opacity-60"
+                stroke={strokeColor}
+                strokeWidth={strokeWidth}
+                className={cn("transition-all duration-300", opacity)}
               />
             );
           })}
@@ -284,102 +308,180 @@ export function TreeVisualizer({ data }: TreeVisualizerProps) {
                 }}
                 onMouseLeave={() => setHoveredNode(null)}
               >
-                {/* Node Box card (width 220px, height 120px) */}
-                <rect
-                  x="-110"
-                  y="-60"
-                  width="220"
-                  height="120"
-                  rx="20"
-                  ry="20"
-                  fill="rgb(9 9 11)"
-                  fillOpacity="0.8"
-                  className={cn(
-                    "stroke-2 transition-all duration-300",
-                    theme.stroke,
-                    hoveredNode?.id === node.id && "scale-102 filter drop-shadow-lg stroke-primary/80"
+                <motion.g
+                  whileHover={{ scale: 1.04 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                >
+                  {/* Node Box card (width 220px, height 120px) */}
+                  <rect
+                    x="-110"
+                    y="-60"
+                    width="220"
+                    height="120"
+                    rx="16"
+                    ry="16"
+                    fill="hsl(var(--card))"
+                    fillOpacity="0.95"
+                    stroke={theme.strokeColor}
+                    strokeWidth={hoveredNode?.id === node.id ? 2 : 1}
+                    strokeOpacity={theme.strokeColor.startsWith("#") ? 0.45 : 1}
+                    filter="url(#node-shadow)"
+                    className="transition-all duration-300"
+                  />
+
+                  {/* Card visual gradient layer on hover */}
+                  {hoveredNode?.id === node.id && (
+                    <rect
+                      x="-110"
+                      y="-60"
+                      width="220"
+                      height="120"
+                      rx="16"
+                      ry="16"
+                      fill="url(#card-glow)"
+                      className="opacity-5 pointer-events-none"
+                    />
                   )}
-                />
 
-                {/* Card visual gradient layer */}
-                <rect
-                  x="-110"
-                  y="-60"
-                  width="220"
-                  height="120"
-                  rx="20"
-                  ry="20"
-                  fill="url(#card-glow)"
-                  className="opacity-10 pointer-events-none"
-                />
+                  {/* Left rank accent pill indicator */}
+                  <rect
+                    x="-106"
+                    y="-40"
+                    width="4"
+                    height="80"
+                    rx="2"
+                    fill={theme.textColor}
+                  />
 
-                {/* Avatar Icon / Initial placeholder */}
-                <g transform="translate(-90, -42)">
-                  <circle cx="18" cy="18" r="18" fill="var(--muted)" className="opacity-40" />
-                  <foreignObject x="0" y="0" width="36" height="36">
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm font-bold uppercase">
-                      {node.name.slice(0, 2)}
-                    </div>
-                  </foreignObject>
-                </g>
+                  {/* Avatar Icon / Initial placeholder */}
+                  <g transform="translate(-90, -40)">
+                    <circle 
+                      cx="18" 
+                      cy="18" 
+                      r="18" 
+                      fill="hsl(var(--muted))" 
+                      stroke={theme.strokeColor}
+                      strokeWidth="1.5"
+                      strokeOpacity={theme.strokeColor.startsWith("#") ? 0.35 : 0.5}
+                    />
+                    <foreignObject x="0" y="0" width="36" height="36">
+                      <div className="w-full h-full flex items-center justify-center text-foreground/90 text-[11px] font-extrabold uppercase select-none">
+                        {node.name.slice(0, 2)}
+                      </div>
+                    </foreignObject>
+                  </g>
 
-                {/* Status indicator badge (circle dot) */}
-                <circle 
-                  cx="-60" 
-                  cy="-10" 
-                  r="5" 
-                  fill={node.is_active ? "var(--emerald-500)" : "var(--rose-500)"} 
-                  className={cn(node.is_active ? "shadow-emerald-500" : "shadow-rose-500")} 
-                />
+                  {/* Discord-style status badge nested at bottom right of avatar */}
+                  <circle
+                    cx="-56"
+                    cy="-10"
+                    r="6.5"
+                    fill="hsl(var(--card))"
+                  />
+                  <circle 
+                    cx="-56" 
+                    cy="-10" 
+                    r="4.5" 
+                    fill={node.is_active ? "#10b981" : "#ef4444"} 
+                  />
 
-                {/* Node Name */}
-                <text
-                  x="-62"
-                  y="-26"
-                  textAnchor="start"
-                  fontSize="12"
-                  fontWeight="bold"
-                  fill="var(--foreground)"
-                  className="truncate"
-                >
-                  {node.name.length > 20 ? `${node.name.slice(0, 18)}...` : node.name}
-                </text>
+                  {/* Node Name */}
+                  <text
+                    x="-42"
+                    y="-24"
+                    textAnchor="start"
+                    fontSize="13"
+                    fontWeight="700"
+                    fill="hsl(var(--foreground))"
+                  >
+                    {node.name.length > 18 ? `${node.name.slice(0, 16)}...` : node.name}
+                  </text>
 
-                {/* Node Rank badge title */}
-                <text
-                  x="-62"
-                  y="-8"
-                  textAnchor="start"
-                  fontSize="9"
-                  fontWeight="800"
-                  letterSpacing="0.05em"
-                  className={cn("uppercase", theme.fill)}
-                >
-                  {node.rank}
-                </text>
+                  {/* Node Rank badge title */}
+                  <text
+                    x="-42"
+                    y="-8"
+                    textAnchor="start"
+                    fontSize="9.5"
+                    fontWeight="800"
+                    letterSpacing="0.05em"
+                    fill={theme.textColor}
+                  >
+                    {node.rank}
+                  </text>
 
-                {/* Email text */}
-                <text
-                  x="-90"
-                  y="20"
-                  textAnchor="start"
-                  fontSize="9.5"
-                  fill="var(--muted-foreground)"
-                >
-                  {node.email.length > 24 ? `${node.email.slice(0, 22)}...` : node.email}
-                </text>
+                  {/* Card Divider line */}
+                  <line
+                    x1="-90"
+                    y1="4"
+                    x2="90"
+                    y2="4"
+                    stroke="hsl(var(--border))"
+                    strokeWidth="1"
+                    strokeDasharray="2 2"
+                    className="opacity-40"
+                  />
 
-                {/* Stats Summary Line */}
-                <text
-                  x="-90"
-                  y="38"
-                  textAnchor="start"
-                  fontSize="9"
-                  fill="var(--muted-foreground)"
-                  className="opacity-80"
-                >
-                  Downline recruits: {node.children.length}
-                </text>
+                  {/* Email text */}
+                  <text
+                    x="-90"
+                    y="19"
+                    textAnchor="start"
+                    fontSize="10"
+                    fill="hsl(var(--muted-foreground))"
+                  >
+                    {node.email.length > 28 ? `${node.email.slice(0, 25)}...` : node.email}
+                  </text>
+
+                  {/* Stats Grid - Directs */}
+                  <text
+                    x="-90"
+                    y="36"
+                    textAnchor="start"
+                    fontSize="7.5"
+                    fontWeight="700"
+                    letterSpacing="0.05em"
+                    fill="hsl(var(--muted-foreground))"
+                    className="uppercase"
+                  >
+                    Directs
+                  </text>
+                  <text
+                    x="-90"
+                    y="49"
+                    textAnchor="start"
+                    fontSize="12"
+                    fontWeight="800"
+                    fill="hsl(var(--foreground))"
+                  >
+                    {node.direct_sales_count}
+                  </text>
+
+                  {/* Stats Grid - Total Downline */}
+                  <text
+                    x="10"
+                    y="36"
+                    textAnchor="start"
+                    fontSize="7.5"
+                    fontWeight="700"
+                    letterSpacing="0.05em"
+                    fill="hsl(var(--muted-foreground))"
+                    className="uppercase"
+                  >
+                    Total Team
+                  </text>
+                  <text
+                    x="10"
+                    y="49"
+                    textAnchor="start"
+                    fontSize="12"
+                    fontWeight="800"
+                    fill="hsl(var(--foreground))"
+                  >
+                    {node.group_sales_count}
+                  </text>
+
+                </motion.g>
 
                 {/* Expand / Collapse Overlay Button */}
                 {hasChildren && (
@@ -391,10 +493,10 @@ export function TreeVisualizer({ data }: TreeVisualizerProps) {
                       cx="0" 
                       cy="0" 
                       r="12" 
-                      fill="rgb(24 24 27)" 
-                      stroke="var(--border)" 
+                      fill="hsl(var(--secondary))" 
+                      stroke="hsl(var(--border))" 
                       strokeWidth="1.5" 
-                      className="hover:fill-zinc-800 transition-colors"
+                      className="hover:fill-muted transition-colors"
                     />
                     <foreignObject x="-6" y="-6" width="12" height="12">
                       <div className="w-full h-full flex items-center justify-center text-muted-foreground hover:text-foreground">
@@ -411,14 +513,6 @@ export function TreeVisualizer({ data }: TreeVisualizerProps) {
             );
           })}
         </g>
-
-        {/* Global SVG definitions */}
-        <defs>
-          <linearGradient id="card-glow" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--primary)" />
-            <stop offset="100%" stopColor="transparent" />
-          </linearGradient>
-        </defs>
       </svg>
 
       {/* Floating Detailed Hover Tooltip */}
@@ -434,7 +528,7 @@ export function TreeVisualizer({ data }: TreeVisualizerProps) {
               left: tooltipPos.x,
               top: tooltipPos.y,
             }}
-            className="z-50 w-72 p-4 rounded-2xl border border-border/50 bg-zinc-950/95 glass-premium shadow-2xl pointer-events-none space-y-3.5"
+            className="z-50 w-72 p-4 rounded-2xl border border-border/50 bg-popover/95 glass-premium shadow-2xl pointer-events-none space-y-3.5"
           >
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-muted/40 border border-border/50 text-muted-foreground text-sm font-bold">
