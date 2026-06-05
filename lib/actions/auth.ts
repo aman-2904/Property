@@ -144,23 +144,12 @@ export async function signUp(formData: any) {
     }
   }
 
-  if (role === "AGENT") {
-    // Attempt auto-login for agent
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    
-    if (signInError) {
-      console.warn("Auto-login failed:", signInError.message);
-      return { success: true, redirectUrl: "/login", message: "Account created! Please check your email to verify your email, then log in." };
-    }
-    
-    revalidatePath("/", "layout");
-    return { success: true, redirectUrl: "/agent/dashboard", message: "Account created! Logging you in..." };
-  }
-
-  return { success: true, redirectUrl: "/login", message: "Admin account created! Please check your email to verify your email, then log in." };
+  return {
+    success: true,
+    requiresVerification: true,
+    email,
+    message: "Account created! Please enter the 6-digit OTP code sent to your email to verify your account."
+  };
 }
 
 export async function forgotPassword(email: string, origin: string) {
