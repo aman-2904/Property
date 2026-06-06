@@ -166,7 +166,7 @@ export function AdminPropertiesClient({
       accessorKey: "created_at",
       render: (row: PropertyData) => {
         const dateVal = (row as any).created_at;
-        return <span>{dateVal ? new Date(dateVal).toLocaleDateString() : "-"}</span>;
+        return <span suppressHydrationWarning>{dateVal ? new Date(dateVal).toLocaleDateString() : "-"}</span>;
       },
     },
     {

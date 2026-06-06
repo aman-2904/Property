@@ -267,8 +267,8 @@ export function ActivityLogsClient({ initialLogs }: ActivityLogsClientProps) {
 
                 {/* Timestamp */}
                 <div className="text-right shrink-0">
-                  <p className="text-xs text-muted-foreground">{timeAgo(log.created_at)}</p>
-                  <p className="text-[10px] text-muted-foreground/60 mt-0.5">
+                  <p className="text-xs text-muted-foreground" suppressHydrationWarning>{timeAgo(log.created_at)}</p>
+                  <p className="text-[10px] text-muted-foreground/60 mt-0.5" suppressHydrationWarning>
                     {new Date(log.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                   </p>
                 </div>

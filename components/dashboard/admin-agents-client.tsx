@@ -144,7 +144,7 @@ export function AdminAgentsClient({ initialAgents }: AdminAgentsClientProps) {
       header: "Registered Date",
       accessorKey: "created_at",
       render: (row: Agent) => (
-        <span>{new Date(row.created_at).toLocaleDateString()}</span>
+        <span suppressHydrationWarning>{new Date(row.created_at).toLocaleDateString()}</span>
       ),
     },
     {

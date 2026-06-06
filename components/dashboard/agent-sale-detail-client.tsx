@@ -97,7 +97,7 @@ function InfoRow({
         <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
           {label}
         </p>
-        <div className="text-sm font-semibold text-foreground mt-0.5">{value}</div>
+        <div className="text-sm font-semibold text-foreground mt-0.5" suppressHydrationWarning>{value}</div>
       </div>
     </div>
   );
@@ -317,7 +317,7 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
           <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent">
             Sale Details
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1" suppressHydrationWarning>
             {sale.properties?.title ?? "Property Sale"} — submitted{" "}
             {new Date(sale.created_at).toLocaleDateString("en-US", {
               year: "numeric",
@@ -490,7 +490,7 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
                       <td className="px-3 py-2.5">
                         <StatusBadge status={p.status} />
                       </td>
-                      <td className="px-3 py-2.5 text-xs text-muted-foreground text-left">
+                      <td className="px-3 py-2.5 text-xs text-muted-foreground text-left" suppressHydrationWarning>
                         {new Date(p.created_at).toLocaleString("en-US", {
                           month: "short",
                           day: "numeric",
@@ -574,7 +574,7 @@ export function AgentSaleDetailClient({ sale }: AgentSaleDetailClientProps) {
                         <td className="px-3 py-2.5">
                           <StatusBadge status={c.status} />
                         </td>
-                        <td className="px-3 py-2.5 text-xs text-muted-foreground">
+                        <td className="px-3 py-2.5 text-xs text-muted-foreground" suppressHydrationWarning>
                           {new Date(c.created_at).toLocaleDateString("en-US", {
                             month: "short",
                             day: "numeric",

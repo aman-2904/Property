@@ -264,7 +264,7 @@ export function AdminSalesClient({ initialSales }: AdminSalesClientProps) {
                   <span className="font-bold text-foreground">
                     ₹{Number(p.amount).toLocaleString("en-US")}
                   </span>
-                  <span className="text-[9px] text-muted-foreground">
+                  <span className="text-[9px] text-muted-foreground" suppressHydrationWarning>
                     {new Date(p.created_at).toLocaleDateString()}
                   </span>
                 </div>

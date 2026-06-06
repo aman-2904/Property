@@ -73,7 +73,7 @@ export function AgentDashboardClient({
       header: "Date",
       accessorKey: "created_at",
       render: (row: any) => (
-        <span>{new Date(row.created_at).toLocaleDateString()}</span>
+        <span suppressHydrationWarning>{new Date(row.created_at).toLocaleDateString()}</span>
       ),
     },
     {
