@@ -13,6 +13,7 @@ const visitSchema = z.object({
   customer_name: z.string().min(1, "Customer name is required"),
   customer_contact: z.string().min(1, "Customer contact is required"),
   visit_mode: z.enum(["physical", "virtual"]),
+  transportation_mode: z.enum(["personal", "company"]),
   coordinator_name: z.string().min(1, "Coordinator name is required"),
   people_count: z.number().int().min(1, "Must be at least 1 person"),
   photo_url: z.string().min(1, "Photo proof of visit is required"),
@@ -41,6 +42,7 @@ export function VisitForm({ properties, onSuccess }: VisitFormProps) {
     resolver: zodResolver(visitSchema),
     defaultValues: {
       visit_mode: "physical",
+      transportation_mode: "personal",
       people_count: 1,
       photo_url: "",
     },
@@ -58,6 +60,7 @@ export function VisitForm({ properties, onSuccess }: VisitFormProps) {
       customer_name: values.customer_name,
       customer_contact: values.customer_contact,
       visit_mode: values.visit_mode,
+      transportation_mode: values.transportation_mode,
       coordinator_name: values.coordinator_name,
       people_count: values.people_count,
       photo_url: values.photo_url,
@@ -74,6 +77,7 @@ export function VisitForm({ properties, onSuccess }: VisitFormProps) {
         customer_name: "",
         customer_contact: "",
         visit_mode: "physical",
+        transportation_mode: "personal",
         coordinator_name: "",
         people_count: 1,
         photo_url: "",
@@ -213,18 +217,39 @@ export function VisitForm({ properties, onSuccess }: VisitFormProps) {
                 className="h-4 w-4 text-primary focus:ring-primary"
               />
             </label>
+          </div>
+          {errors.visit_mode && (
+            <p className="text-xs text-destructive pl-1">{errors.visit_mode.message}</p>
+          )}
+        </div>
+
+        {/* Mode of Transportation */}
+        <div className="space-y-2">
+          <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
+            Mode of Transportation
+          </label>
+          <div className="flex flex-col gap-2.5">
             <label className="flex items-center justify-between p-3.5 rounded-xl border border-border/50 bg-background/50 hover:bg-zinc-800/10 cursor-pointer transition-all">
-              <span className="text-sm font-semibold text-foreground">Virtual Walkthrough</span>
+              <span className="text-sm font-semibold text-foreground">Using Personal Vehicle</span>
               <input
                 type="radio"
-                value="virtual"
-                {...register("visit_mode")}
+                value="personal"
+                {...register("transportation_mode")}
+                className="h-4 w-4 text-primary focus:ring-primary"
+              />
+            </label>
+            <label className="flex items-center justify-between p-3.5 rounded-xl border border-border/50 bg-background/50 hover:bg-zinc-800/10 cursor-pointer transition-all">
+              <span className="text-sm font-semibold text-foreground">Require Company Vehicle</span>
+              <input
+                type="radio"
+                value="company"
+                {...register("transportation_mode")}
                 className="h-4 w-4 text-primary focus:ring-primary"
               />
             </label>
           </div>
-          {errors.visit_mode && (
-            <p className="text-xs text-destructive pl-1">{errors.visit_mode.message}</p>
+          {errors.transportation_mode && (
+            <p className="text-xs text-destructive pl-1">{errors.transportation_mode.message}</p>
           )}
         </div>
 

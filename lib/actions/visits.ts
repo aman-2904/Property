@@ -8,6 +8,7 @@ export interface VisitData {
   customer_name: string;
   customer_contact: string;
   visit_mode: "physical" | "virtual";
+  transportation_mode: "personal" | "company";
   coordinator_name: string;
   people_count: number;
   photo_url?: string;
@@ -31,6 +32,7 @@ export async function createVisit(data: VisitData) {
       customer_name: data.customer_name,
       customer_contact: data.customer_contact,
       visit_mode: data.visit_mode,
+      transportation_mode: data.transportation_mode,
       coordinator_name: data.coordinator_name,
       people_count: Number(data.people_count),
       photo_url: data.photo_url || null,

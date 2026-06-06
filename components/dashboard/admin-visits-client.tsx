@@ -23,6 +23,7 @@ interface VisitRow {
   customer_name: string;
   customer_contact: string;
   visit_mode: "physical" | "virtual";
+  transportation_mode?: "personal" | "company" | null;
   coordinator_name: string;
   people_count: number;
   photo_url?: string | null;
@@ -79,6 +80,7 @@ export function AdminVisitsClient({ initialVisits, analytics }: AdminVisitsClien
       "Property Title",
       "Location",
       "Visit Mode",
+      "Transportation Mode",
       "Coordinator Name",
       "Guests Count",
       "Photo Proof URL",
@@ -93,6 +95,7 @@ export function AdminVisitsClient({ initialVisits, analytics }: AdminVisitsClien
       visit.properties?.title || "N/A",
       visit.properties?.location || "N/A",
       visit.visit_mode,
+      visit.transportation_mode || "N/A",
       visit.coordinator_name || "N/A",
       visit.people_count,
       visit.photo_url || "N/A",
@@ -160,18 +163,25 @@ export function AdminVisitsClient({ initialVisits, analytics }: AdminVisitsClien
       ),
     },
     {
-      header: "Mode",
+      header: "Mode / Transport",
       render: (row: VisitRow) => (
-        <span
-          className={cn(
-            "inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border",
-            row.visit_mode === "physical"
-              ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-              : "bg-blue-500/10 text-blue-500 border-blue-500/20"
+        <div className="flex flex-col gap-1 items-start">
+          <span
+            className={cn(
+              "inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border",
+              row.visit_mode === "physical"
+                ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                : "bg-blue-500/10 text-blue-500 border-blue-500/20"
+            )}
+          >
+            {row.visit_mode}
+          </span>
+          {row.transportation_mode && (
+            <span className="text-[10px] font-semibold text-muted-foreground whitespace-nowrap">
+              🚗 {row.transportation_mode === "company" ? "Company Vehicle" : "Personal Vehicle"}
+            </span>
           )}
-        >
-          {row.visit_mode}
-        </span>
+        </div>
       ),
     },
     {
@@ -373,16 +383,23 @@ export function AdminVisitsClient({ initialVisits, analytics }: AdminVisitsClien
                       <span className="font-bold text-foreground text-sm">{visit.properties?.title || "N/A"}</span>
                       <span className="text-[11px] text-muted-foreground">{visit.properties?.location || ""}</span>
                     </div>
-                    <span
-                      className={cn(
-                        "inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider border",
-                        visit.visit_mode === "physical"
-                          ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-                          : "bg-blue-500/10 text-blue-500 border-blue-500/20"
+                    <div className="flex flex-col gap-1 items-end">
+                      <span
+                        className={cn(
+                          "inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider border",
+                          visit.visit_mode === "physical"
+                            ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                            : "bg-blue-500/10 text-blue-500 border-blue-500/20"
+                        )}
+                      >
+                        {visit.visit_mode}
+                      </span>
+                      {visit.transportation_mode && (
+                        <span className="text-[9px] font-semibold text-muted-foreground whitespace-nowrap">
+                          🚗 {visit.transportation_mode === "company" ? "Company Vehicle" : "Personal"}
+                        </span>
                       )}
-                    >
-                      {visit.visit_mode}
-                    </span>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3 text-xs border-t border-border/20 pt-3">
