@@ -37,6 +37,11 @@ export async function submitSale(formData: {
     return { error: "Property not found or invalid property ID." };
   }
 
+  // Enforce booking amount not exceeding sale price
+  if (formData.bookingAmount > property.price) {
+    return { error: "Booking amount cannot exceed the sale price." };
+  }
+
   // 1. Insert overall sale transaction
   const { data: saleData, error: saleError } = await supabase
     .from("sales")

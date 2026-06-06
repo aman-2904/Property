@@ -136,6 +136,7 @@ function SubmitSaleModal({
     if (!price || price <= 0) return setErrorMsg("Enter a valid sale value.");
     const booking = parseFloat(form.bookingAmount);
     if (!booking || booking <= 0) return setErrorMsg("Enter a valid booking amount.");
+    if (booking > price) return setErrorMsg("Booking amount cannot exceed the sale value.");
 
     setIsLoading(true);
     const res = await submitSale({

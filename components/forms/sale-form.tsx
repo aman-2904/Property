@@ -15,6 +15,9 @@ const saleSchema = z.object({
   salePrice: z.coerce.number().min(1, "Sale price must be greater than 0"),
   bookingAmount: z.coerce.number().min(1, "Booking amount must be greater than 0"),
   documentUrl: z.string().min(1, "Please upload the sales agreement/proof document"),
+}).refine((data) => data.bookingAmount <= data.salePrice, {
+  message: "Booking amount cannot exceed the sale value",
+  path: ["bookingAmount"],
 });
 
 type SaleFormValues = z.infer<typeof saleSchema>;
