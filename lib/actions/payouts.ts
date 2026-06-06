@@ -25,38 +25,36 @@ export async function getPayouts(agentId?: string) {
 export async function getAgentBalance(agentId: string) {
   const supabase = createClient();
 
-  // 1. Fetch wallet directly (synced automatically by database triggers)
-  const { data: wallet, error: walletError } = await supabase
-    .from("wallets")
-    .select("*")
-    .eq("user_id", agentId)
-    .single();
+  // Fetch wallet, approved withdrawals, and pending withdrawals in parallel
+  const [walletResult, withdrawalsResult, pendingResult] = await Promise.all([
+    supabase
+      .from("wallets")
+      .select("*")
+      .eq("user_id", agentId)
+      .single(),
+    supabase
+      .from("withdrawals")
+      .select("amount")
+      .eq("user_id", agentId)
+      .eq("status", "approved"),
+    supabase
+      .from("withdrawals")
+      .select("amount")
+      .eq("user_id", agentId)
+      .eq("status", "pending"),
+  ]);
+
+  const wallet = walletResult.data;
+  const walletError = walletResult.error;
+  const withdrawalData = withdrawalsResult.data;
+  const pendingWithdrawalData = pendingResult.data;
 
   if (walletError || !wallet) {
     console.error("Error fetching wallet for balance:", walletError);
     return { totalEarned: 0, balance: 0, pendingHold: 0, paid: 0 };
   }
 
-  // 2. Fetch total approved withdrawals to show paid amount
-  const { data: withdrawalData, error: withdrawalError } = await supabase
-    .from("withdrawals")
-    .select("amount")
-    .eq("user_id", agentId)
-    .eq("status", "approved");
-
-  if (withdrawalError) {
-    console.error("Error fetching approved withdrawals:", withdrawalError);
-  }
-
   const paid = withdrawalData?.reduce((sum, item) => sum + Number(item.amount), 0) || 0;
-
-  // 3. Fetch total pending withdrawals (held balance)
-  const { data: pendingWithdrawalData } = await supabase
-    .from("withdrawals")
-    .select("amount")
-    .eq("user_id", agentId)
-    .eq("status", "pending");
-
   const pendingHold = pendingWithdrawalData?.reduce((sum, item) => sum + Number(item.amount), 0) || 0;
 
   return {

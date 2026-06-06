@@ -1,6 +1,6 @@
 import * as React from "react";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { getAgentCommissions } from "@/lib/actions/sales";
 import { AgentCommissionsClient } from "@/components/dashboard/agent-commissions-client";
 
@@ -14,7 +14,7 @@ export default async function AgentCommissionsPage() {
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getCachedUser();
 
   if (!user) {
     redirect("/login");

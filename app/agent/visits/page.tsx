@@ -1,6 +1,6 @@
 import * as React from "react";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { getProperties } from "@/lib/actions/properties";
 import { getVisits } from "@/lib/actions/visits";
 import { VisitForm } from "@/components/forms/visit-form";
@@ -13,17 +13,17 @@ export default async function AgentVisitsPage() {
   
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getCachedUser();
 
   if (!user) {
     redirect("/login");
   }
 
-  // 1. Fetch properties (only available listings for visit setup)
-  const properties = await getProperties(undefined, "available");
-
-  // 2. Fetch logged visits for this agent
-  const visits = await getVisits(user.id);
+  // Fetch properties and logged visits in parallel
+  const [properties, visits] = await Promise.all([
+    getProperties(undefined, "available"),
+    getVisits(user.id),
+  ]);
 
   // Map to select options format
   const mappedProperties = (properties || []).map((p: any) => ({

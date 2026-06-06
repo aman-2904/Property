@@ -1,8 +1,7 @@
 import * as React from "react";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { getAgentSales } from "@/lib/actions/sales";
-import { getAgentSalesSummary } from "@/lib/actions/sales";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
+import { getAgentSales, getAgentSalesSummary } from "@/lib/actions/sales";
 import { getProperties } from "@/lib/actions/properties";
 import { AgentSalesClient } from "@/components/dashboard/agent-sales-client";
 
@@ -16,7 +15,7 @@ export default async function AgentSalesPage() {
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getCachedUser();
 
   if (!user) {
     redirect("/login");

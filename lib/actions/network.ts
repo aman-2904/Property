@@ -91,28 +91,29 @@ export async function getDownlineTree(rootAgentId: string, maxDepth?: number): P
 export async function getAgentTeamAnalytics(agentId: string): Promise<TeamAnalytics> {
   const adminSupabase = createAdminClient();
 
-  // 1. Fetch current profile to get rank title using admin client to bypass RLS recursion
-  const { data: profile } = await adminSupabase
-    .from("profiles")
-    .select("promotion_level")
-    .eq("id", agentId)
-    .single();
+  // 1. Fetch current profile, direct referrals, and downline list in parallel
+  const [profileResult, directResult, downlineResult] = await Promise.all([
+    adminSupabase
+      .from("profiles")
+      .select("promotion_level")
+      .eq("id", agentId)
+      .single(),
+    adminSupabase
+      .from("profiles")
+      .select("id", { count: "exact", head: true })
+      .eq("upline_id", agentId),
+    adminSupabase.rpc("get_downline_network", {
+      root_id: agentId,
+      max_depth: null,
+    }),
+  ]);
+
+  const profile = profileResult.data;
+  const directCount = directResult.count;
+  const downline = downlineResult.data;
 
   const rankTitles = ["Rookie Agent", "Senior Agent", "Manager", "Director"];
   const currentPromotionTitle = rankTitles[profile?.promotion_level ?? 0] || "Rookie Agent";
-
-  // 2. Fetch direct referrals count using admin client to bypass RLS recursion
-  const { count: directCount } = await adminSupabase
-    .from("profiles")
-    .select("id", { count: "exact", head: true })
-    .eq("upline_id", agentId);
-
-  // 3. Fetch entire downline using RPC (depth = null)
-  const { data: downline } = await adminSupabase.rpc("get_downline_network", {
-    root_id: agentId,
-    max_depth: null,
-  });
-
 
   // Calculate team size: total count minus 1 (excluding the root agent themselves)
   const totalTeamCount = Math.max(0, (downline?.length ?? 1) - 1);
@@ -120,7 +121,7 @@ export async function getAgentTeamAnalytics(agentId: string): Promise<TeamAnalyt
   // Collect all team member IDs (including the agent themselves, to sum up team sales)
   const teamMemberIds = downline ? downline.map((d: any) => d.id) : [agentId];
 
-  // 4. Fetch sum of sales from all these team members
+  // 2. Fetch sum of sales from all these team members
   const { data: sales } = await adminSupabase
     .from("sales")
     .select("booking_amount")

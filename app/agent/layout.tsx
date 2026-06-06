@@ -1,6 +1,6 @@
 import * as React from "react";
 import { redirect } from "next/navigation";
-import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient, getCachedUser } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import fs from "fs";
 
@@ -21,7 +21,7 @@ export default async function AgentLayout({
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getCachedUser();
 
   logToFile(`User checking: ${user ? user.email : "null"}`);
 

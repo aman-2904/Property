@@ -1,6 +1,6 @@
 import * as React from "react";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { getAgentBalance, getPayouts } from "@/lib/actions/payouts";
 import { AgentPayoutsClient } from "@/components/dashboard/agent-payouts-client";
 
@@ -9,18 +9,24 @@ export default async function AgentPayoutsPage() {
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getCachedUser();
 
   if (!user) {
     redirect("/login");
   }
 
-  // 1. Fetch profile to check bank details
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("account_holder_name, bank_name, account_number, ifsc_code, bank_accounts, name")
-    .eq("id", user.id)
-    .single();
+  // Fetch bank accounts profile, balance, and payouts in parallel
+  const [profileResponse, balanceData, payouts] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("account_holder_name, bank_name, account_number, ifsc_code, bank_accounts, name")
+      .eq("id", user.id)
+      .single(),
+    getAgentBalance(user.id),
+    getPayouts(user.id),
+  ]);
+
+  const profile = profileResponse.data;
 
   let bankAccounts: any[] = Array.isArray(profile?.bank_accounts) ? profile.bank_accounts : [];
 
@@ -37,11 +43,7 @@ export default async function AgentPayoutsPage() {
 
   const hasBankDetails = bankAccounts.length > 0;
 
-  // 2. Fetch balance metrics
-  const { totalEarned, balance, paid, pendingHold } = await getAgentBalance(user.id);
-
-  // 3. Fetch withdrawal requests
-  const payouts = await getPayouts(user.id);
+  const { totalEarned, balance, paid, pendingHold } = balanceData;
 
   return (
     <AgentPayoutsClient
