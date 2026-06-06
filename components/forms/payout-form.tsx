@@ -11,10 +11,10 @@ import { cn } from "@/lib/utils";
 
 interface PayoutFormProps {
   balance: number;
-  hasBankDetails: boolean;
+  bankAccounts: any[];
 }
 
-export function PayoutForm({ balance, hasBankDetails }: PayoutFormProps) {
+export function PayoutForm({ balance, bankAccounts }: PayoutFormProps) {
   const router = useRouter();
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState(false);
@@ -25,10 +25,12 @@ export function PayoutForm({ balance, hasBankDetails }: PayoutFormProps) {
       .number()
       .min(10, "Minimum withdrawal is ₹10")
       .max(balance, `Maximum withdrawal is your current balance (₹${balance.toLocaleString("en-US")})`),
-    paymentMethod: z.string().min(1, "Please choose a payment method"),
+    bankAccountId: z.string().min(1, "Please select a bank account"),
   });
 
   type PayoutFormValues = z.infer<typeof payoutSchema>;
+
+  const defaultAccount = bankAccounts.find((a) => a.is_default) || bankAccounts[0];
 
   const {
     register,
@@ -39,7 +41,7 @@ export function PayoutForm({ balance, hasBankDetails }: PayoutFormProps) {
     resolver: zodResolver(payoutSchema) as any,
     defaultValues: {
       amount: 0,
-      paymentMethod: "",
+      bankAccountId: defaultAccount?.id || "",
     },
   });
 
@@ -49,19 +51,24 @@ export function PayoutForm({ balance, hasBankDetails }: PayoutFormProps) {
     startTransition(async () => {
       const res = await requestPayout({
         amount: data.amount,
-        paymentMethod: data.paymentMethod,
+        bankAccountId: data.bankAccountId,
       });
 
       if (res && res.error) {
         setError(res.error);
       } else {
         setSuccess(true);
-        reset();
+        reset({
+          amount: 0,
+          bankAccountId: defaultAccount?.id || "",
+        });
         router.refresh();
         setTimeout(() => setSuccess(false), 5000);
       }
     });
   };
+
+  const hasBankDetails = bankAccounts.length > 0;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -82,7 +89,7 @@ export function PayoutForm({ balance, hasBankDetails }: PayoutFormProps) {
       {!hasBankDetails && (
         <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-500 text-sm flex items-start gap-2.5">
           <AlertCircle className="h-5 w-5 shrink-0 mt-0.5 text-amber-500" />
-          <span>Bank details (Bank Name, Account Number, and IFSC Code) are mandatory for withdrawals. Please update them in Settings.</span>
+          <span>Bank details (Account Holder Name, Bank Name, Account Number, and IFSC Code) are mandatory for withdrawals. Please update them first.</span>
         </div>
       )}
 
@@ -105,30 +112,33 @@ export function PayoutForm({ balance, hasBankDetails }: PayoutFormProps) {
         )}
       </div>
 
-      <div className="space-y-1.5">
-        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
-          Payment Method
-        </label>
-        <select
-          {...register("paymentMethod")}
-          disabled={isPending || balance < 10 || !hasBankDetails}
-          className="w-full px-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all text-foreground cursor-pointer appearance-none"
-          style={{
-            backgroundImage: `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
-            backgroundPosition: "right 0.75rem center",
-            backgroundSize: "1rem",
-            backgroundRepeat: "no-repeat",
-          }}
-        >
-          <option value="">Choose method...</option>
-          <option value="Bank Transfer">Bank Transfer (ACH)</option>
-          <option value="USDT (TRC-20)">USDT (TRC-20) Crypto</option>
-          <option value="PayPal">PayPal</option>
-        </select>
-        {errors.paymentMethod && (
-          <p className="text-xs text-destructive pl-1">{errors.paymentMethod.message}</p>
-        )}
-      </div>
+      {hasBankDetails && (
+        <div className="space-y-1.5">
+          <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
+            Withdrawal Destination Account
+          </label>
+          <select
+            {...register("bankAccountId")}
+            disabled={isPending || balance < 10 || bankAccounts.length === 0}
+            className="w-full px-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all text-foreground cursor-pointer appearance-none"
+            style={{
+              backgroundImage: `url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`,
+              backgroundPosition: "right 0.75rem center",
+              backgroundSize: "1rem",
+              backgroundRepeat: "no-repeat",
+            }}
+          >
+            {bankAccounts.map((account) => (
+              <option key={account.id} value={account.id}>
+                {account.bank_name} - {account.account_number.slice(-4)} ({account.account_holder_name})
+              </option>
+            ))}
+          </select>
+          {errors.bankAccountId && (
+            <p className="text-xs text-destructive pl-1">{errors.bankAccountId.message as string}</p>
+          )}
+        </div>
+      )}
 
       <button
         type="submit"

@@ -18,15 +18,24 @@ export default async function AgentPayoutsPage() {
   // 1. Fetch profile to check bank details
   const { data: profile } = await supabase
     .from("profiles")
-    .select("bank_name, account_number, ifsc_code")
+    .select("account_holder_name, bank_name, account_number, ifsc_code, bank_accounts, name")
     .eq("id", user.id)
     .single();
 
-  const hasBankDetails = !!(
-    profile?.bank_name &&
-    profile?.account_number &&
-    profile?.ifsc_code
-  );
+  let bankAccounts: any[] = Array.isArray(profile?.bank_accounts) ? profile.bank_accounts : [];
+
+  if (bankAccounts.length === 0 && profile?.bank_name && profile?.account_number) {
+    bankAccounts.push({
+      id: "legacy",
+      account_holder_name: profile.account_holder_name || profile.name || "",
+      bank_name: profile.bank_name,
+      account_number: profile.account_number,
+      ifsc_code: profile.ifsc_code,
+      is_default: true
+    });
+  }
+
+  const hasBankDetails = bankAccounts.length > 0;
 
   // 2. Fetch balance metrics
   const { totalEarned, balance, paid, pendingHold } = await getAgentBalance(user.id);
@@ -41,6 +50,7 @@ export default async function AgentPayoutsPage() {
       paid={paid}
       totalEarned={totalEarned}
       hasBankDetails={hasBankDetails}
+      bankAccounts={bankAccounts}
       payouts={payouts as any[]}
     />
   );

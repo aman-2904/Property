@@ -18,9 +18,16 @@ interface Payout {
   status: string;
   remarks: string | null;
   created_at: string;
+  bank_details?: {
+    account_holder_name: string | null;
+    bank_name: string | null;
+    account_number: string | null;
+    ifsc_code: string | null;
+  } | null;
   profiles: {
     name: string;
     email: string;
+    account_holder_name: string | null;
     bank_name: string | null;
     account_number: string | null;
     ifsc_code: string | null;
@@ -73,7 +80,7 @@ export function AdminWithdrawalsClient({ initialPayouts }: AdminWithdrawalsClien
   const [selectedPayout, setSelectedPayout] = React.useState<Payout | null>(null);
   const [isApproveOpen, setIsApproveOpen] = React.useState(false);
   const [isRejectOpen, setIsRejectOpen] = React.useState(false);
-  const [remarksInput, setRemarksInput] = React.useState("");
+  const [remarksInput, setRemarksInput] = React.useState("done");
   const [isLoading, setIsLoading] = React.useState(false);
   const [showToast, setShowToast] = React.useState<string | null>(null);
 
@@ -115,7 +122,7 @@ export function AdminWithdrawalsClient({ initialPayouts }: AdminWithdrawalsClien
       triggerToast(`Error: ${res.error}`, false);
     } else {
       setIsApproveOpen(false);
-      setRemarksInput("");
+      setRemarksInput("done");
       triggerToast("Withdrawal request approved successfully!");
       router.refresh();
     }
@@ -147,16 +154,17 @@ export function AdminWithdrawalsClient({ initialPayouts }: AdminWithdrawalsClien
   };
 
   const exportCSV = () => {
-    const headers = ["Agent", "Email", "Amount", "Bank Name", "Account Number", "IFSC Code", "Status", "Remarks", "Date"];
+    const headers = ["Agent", "Email", "Amount", "A/C Holder Name", "Bank Name", "Account Number", "IFSC Code", "Status", "Remarks", "Date"];
     const lines = [
       headers.join(","),
       ...filteredPayouts.map((w) => [
         `"${String(w.profiles?.name ?? "").replace(/"/g, '""')}"`,
         `"${String(w.profiles?.email ?? "").replace(/"/g, '""')}"`,
         w.amount,
-        `"${String(w.profiles?.bank_name ?? "").replace(/"/g, '""')}"`,
-        `"${String(w.profiles?.account_number ?? "").replace(/"/g, '""')}"`,
-        `"${String(w.profiles?.ifsc_code ?? "").replace(/"/g, '""')}"`,
+        `"${String(w.bank_details?.account_holder_name ?? w.profiles?.account_holder_name ?? "").replace(/"/g, '""')}"`,
+        `"${String(w.bank_details?.bank_name ?? w.profiles?.bank_name ?? "").replace(/"/g, '""')}"`,
+        `"${String(w.bank_details?.account_number ?? w.profiles?.account_number ?? "").replace(/"/g, '""')}"`,
+        `"${String(w.bank_details?.ifsc_code ?? w.profiles?.ifsc_code ?? "").replace(/"/g, '""')}"`,
         w.status,
         `"${String(w.remarks ?? "").replace(/"/g, '""')}"`,
         new Date(w.created_at).toISOString().split("T")[0]
@@ -194,17 +202,22 @@ export function AdminWithdrawalsClient({ initialPayouts }: AdminWithdrawalsClien
     {
       header: "Bank Details",
       accessorKey: "profiles.bank_name",
-      render: (row: Payout) => (
-        <div className="flex flex-col text-xs text-muted-foreground">
-          <span className="font-semibold text-foreground/80 flex items-center gap-1">
-            <Landmark className="h-3 w-3 shrink-0" />
-            {row.profiles?.bank_name || "N/A"}
-          </span>
-          {row.profiles?.account_number && (
-            <span>A/C: {row.profiles.account_number}</span>
-          )}
-        </div>
-      ),
+      render: (row: Payout) => {
+        const bankName = row.bank_details?.bank_name ?? row.profiles?.bank_name;
+        const accountNumber = row.bank_details?.account_number ?? row.profiles?.account_number;
+        const accountHolder = row.bank_details?.account_holder_name ?? row.profiles?.account_holder_name;
+        return (
+          <div className="flex flex-col text-xs text-muted-foreground">
+            <span className="font-semibold text-foreground/80 flex items-center gap-1" title={accountHolder || undefined}>
+              <Landmark className="h-3 w-3 shrink-0" />
+              {bankName || "N/A"}
+            </span>
+            {accountNumber && (
+              <span>A/C: {accountNumber}</span>
+            )}
+          </div>
+        );
+      },
     },
     {
       header: "Status",
@@ -237,6 +250,7 @@ export function AdminWithdrawalsClient({ initialPayouts }: AdminWithdrawalsClien
             <button
               onClick={() => {
                 setSelectedPayout(row);
+                setRemarksInput("done");
                 setIsApproveOpen(true);
               }}
               className="p-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500 text-emerald-500 hover:text-white border border-emerald-500/20 transition-all"
@@ -340,9 +354,10 @@ export function AdminWithdrawalsClient({ initialPayouts }: AdminWithdrawalsClien
                 </p>
                 <div className="text-xs text-muted-foreground space-y-0.5">
                   <p>Recipient: {selectedPayout?.profiles?.name}</p>
-                  <p>Bank: {selectedPayout?.profiles?.bank_name || "N/A"}</p>
-                  <p>Account Number: {selectedPayout?.profiles?.account_number || "N/A"}</p>
-                  <p>IFSC Code: {selectedPayout?.profiles?.ifsc_code || "N/A"}</p>
+                  <p>A/C Holder: {selectedPayout?.bank_details?.account_holder_name ?? selectedPayout?.profiles?.account_holder_name ?? "N/A"}</p>
+                  <p>Bank: {selectedPayout?.bank_details?.bank_name ?? selectedPayout?.profiles?.bank_name ?? "N/A"}</p>
+                  <p>Account Number: {selectedPayout?.bank_details?.account_number ?? selectedPayout?.profiles?.account_number ?? "N/A"}</p>
+                  <p>IFSC Code: {selectedPayout?.bank_details?.ifsc_code ?? selectedPayout?.profiles?.ifsc_code ?? "N/A"}</p>
                 </div>
               </div>
 

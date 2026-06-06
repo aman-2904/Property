@@ -1,13 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import fs from "fs";
-import path from "path";
 
 function logToFile(msg: string) {
-  try {
-    const logPath = path.join(process.cwd(), "middleware_log.txt");
-    fs.appendFileSync(logPath, `[${new Date().toISOString()}] ${msg}\n`);
-  } catch (e) {}
+  // Disabled console log to prevent Next.js build worker IPC corruption
 }
 
 export async function updateSession(request: NextRequest) {

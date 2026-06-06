@@ -4,7 +4,7 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { updateBankDetails } from "@/lib/actions/payouts";
+import { saveBankAccount } from "@/lib/actions/payouts";
 import { Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -12,9 +12,11 @@ import { cn } from "@/lib/utils";
 interface BankDetailsFormProps {
   onSuccessCallback?: () => void;
   defaultValues?: {
-    bankName: string;
-    accountNumber: string;
-    ifscCode: string;
+    id?: string;
+    account_holder_name?: string | null;
+    bank_name?: string | null;
+    account_number?: string | null;
+    ifsc_code?: string | null;
   };
 }
 
@@ -24,11 +26,21 @@ export function BankDetailsForm({ onSuccessCallback, defaultValues }: BankDetail
   const [success, setSuccess] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
 
-  const bankDetailsSchema = z.object({
-    bankName: z.string().min(2, "Bank name must be at least 2 characters"),
-    accountNumber: z.string().min(5, "Account number must be at least 5 characters"),
-    ifscCode: z.string().min(4, "IFSC code must be at least 4 characters"),
-  });
+  const bankDetailsSchema = z
+    .object({
+      accountHolderName: z.string().trim().min(2, "Account holder name must be at least 2 characters"),
+      bankName: z.string().trim().min(2, "Bank name must be at least 2 characters"),
+      accountNumber: z.string().trim().min(5, "Account number must be at least 5 characters"),
+      confirmAccountNumber: z.string().trim().min(5, "Confirm account number must be at least 5 characters"),
+      ifscCode: z
+        .string()
+        .trim()
+        .regex(/^[A-Z]{4}0[A-Z0-9]{6}$/i, "Invalid IFSC code format (e.g. SBIN0001234)"),
+    })
+    .refine((data) => data.accountNumber === data.confirmAccountNumber, {
+      message: "Account numbers do not match",
+      path: ["confirmAccountNumber"],
+    });
 
   type BankDetailsFormValues = z.infer<typeof bankDetailsSchema>;
 
@@ -38,18 +50,27 @@ export function BankDetailsForm({ onSuccessCallback, defaultValues }: BankDetail
     formState: { errors },
   } = useForm<BankDetailsFormValues>({
     resolver: zodResolver(bankDetailsSchema) as any,
-    defaultValues: defaultValues || {
-      bankName: "",
-      accountNumber: "",
-      ifscCode: "",
+    defaultValues: {
+      accountHolderName: defaultValues?.account_holder_name || "",
+      bankName: defaultValues?.bank_name || "",
+      accountNumber: defaultValues?.account_number || "",
+      confirmAccountNumber: defaultValues?.account_number || "",
+      ifscCode: defaultValues?.ifsc_code || "",
     },
   });
 
   const onSubmit = (data: BankDetailsFormValues) => {
+    if (isPending) return; // Prevent duplicate submissions
     setError(null);
     setSuccess(false);
     startTransition(async () => {
-      const res = await updateBankDetails(data);
+      const res = await saveBankAccount({
+        id: defaultValues?.id,
+        accountHolderName: data.accountHolderName,
+        bankName: data.bankName,
+        accountNumber: data.accountNumber,
+        ifscCode: data.ifscCode.toUpperCase(),
+      });
 
       if (res && res.error) {
         setError(res.error);
@@ -83,11 +104,30 @@ export function BankDetailsForm({ onSuccessCallback, defaultValues }: BankDetail
 
       <div className="space-y-1.5">
         <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
+          Account Holder Name
+        </label>
+        <input
+          type="text"
+          placeholder="e.g. John Doe"
+          {...register("accountHolderName")}
+          disabled={isPending}
+          className={cn(
+            "w-full px-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all font-semibold",
+            errors.accountHolderName && "border-destructive/50"
+          )}
+        />
+        {errors.accountHolderName && (
+          <p className="text-xs text-destructive pl-1">{errors.accountHolderName.message as string}</p>
+        )}
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
           Bank Name
         </label>
         <input
           type="text"
-          placeholder="e.g. JPMorgan Chase"
+          placeholder="e.g. HDFC Bank"
           {...register("bankName")}
           disabled={isPending}
           className={cn(
@@ -102,11 +142,11 @@ export function BankDetailsForm({ onSuccessCallback, defaultValues }: BankDetail
 
       <div className="space-y-1.5">
         <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
-          Account Number
+          Bank Account Number
         </label>
         <input
           type="text"
-          placeholder="e.g. 1234567890"
+          placeholder="Enter Account Number"
           {...register("accountNumber")}
           disabled={isPending}
           className={cn(
@@ -121,11 +161,30 @@ export function BankDetailsForm({ onSuccessCallback, defaultValues }: BankDetail
 
       <div className="space-y-1.5">
         <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
-          IFSC / Routing Code
+          Confirm Account Number
         </label>
         <input
           type="text"
-          placeholder="e.g. CHAS0123456"
+          placeholder="Confirm Account Number"
+          {...register("confirmAccountNumber")}
+          disabled={isPending}
+          className={cn(
+            "w-full px-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all font-semibold",
+            errors.confirmAccountNumber && "border-destructive/50"
+          )}
+        />
+        {errors.confirmAccountNumber && (
+          <p className="text-xs text-destructive pl-1">{errors.confirmAccountNumber.message as string}</p>
+        )}
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
+          IFSC Code
+        </label>
+        <input
+          type="text"
+          placeholder="e.g. HDFC0001234"
           {...register("ifscCode")}
           disabled={isPending}
           className={cn(
