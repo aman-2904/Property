@@ -67,6 +67,32 @@ export function TreeVisualizer({ data }: TreeVisualizerProps) {
     });
   };
 
+  // Precompute recursive downline recruits/team stats client-side based on actual hierarchy
+  const teamCountsMap = React.useMemo(() => {
+    const directsMap = new Map<string, number>();
+    const teamMap = new Map<string, number>();
+
+    function calculate(node: TreeNodeData): number {
+      if (!node) return 0;
+      const directCount = node.children?.length ?? 0;
+      directsMap.set(node.id, directCount);
+
+      let totalTeam = 0;
+      if (node.children && node.children.length > 0) {
+        node.children.forEach((child) => {
+          totalTeam += 1 + calculate(child);
+        });
+      }
+      teamMap.set(node.id, totalTeam);
+      return totalTeam;
+    }
+
+    if (data) {
+      calculate(data);
+    }
+    return { directsMap, teamMap };
+  }, [data]);
+
   // Compute Layout (Horizontal Centering, Post-order traversal)
   const coordsMap = React.useMemo(() => {
     const coords = new Map<string, Coords>();
@@ -454,7 +480,7 @@ export function TreeVisualizer({ data }: TreeVisualizerProps) {
                     fontWeight="800"
                     fill="hsl(var(--foreground))"
                   >
-                    {node.direct_sales_count}
+                    {teamCountsMap.directsMap.get(node.id) ?? 0}
                   </text>
 
                   {/* Stats Grid - Total Downline */}
@@ -478,7 +504,7 @@ export function TreeVisualizer({ data }: TreeVisualizerProps) {
                     fontWeight="800"
                     fill="hsl(var(--foreground))"
                   >
-                    {node.group_sales_count}
+                    {teamCountsMap.teamMap.get(node.id) ?? 0}
                   </text>
 
                 </motion.g>
@@ -558,14 +584,14 @@ export function TreeVisualizer({ data }: TreeVisualizerProps) {
                 <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">Direct Recruits</span>
                 <span className="font-semibold text-foreground flex items-center gap-1">
                   <Users className="h-3 w-3 text-muted-foreground" />
-                  {hoveredNode.direct_sales_count}
+                  {teamCountsMap.directsMap.get(hoveredNode.id) ?? 0}
                 </span>
               </div>
               <div className="space-y-0.5 mt-1.5">
                 <span className="text-muted-foreground block uppercase tracking-wider text-[8px] font-bold">Total Downline</span>
                 <span className="font-semibold text-foreground flex items-center gap-1">
                   <Activity className="h-3 w-3 text-muted-foreground" />
-                  {hoveredNode.group_sales_count}
+                  {teamCountsMap.teamMap.get(hoveredNode.id) ?? 0}
                 </span>
               </div>
             </div>

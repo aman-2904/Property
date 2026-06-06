@@ -27,6 +27,45 @@ export function AgentNetworkClient({
 }: AgentNetworkClientProps) {
   const rankTitles = ["Rookie Agent", "Senior Agent", "Manager", "Director"];
 
+  // Precompute recruits counts for each member in downlineList client-side
+  const recruitsStatsMap = React.useMemo(() => {
+    const directRecruitsMap = new Map<string, number>();
+    const totalTeamMap = new Map<string, number>();
+
+    // 1. Build a map of upline_id -> children list for quick lookup
+    const childrenMap = new Map<string, string[]>();
+    (downlineList || []).forEach((member) => {
+      if (member.upline_id) {
+        if (!childrenMap.has(member.upline_id)) {
+          childrenMap.set(member.upline_id, []);
+        }
+        childrenMap.get(member.upline_id)!.push(member.id);
+      }
+    });
+
+    // 2. Count directs for each member
+    (downlineList || []).forEach((member) => {
+      const directs = childrenMap.get(member.id)?.length ?? 0;
+      directRecruitsMap.set(member.id, directs);
+    });
+
+    // 3. Count total team recursively
+    function countTeam(memberId: string): number {
+      const children = childrenMap.get(memberId) || [];
+      let total = children.length;
+      children.forEach((childId) => {
+        total += countTeam(childId);
+      });
+      return total;
+    }
+
+    (downlineList || []).forEach((member) => {
+      totalTeamMap.set(member.id, countTeam(member.id));
+    });
+
+    return { directRecruitsMap, totalTeamMap };
+  }, [downlineList]);
+
   // Table columns for downline directory
   const columns = [
     {
@@ -60,10 +99,20 @@ export function AgentNetworkClient({
     {
       header: "Direct Recruits",
       accessorKey: "direct_sales_count",
+      render: (row: any) => (
+        <span>
+          {recruitsStatsMap.directRecruitsMap.get(row.id) ?? 0}
+        </span>
+      ),
     },
     {
       header: "Total Downline",
       accessorKey: "group_sales_count",
+      render: (row: any) => (
+        <span>
+          {recruitsStatsMap.totalTeamMap.get(row.id) ?? 0}
+        </span>
+      ),
     },
     {
       header: "Status",
@@ -189,11 +238,15 @@ export function AgentNetworkClient({
                       </div>
                       <div className="flex flex-col gap-0.5">
                         <span className="text-muted-foreground text-[9px] uppercase tracking-wider font-semibold">Directs</span>
-                        <span className="text-foreground/80 font-medium">{member.direct_sales_count}</span>
+                        <span className="text-foreground/80 font-medium">
+                          {recruitsStatsMap.directRecruitsMap.get(member.id) ?? 0}
+                        </span>
                       </div>
                       <div className="flex flex-col gap-0.5">
                         <span className="text-muted-foreground text-[9px] uppercase tracking-wider font-semibold">Downline</span>
-                        <span className="text-foreground/80 font-medium">{member.group_sales_count}</span>
+                        <span className="text-foreground/80 font-medium">
+                          {recruitsStatsMap.totalTeamMap.get(member.id) ?? 0}
+                        </span>
                       </div>
                     </div>
 
