@@ -73,16 +73,7 @@ export async function getVisits(agentId?: string) {
 export async function getVisitAnalytics() {
   const supabase = createClient();
 
-  // 1. Total Visits count
-  const { count: totalVisits, error: countErr } = await supabase
-    .from("visits")
-    .select("*", { count: "exact", head: true });
-
-  if (countErr) {
-    console.error("Error fetching total visits count:", countErr);
-  }
-
-  // 2. Fetch all visits with joins for other stats
+  // 1. Fetch all visits with joins for other stats
   const { data: visitsData, error: dataErr } = await supabase
     .from("visits")
     .select(`
@@ -104,6 +95,7 @@ export async function getVisitAnalytics() {
   }
 
   const visits = visitsData || [];
+  const totalVisits = visits.length;
 
   // 3. Monthly Visits Calculation
   const monthlyGroups: Record<string, number> = {};

@@ -259,7 +259,7 @@ export function ActivityLogsClient({ initialLogs }: ActivityLogsClientProps) {
                     )}
                     {log.metadata?.amount && (
                       <span className="text-xs font-bold text-foreground/70">
-                        · ${Number(log.metadata.amount).toLocaleString("en-US")}
+                        · ₹{Number(log.metadata.amount).toLocaleString("en-IN")}
                       </span>
                     )}
                   </div>

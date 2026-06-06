@@ -1,6 +1,6 @@
 import * as React from "react";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { getActivityLogs } from "@/lib/actions/admin";
 import { ActivityLogsClient } from "@/components/dashboard/activity-logs-client";
 
@@ -11,7 +11,7 @@ export default async function ActivityLogsPage() {
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getCachedUser();
 
   if (!user) redirect("/login");
 

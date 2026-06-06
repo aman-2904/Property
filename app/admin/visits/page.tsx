@@ -3,8 +3,10 @@ import { getVisits, getVisitAnalytics } from "@/lib/actions/visits";
 import { AdminVisitsClient } from "@/components/dashboard/admin-visits-client";
 
 export default async function AdminVisitsPage() {
-  const visits = await getVisits();
-  const analytics = await getVisitAnalytics();
+  const [visits, analytics] = await Promise.all([
+    getVisits(),
+    getVisitAnalytics(),
+  ]);
 
   return (
     <div className="space-y-6">

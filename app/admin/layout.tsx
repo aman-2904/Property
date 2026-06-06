@@ -1,6 +1,6 @@
 import * as React from "react";
 import { redirect } from "next/navigation";
-import { createClient, createAdminClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient, getCachedUser } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/dashboard/sidebar";
 
 import { headers } from "next/headers";
@@ -22,7 +22,7 @@ export default async function AdminLayout({
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getCachedUser();
 
   if (!user) {
     redirect("/admin/login");

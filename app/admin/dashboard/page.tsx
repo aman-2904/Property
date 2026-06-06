@@ -1,6 +1,6 @@
 import * as React from "react";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { AdminDashboardClient } from "@/components/dashboard/admin-dashboard-client";
 import {
   getAdminStats,
@@ -22,7 +22,7 @@ export default async function AdminDashboardPage() {
 
   const {
     data: { user },
-  } = await supabase.auth.getUser();
+  } = await getCachedUser();
 
   if (!user) {
     redirect("/login");
