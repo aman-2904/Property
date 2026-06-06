@@ -19,6 +19,7 @@ interface DataTableProps<T> {
   emptyTitle?: string;
   emptyDescription?: string;
   rowClassName?: string;
+  cellClassName?: string;
 }
 
 export function DataTable<T>({
@@ -28,6 +29,7 @@ export function DataTable<T>({
   emptyTitle,
   emptyDescription,
   rowClassName,
+  cellClassName,
 }: DataTableProps<T>) {
   if (isLoading) {
     return <TableSkeleton rows={5} />;
@@ -47,7 +49,8 @@ export function DataTable<T>({
                 <th
                   key={index}
                   className={cn(
-                    "px-6 py-4 text-xs font-semibold uppercase tracking-wider",
+                    "px-4 py-3 text-xs font-semibold uppercase tracking-wider",
+                    cellClassName,
                     col.className
                   )}
                 >
@@ -67,7 +70,7 @@ export function DataTable<T>({
               >
                 {columns.map((col, colIndex) => {
                   const val =
-                    col.accessorKey && typeof col.accessorKey === "string"
+                     col.accessorKey && typeof col.accessorKey === "string"
                       ? (row as any)[col.accessorKey]
                       : undefined;
 
@@ -75,7 +78,8 @@ export function DataTable<T>({
                     <td
                       key={colIndex}
                       className={cn(
-                        "px-6 py-4 text-foreground/90 align-middle",
+                        "px-4 py-3 text-foreground/90 align-middle",
+                        cellClassName,
                         col.className
                       )}
                     >

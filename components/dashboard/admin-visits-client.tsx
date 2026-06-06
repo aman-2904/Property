@@ -3,7 +3,7 @@
 import * as React from "react";
 import { DataTable } from "@/components/tables/data-table";
 import { Modal, ModalContent, ModalHeader, ModalTitle, ModalPortal, ModalOverlay } from "@/components/ui/modal-system";
-import { Search, Eye, Filter, Calendar, Download, EyeOff, BarChart3, Users, Building } from "lucide-react";
+import { Search, Eye, Filter, Calendar, Download, EyeOff, BarChart3, Users, Building, Car } from "lucide-react";
 import { EmptyState } from "@/components/ui/empty-states";
 
 import {
@@ -50,7 +50,7 @@ interface AdminVisitsClientProps {
 
 export function AdminVisitsClient({ initialVisits, analytics }: AdminVisitsClientProps) {
   const [searchQuery, setSearchQuery] = React.useState("");
-  const [modeFilter, setModeFilter] = React.useState("");
+  const [transportFilter, setTransportFilter] = React.useState("");
   const [selectedPhoto, setSelectedPhoto] = React.useState<string | null>(null);
 
   // Client-side filtering
@@ -63,11 +63,11 @@ export function AdminVisitsClient({ initialVisits, analytics }: AdminVisitsClien
         (visit.coordinator_name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
         agentName.toLowerCase().includes(searchQuery.toLowerCase());
       
-      const matchesMode = modeFilter === "" || visit.visit_mode === modeFilter;
+      const matchesTransport = transportFilter === "" || visit.transportation_mode === transportFilter;
 
-      return matchesSearch && matchesMode;
+      return matchesSearch && matchesTransport;
     });
-  }, [initialVisits, searchQuery, modeFilter]);
+  }, [initialVisits, searchQuery, transportFilter]);
 
   // Export to CSV
   const handleExportCSV = () => {
@@ -165,10 +165,10 @@ export function AdminVisitsClient({ initialVisits, analytics }: AdminVisitsClien
     {
       header: "Mode / Transport",
       render: (row: VisitRow) => (
-        <div className="flex flex-col gap-1 items-start">
+        <div className="flex flex-col gap-1.5 items-start">
           <span
             className={cn(
-              "inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border",
+              "inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider border whitespace-nowrap",
               row.visit_mode === "physical"
                 ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
                 : "bg-blue-500/10 text-blue-500 border-blue-500/20"
@@ -177,8 +177,16 @@ export function AdminVisitsClient({ initialVisits, analytics }: AdminVisitsClien
             {row.visit_mode}
           </span>
           {row.transportation_mode && (
-            <span className="text-[10px] font-semibold text-muted-foreground whitespace-nowrap">
-              🚗 {row.transportation_mode === "company" ? "Company Vehicle" : "Personal Vehicle"}
+            <span
+              className={cn(
+                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider border whitespace-nowrap",
+                row.transportation_mode === "company"
+                  ? "bg-violet-500/10 text-violet-400 border-violet-500/25"
+                  : "bg-zinc-500/10 text-zinc-400 border-zinc-500/25"
+              )}
+            >
+              <Car className="h-3.5 w-3.5 shrink-0" />
+              {row.transportation_mode === "company" ? "Company Vehicle" : "Personal Vehicle"}
             </span>
           )}
         </div>
@@ -333,13 +341,13 @@ export function AdminVisitsClient({ initialVisits, analytics }: AdminVisitsClien
           <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
             <Filter className="h-4 w-4 text-muted-foreground" />
             <select
-              value={modeFilter}
-              onChange={(e) => setModeFilter(e.target.value)}
+              value={transportFilter}
+              onChange={(e) => setTransportFilter(e.target.value)}
               className="h-10 px-3 rounded-xl border border-border/50 bg-background/50 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-xs"
             >
-              <option value="">All Visit Modes</option>
-              <option value="physical">Physical Visit</option>
-              <option value="virtual">Virtual Walkthrough</option>
+              <option value="">All Transportation</option>
+              <option value="personal">Personal Vehicle</option>
+              <option value="company">Company Vehicle</option>
             </select>
 
             <button
@@ -367,6 +375,7 @@ export function AdminVisitsClient({ initialVisits, analytics }: AdminVisitsClien
               <DataTable
                 columns={columns}
                 data={filteredVisits}
+                cellClassName="px-3 py-3"
                 emptyTitle="No visits records found"
                 emptyDescription="There are no registered visit tours matching the filters."
               />
@@ -395,8 +404,16 @@ export function AdminVisitsClient({ initialVisits, analytics }: AdminVisitsClien
                         {visit.visit_mode}
                       </span>
                       {visit.transportation_mode && (
-                        <span className="text-[9px] font-semibold text-muted-foreground whitespace-nowrap">
-                          🚗 {visit.transportation_mode === "company" ? "Company Vehicle" : "Personal"}
+                        <span
+                          className={cn(
+                            "inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[8px] font-extrabold uppercase tracking-wider border mt-1",
+                            visit.transportation_mode === "company"
+                              ? "bg-violet-500/10 text-violet-400 border-violet-500/25"
+                              : "bg-zinc-500/10 text-zinc-400 border-zinc-500/25"
+                          )}
+                        >
+                          <Car className="h-2.5 w-2.5" />
+                          {visit.transportation_mode === "company" ? "Company" : "Personal"}
                         </span>
                       )}
                     </div>
