@@ -4,7 +4,6 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { FileUpload } from "@/components/ui/file-upload";
 import { Loader2, AlertCircle } from "lucide-react";
 import { submitSale } from "@/lib/actions/sales";
 import { cn, numberToIndianWords } from "@/lib/utils";
@@ -14,7 +13,6 @@ const saleSchema = z.object({
   buyerPhone: z.string().min(6, "Please enter a valid phone number"),
   salePrice: z.coerce.number().min(1, "Sale price must be greater than 0"),
   bookingAmount: z.coerce.number().min(1, "Booking amount must be greater than 0"),
-  documentUrl: z.string().min(1, "Please upload the sales agreement/proof document"),
 }).refine((data) => data.bookingAmount <= data.salePrice, {
   message: "Booking amount cannot exceed the sale value",
   path: ["bookingAmount"],
@@ -41,7 +39,6 @@ export function SaleForm({
   const {
     register,
     handleSubmit,
-    setValue,
     watch,
     formState: { errors },
   } = useForm<SaleFormValues>({
@@ -51,11 +48,9 @@ export function SaleForm({
       buyerPhone: "",
       salePrice: propertyPrice,
       bookingAmount: "" as any,
-      documentUrl: "",
     },
   });
 
-  const documentUrl = watch("documentUrl");
   const bookingAmountValue = watch("bookingAmount");
 
   const onSubmit = (data: SaleFormValues) => {
@@ -67,7 +62,6 @@ export function SaleForm({
         buyerPhone: data.buyerPhone,
         salePrice: propertyPrice,
         bookingAmount: data.bookingAmount,
-        documentUrl: data.documentUrl,
       });
 
       if (res && res.error) {
@@ -183,34 +177,6 @@ export function SaleForm({
         )}
       </div>
 
-      {/* Document Upload */}
-      <div className="space-y-1.5">
-        <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1 block mb-1">
-          Sales Agreement Document
-        </label>
-        {documentUrl ? (
-          <div className="flex items-center justify-between p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-500">
-            <span className="text-xs font-medium truncate max-w-[280px]">
-              Document uploaded successfully
-            </span>
-            <button
-              type="button"
-              onClick={() => setValue("documentUrl", "")}
-              className="text-xs font-bold underline hover:text-emerald-400"
-            >
-              Replace
-            </button>
-          </div>
-        ) : (
-          <FileUpload
-            bucket="sale-documents"
-            onUploadComplete={(url) => setValue("documentUrl", url)}
-          />
-        )}
-        {errors.documentUrl && (
-          <p className="text-xs text-destructive pl-1">{errors.documentUrl.message}</p>
-        )}
-      </div>
 
       <button
         type="submit"
