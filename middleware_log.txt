@@ -2020,3 +2020,6 @@
 [2026-06-07T08:16:16.473Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
 [2026-06-07T08:16:16.692Z] [AgentLayout] Profile queried, role: AGENT
 [2026-06-07T08:16:16.692Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-07T08:18:43.267Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-07T08:18:43.455Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-07T08:18:43.455Z] [AgentLayout] Allowing access to AgentLayout

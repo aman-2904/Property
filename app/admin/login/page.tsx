@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion } from "framer-motion";
-import { Lock, Mail, Loader2, AlertCircle, ShieldAlert, ArrowLeft, CheckCircle, Key } from "lucide-react";
+import { Lock, Mail, Loader2, AlertCircle, ShieldAlert, ArrowLeft, CheckCircle, Key, Eye, EyeOff } from "lucide-react";
 import { login } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/dashboard/theme-toggle";
@@ -32,6 +32,7 @@ export default function AdminLoginPage() {
   const [resetError, setResetError] = React.useState<string | null>(null);
   const [resetSuccess, setResetSuccess] = React.useState<string | null>(null);
   const [isResetPending, setIsResetPending] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const {
     register,
@@ -382,15 +383,23 @@ export default function AdminLoginPage() {
                     <Lock className="h-4 w-4" />
                   </span>
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     {...register("password")}
                     disabled={isPending}
                     placeholder="••••••••"
                     className={cn(
-                      "w-full pl-10 pr-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-violet-500/50 transition-all",
+                      "w-full pl-10 pr-11 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-violet-500/50 transition-all",
                       errors.password && "border-destructive/50 focus:border-destructive/50"
                     )}
                   />
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    onClick={() => setShowPassword((s) => !s)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
                 {errors.password && (
                   <p className="text-xs text-destructive pl-1">{errors.password.message}</p>
