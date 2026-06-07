@@ -17,6 +17,7 @@ interface Commission {
   sales: {
     sale_amount: number;
     booking_amount: number;
+    buyer_name: string;
     properties: {
       title: string;
     } | null;
@@ -105,6 +106,15 @@ export function AgentCommissionsClient({ initialCommissions }: AgentCommissionsC
             )}
           </div>
         </div>
+      ),
+    },
+    {
+      header: "Client",
+      accessorKey: "sales.buyer_name",
+      render: (row: Commission) => (
+        <span className="text-xs font-semibold text-foreground/85">
+          {row.sales?.buyer_name || "N/A"}
+        </span>
       ),
     },
     {
@@ -213,9 +223,7 @@ export function AgentCommissionsClient({ initialCommissions }: AgentCommissionsC
           filterOptions={[
             { value: "pending", label: "Pending" },
             { value: "approved", label: "Approved" },
-            { value: "paid", label: "Paid" },
             { value: "rejected", label: "Rejected" },
-            { value: "cancelled", label: "Cancelled" },
           ]}
           filterPlaceholder="All Statuses"
         />

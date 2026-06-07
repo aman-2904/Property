@@ -400,7 +400,7 @@ export async function getAgentCommissions(agentId: string) {
   const adminSupabase = createAdminClient();
   const { data, error } = await adminSupabase
     .from("commissions")
-    .select("*, sales(booking_amount, sale_amount, properties(title))")
+    .select("*, sales(booking_amount, sale_amount, buyer_name, properties(title))")
     .eq("recipient_id", agentId)
     .order("created_at", { ascending: false });
 
