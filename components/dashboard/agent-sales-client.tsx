@@ -276,19 +276,11 @@ function SubmitSaleModal({
               </div>
             )}
 
-            <ModalFooter className="pt-2 flex gap-2">
-              <button
-                type="button"
-                onClick={handleClose}
-                disabled={isLoading}
-                className="inline-flex h-10 items-center justify-center rounded-xl border border-input px-4 text-sm font-medium hover:bg-muted transition-colors"
-              >
-                Cancel
-              </button>
+            <ModalFooter className="pt-2 flex flex-col sm:flex-row gap-3">
               <button
                 type="submit"
                 disabled={isLoading}
-                className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50"
+                className="inline-flex h-12 w-full sm:flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold py-3 hover:bg-primary/90 transition-colors disabled:opacity-50 shadow-lg shadow-primary/20 active:scale-[0.98]"
               >
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -296,6 +288,14 @@ function SubmitSaleModal({
                   <Plus className="h-4 w-4" />
                 )}
                 {isLoading ? "Submitting..." : "Submit Sale"}
+              </button>
+              <button
+                type="button"
+                onClick={handleClose}
+                disabled={isLoading}
+                className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-xl border border-input px-6 py-3 text-sm font-medium hover:bg-muted transition-colors"
+              >
+                Cancel
               </button>
             </ModalFooter>
           </form>
@@ -432,19 +432,11 @@ function SubmitPaymentModal({
               </div>
             )}
 
-            <ModalFooter className="pt-2 flex gap-2">
-              <button
-                type="button"
-                onClick={handleClose}
-                disabled={isLoading}
-                className="inline-flex h-10 items-center justify-center rounded-xl border border-input px-4 text-sm font-medium hover:bg-muted transition-colors"
-              >
-                Cancel
-              </button>
+            <ModalFooter className="pt-2 flex flex-col sm:flex-row gap-3">
               <button
                 type="submit"
                 disabled={isLoading}
-                className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50"
+                className="inline-flex h-12 w-full sm:flex-1 items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold py-3 hover:bg-primary/90 transition-colors disabled:opacity-50 shadow-lg shadow-primary/20 active:scale-[0.98]"
               >
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -452,6 +444,14 @@ function SubmitPaymentModal({
                   <Plus className="h-4 w-4" />
                 )}
                 {isLoading ? "Submitting..." : "Submit Payment"}
+              </button>
+              <button
+                type="button"
+                onClick={handleClose}
+                disabled={isLoading}
+                className="inline-flex h-12 w-full sm:w-auto items-center justify-center rounded-xl border border-input px-6 py-3 text-sm font-medium hover:bg-muted transition-colors"
+              >
+                Cancel
               </button>
             </ModalFooter>
           </form>
