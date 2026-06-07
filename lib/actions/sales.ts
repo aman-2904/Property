@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { createAdminNotifications, createNotification } from "@/lib/actions/notifications";
 
 export async function submitSale(formData: {
   propertyId: string;
@@ -83,6 +84,24 @@ export async function submitSale(formData: {
   revalidatePath("/agent/properties");
   revalidatePath("/agent/dashboard");
   revalidatePath("/agent/sales");
+
+  // Trigger admin notification
+  try {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("name")
+      .eq("id", user.id)
+      .single();
+    const agentName = profile?.name || "An agent";
+    await createAdminNotifications(
+      "New Sale Submitted",
+      `${agentName} has submitted a new sale request for approval.`,
+      "/admin/sales"
+    );
+  } catch (err) {
+    console.error("Error creating sale notification:", err);
+  }
+
   return { success: true };
 }
 
@@ -136,13 +155,38 @@ export async function updateSaleStatus(
     approved_at: new Date().toISOString(),
   };
 
-  const { error } = await supabase
+  const { data: saleInfo, error } = await supabase
     .from("sales")
     .update(updateData)
-    .eq("id", saleId);
+    .eq("id", saleId)
+    .select("seller_id, properties(title)")
+    .single();
 
-  if (error) {
-    return { error: error.message };
+  if (error || !saleInfo) {
+    return { error: error?.message || "Failed to update sale status" };
+  }
+
+  // Trigger notifications
+  try {
+    const propertyTitle = (saleInfo.properties as any)?.title || "a property";
+    // Notify agent
+    await createNotification(
+      saleInfo.seller_id,
+      `Sale ${status === "approved" ? "Approved" : "Rejected"}`,
+      `Your sale request for "${propertyTitle}" has been ${status}.`,
+      "/agent/sales"
+    );
+
+    if (status === "approved") {
+      // Notify admins that new pending commissions are generated and need approval
+      await createAdminNotifications(
+        "Commissions Pending Review",
+        "New commissions have been generated and are pending approval.",
+        "/admin/commissions"
+      );
+    }
+  } catch (err) {
+    console.error("Error sending sale status update notifications:", err);
   }
 
   // Sync with sale_payments: Find payments and set their status accordingly
@@ -323,6 +367,24 @@ export async function submitAdditionalPayment(saleId: string, amount: number) {
 
   revalidatePath("/agent/sales");
   revalidatePath(`/agent/sales/${saleId}`);
+
+  // Trigger admin notification
+  try {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("name")
+      .eq("id", user.id)
+      .single();
+    const agentName = profile?.name || "An agent";
+    await createAdminNotifications(
+      "Additional Payment Submitted",
+      `${agentName} has submitted an additional payment for approval.`,
+      "/admin/sales"
+    );
+  } catch (err) {
+    console.error("Error creating additional payment notification:", err);
+  }
+
   return { success: true };
 }
 

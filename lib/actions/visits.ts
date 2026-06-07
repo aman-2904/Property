@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { createAdminNotifications } from "@/lib/actions/notifications";
 
 export interface VisitData {
   property_id: string;
@@ -46,6 +47,24 @@ export async function createVisit(data: VisitData) {
 
   revalidatePath("/agent/visits");
   revalidatePath("/admin/visits");
+
+  // Trigger admin notification
+  try {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("name")
+      .eq("id", user.id)
+      .single();
+    const agentName = profile?.name || "An agent";
+    await createAdminNotifications(
+      "New Site Visit Recorded",
+      `${agentName} recorded a new site visit with ${data.customer_name}.`,
+      "/admin/visits"
+    );
+  } catch (err) {
+    console.error("Error creating visit notification:", err);
+  }
+
   return { success: true };
 }
 

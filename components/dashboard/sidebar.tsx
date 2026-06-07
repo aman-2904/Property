@@ -24,6 +24,8 @@ import {
 import { signOut } from "@/lib/actions/auth";
 import { ThemeToggle } from "./theme-toggle";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
+import { markNotificationsAsReadAction } from "@/lib/actions/notifications";
 
 interface SidebarProps {
   role: "SUPER_ADMIN" | "ADMIN" | "AGENT";
@@ -39,6 +41,101 @@ export function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
+
+  // Notification States
+  const [userId, setUserId] = React.useState<string | null>(null);
+  const [unreadModules, setUnreadModules] = React.useState<Set<string>>(new Set());
+
+  const supabase = React.useMemo(() => createClient(), []);
+
+  // Fetch unread notifications and subscribe to realtime updates
+  React.useEffect(() => {
+    let active = true;
+    let channel: any = null;
+    let interval: any = null;
+
+    async function initNotifications() {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || !active) return;
+      setUserId(user.id);
+
+      const fetchUnread = async () => {
+        const { data: notifs } = await supabase
+          .from("notifications")
+          .select("id, message")
+          .eq("user_id", user.id)
+          .eq("is_read", false);
+
+        if (notifs && active) {
+          const modules = new Set<string>();
+          notifs.forEach((n) => {
+            try {
+              const parsed = JSON.parse(n.message);
+              if (parsed.module) {
+                modules.add(parsed.module);
+              }
+            } catch (e) {
+              // ignore
+            }
+          });
+          setUnreadModules(modules);
+        }
+      };
+
+      await fetchUnread();
+
+      channel = supabase
+        .channel(`user-notifs-${user.id}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "notifications",
+            filter: `user_id=eq.${user.id}`,
+          },
+          () => {
+            if (active) {
+              fetchUnread();
+            }
+          }
+        )
+        .subscribe();
+
+      interval = setInterval(() => {
+        if (active) {
+          fetchUnread();
+        }
+      }, 10000);
+    }
+
+    initNotifications();
+
+    return () => {
+      active = false;
+      if (channel) {
+        channel.unsubscribe();
+      }
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [supabase]);
+
+  // Mark as read when navigating to a page
+  React.useEffect(() => {
+    if (!userId || !pathname) return;
+
+    if (unreadModules.has(pathname)) {
+      markNotificationsAsReadAction(userId, pathname).then(() => {
+        setUnreadModules((prev) => {
+          const next = new Set(prev);
+          next.delete(pathname);
+          return next;
+        });
+      });
+    }
+  }, [pathname, userId, unreadModules]);
 
   const handleLogout = () => {
     startTransition(async () => {
@@ -114,6 +211,7 @@ export function Sidebar({ role }: SidebarProps) {
             {items.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
+              const isUnread = unreadModules.has(item.href);
 
               return (
                 <Link
@@ -126,8 +224,11 @@ export function Sidebar({ role }: SidebarProps) {
                       : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
                   )}
                 >
-                  <Icon className="h-4 w-4" />
-                  {item.label}
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <span className="flex-1 truncate">{item.label}</span>
+                  {isUnread && (
+                    <span className="h-2 w-2 rounded-full bg-rose-500 shadow-sm shadow-rose-500/50 shrink-0 animate-pulse" />
+                  )}
                 </Link>
               );
             })}
@@ -192,6 +293,7 @@ export function Sidebar({ role }: SidebarProps) {
                   {items.map((item) => {
                     const Icon = item.icon;
                     const isActive = pathname === item.href;
+                    const isUnread = unreadModules.has(item.href);
 
                     return (
                       <Link
@@ -205,8 +307,11 @@ export function Sidebar({ role }: SidebarProps) {
                             : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
                         )}
                       >
-                        <Icon className="h-4 w-4" />
-                        {item.label}
+                        <Icon className="h-4 w-4 shrink-0" />
+                        <span className="flex-1 truncate">{item.label}</span>
+                        {isUnread && (
+                          <span className="h-2 w-2 rounded-full bg-rose-500 shadow-sm shadow-rose-500/50 shrink-0 animate-pulse" />
+                        )}
                       </Link>
                     );
                   })}

@@ -2,6 +2,7 @@
 
 import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { createAdminNotifications, createNotification } from "@/lib/actions/notifications";
 
 export async function getPayouts(agentId?: string) {
   const supabase = createClient();
@@ -139,6 +140,24 @@ export async function requestPayout(formData: {
 
   revalidatePath("/agent/payouts");
   revalidatePath("/agent/dashboard");
+
+  // Trigger admin notification
+  try {
+    const { data: profile } = await adminSupabase
+      .from("profiles")
+      .select("name")
+      .eq("id", user.id)
+      .single();
+    const agentName = profile?.name || "An agent";
+    await createAdminNotifications(
+      "New Payout Request",
+      `${agentName} has requested a withdrawal payout of ₹${formData.amount.toLocaleString()}.`,
+      "/admin/payouts"
+    );
+  } catch (err) {
+    console.error("Error creating payout notification:", err);
+  }
+
   return { success: true };
 }
 
@@ -163,13 +182,27 @@ export async function updatePayoutStatus(formData: {
     hash: formData.remarks || null,
   };
 
-  const { error } = await supabase
+  const { data: withdrawalInfo, error } = await supabase
     .from("withdrawals")
     .update(updateData)
-    .eq("id", formData.payoutId);
+    .eq("id", formData.payoutId)
+    .select("user_id, amount")
+    .single();
 
-  if (error) {
-    return { error: error.message };
+  if (error || !withdrawalInfo) {
+    return { error: error?.message || "Failed to update payout status" };
+  }
+
+  // Trigger agent notification
+  try {
+    await createNotification(
+      withdrawalInfo.user_id,
+      `Payout Request ${formData.status === "approved" ? "Approved" : "Rejected"}`,
+      `Your payout request for ₹${Number(withdrawalInfo.amount).toLocaleString()} has been ${formData.status}.`,
+      "/agent/payouts"
+    );
+  } catch (err) {
+    console.error("Error sending payout status update notification:", err);
   }
 
   revalidatePath("/admin/payouts");

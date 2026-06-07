@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { createNotification } from "@/lib/actions/notifications";
 
 // ─── KPI STATS ──────────────────────────────────────────────────────────────
 
@@ -324,13 +325,27 @@ export async function updateCommissionStatus(
     approved_at: new Date().toISOString(),
   };
 
-  const { error } = await supabase
+  const { data: commInfo, error } = await supabase
     .from("commissions")
     .update(updateData)
-    .eq("id", commissionId);
+    .eq("id", commissionId)
+    .select("recipient_id, amount")
+    .single();
 
-  if (error) {
-    return { error: error.message };
+  if (error || !commInfo) {
+    return { error: error?.message || "Failed to update commission status" };
+  }
+
+  // Trigger agent notification
+  try {
+    await createNotification(
+      commInfo.recipient_id,
+      `Commission ${status === "approved" ? "Approved" : "Rejected"}`,
+      `Your commission of ₹${Number(commInfo.amount).toLocaleString()} has been ${status}.`,
+      "/agent/commissions"
+    );
+  } catch (err) {
+    console.error("Error creating commission notification:", err);
   }
 
   revalidatePath("/admin/dashboard");
@@ -393,11 +408,27 @@ export async function updatePaymentStatus(
       approved_at: new Date().toISOString(),
     })
     .eq("id", paymentId)
-    .select("sale_id")
+    .select("amount, sale_id, sales(seller_id, properties(title))")
     .single();
 
   if (error || !payment) {
     return { error: error?.message || "Failed to update payment status" };
+  }
+
+  // Trigger agent notification
+  try {
+    const sellerId = (payment.sales as any)?.seller_id;
+    const propertyTitle = (payment.sales as any)?.properties?.title || "a property";
+    if (sellerId) {
+      await createNotification(
+        sellerId,
+        `Payment ${status === "approved" ? "Approved" : "Rejected"}`,
+        `Your payment of ₹${Number(payment.amount).toLocaleString()} for "${propertyTitle}" has been ${status}.`,
+        "/agent/sales"
+      );
+    }
+  } catch (err) {
+    console.error("Error sending additional payment approval notification:", err);
   }
 
   if (status === "approved") {
