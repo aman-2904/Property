@@ -329,10 +329,14 @@ export async function submitAdditionalPayment(saleId: string, amount: number) {
 /**
  * Fetches all commissions distributed to a specific agent.
  * Includes related sale price/booking amount and property title details.
+ * Uses admin client to bypass RLS so that upline override commissions
+ * (where the sale was made by a different agent) can still resolve
+ * the property name via the sales → properties join.
  */
 export async function getAgentCommissions(agentId: string) {
-  const supabase = createClient();
-  const { data, error } = await supabase
+  const { createAdminClient } = await import("@/lib/supabase/server");
+  const adminSupabase = createAdminClient();
+  const { data, error } = await adminSupabase
     .from("commissions")
     .select("*, sales(booking_amount, sale_amount, properties(title))")
     .eq("recipient_id", agentId)
