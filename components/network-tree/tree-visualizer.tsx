@@ -598,7 +598,12 @@ export function TreeVisualizer({ data }: TreeVisualizerProps) {
 
             <div className="pt-2 border-t border-border/40 text-[9.5px] text-muted-foreground flex justify-between items-center">
               <span>Depth level: {hoveredNode.level_depth}</span>
-              <span suppressHydrationWarning>Joined: {new Date(hoveredNode.created_at || "").toLocaleDateString()}</span>
+              {hoveredNode.created_at && (() => {
+                const d = new Date(hoveredNode.created_at);
+                return !isNaN(d.getTime()) ? (
+                  <span suppressHydrationWarning>Joined: {d.toLocaleDateString()}</span>
+                ) : null;
+              })()}
             </div>
           </motion.div>
         )}

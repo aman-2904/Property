@@ -15,6 +15,7 @@ export interface TreeNode {
   level_depth: number;
   direct_sales_count: number;
   group_sales_count: number;
+  created_at?: string;
   children: TreeNode[];
 }
 
@@ -63,6 +64,7 @@ export async function getDownlineTree(rootAgentId: string, maxDepth?: number): P
       level_depth: node.level_depth,
       direct_sales_count: node.direct_sales_count ?? 0,
       group_sales_count: node.group_sales_count ?? 0,
+      created_at: node.created_at,
       children: [],
     });
   });

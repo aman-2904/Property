@@ -2023,3 +2023,30 @@
 [2026-06-07T08:18:43.267Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
 [2026-06-07T08:18:43.455Z] [AgentLayout] Profile queried, role: AGENT
 [2026-06-07T08:18:43.455Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-07T17:56:26.974Z] [DashboardRouter] User checking: dheerajkr2205@gmail.com
+[2026-06-07T17:56:27.172Z] [DashboardRouter] Profile found, role: AGENT
+[2026-06-07T17:56:27.173Z] [DashboardRouter] Redirecting user dheerajkr2205@gmail.com (role: AGENT) to /agent/dashboard
+[2026-06-07T17:56:35.389Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-07T17:56:35.505Z] [DashboardRouter] User checking: dheerajkr2205@gmail.com
+[2026-06-07T17:56:35.589Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-07T17:56:35.590Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-07T17:56:35.701Z] [DashboardRouter] Profile found, role: AGENT
+[2026-06-07T17:56:35.702Z] [DashboardRouter] Redirecting user dheerajkr2205@gmail.com (role: AGENT) to /agent/dashboard
+[2026-06-07T17:56:40.090Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-07T17:56:40.149Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-07T17:56:40.388Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-07T17:56:40.388Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-07T17:56:40.766Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-07T17:56:40.767Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-07T17:56:40.780Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-07T17:56:40.950Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-07T17:56:40.951Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-07T17:56:51.041Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-07T17:56:51.742Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-07T17:56:51.742Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-07T17:57:36.847Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-07T17:57:37.197Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-07T17:57:37.197Z] [AgentLayout] Allowing access to AgentLayout
+[2026-06-07T17:58:30.423Z] [AgentLayout] User checking: dheerajkr2205@gmail.com
+[2026-06-07T17:58:30.825Z] [AgentLayout] Profile queried, role: AGENT
+[2026-06-07T17:58:30.825Z] [AgentLayout] Allowing access to AgentLayout
