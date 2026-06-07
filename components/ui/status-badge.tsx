@@ -64,9 +64,9 @@ export function StatusBadge({ status, className, ...props }: StatusBadgeProps) {
     },
     // Properties status
     available: {
-      bg: "bg-emerald-500/10 border border-emerald-500/20",
-      text: "text-emerald-500 dark:text-emerald-400",
-      dot: "bg-emerald-500",
+      bg: "bg-emerald-900 border border-emerald-700",
+      text: "text-emerald-300",
+      dot: "bg-emerald-400",
       label: "Available",
     },
     sold: {

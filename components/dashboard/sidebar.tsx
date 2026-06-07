@@ -53,7 +53,7 @@ export function Sidebar({ role }: SidebarProps) {
     { label: "My Commissions", href: "/agent/commissions", icon: Coins },
     { label: "My Downline", href: "/agent/network", icon: Network },
     { label: "My Payouts", href: "/agent/payouts", icon: DollarSign },
-    { label: "Visit Logs", href: "/agent/visits", icon: MapPin },
+    { label: "Site Visit Record", href: "/agent/visits", icon: MapPin },
     { label: "My Profile", href: "/agent/profile", icon: UserCircle2 },
   ];
 
