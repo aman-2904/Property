@@ -19,6 +19,7 @@ import {
   ClipboardList,
   BarChart3,
   ArrowUpRight,
+  UserCircle2,
 } from "lucide-react";
 import { signOut } from "@/lib/actions/auth";
 import { ThemeToggle } from "./theme-toggle";
@@ -53,6 +54,7 @@ export function Sidebar({ role }: SidebarProps) {
     { label: "My Downline", href: "/agent/network", icon: Network },
     { label: "My Payouts", href: "/agent/payouts", icon: DollarSign },
     { label: "Visit Logs", href: "/agent/visits", icon: MapPin },
+    { label: "My Profile", href: "/agent/profile", icon: UserCircle2 },
   ];
 
   const adminItems: SidebarItem[] = [
