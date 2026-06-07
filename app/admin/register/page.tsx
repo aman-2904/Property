@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion } from "framer-motion";
-import { User, Lock, Mail, Loader2, AlertCircle, CheckCircle, ShieldAlert, ArrowLeft, Key } from "lucide-react";
+import { User, Lock, Mail, Loader2, AlertCircle, CheckCircle, ShieldAlert, ArrowLeft, Key, Eye, EyeOff } from "lucide-react";
 import { signUp } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/dashboard/theme-toggle";
@@ -28,6 +28,8 @@ export default function AdminRegisterPage() {
   const [success, setSuccess] = React.useState(false);
   const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
   const [isPending, startTransition] = React.useTransition();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showSecretKey, setShowSecretKey] = React.useState(false);
 
   // OTP Verification States
   const [requiresVerification, setRequiresVerification] = React.useState(false);
@@ -276,15 +278,23 @@ export default function AdminRegisterPage() {
                     <Lock className="h-4 w-4" />
                   </span>
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     {...register("password")}
                     disabled={isPending || success}
                     placeholder="••••••••"
                     className={cn(
-                      "w-full pl-10 pr-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-violet-500/50 transition-all",
+                      "w-full pl-10 pr-11 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-violet-500/50 transition-all",
                       errors.password && "border-destructive/50"
                     )}
                   />
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    onClick={() => setShowPassword((s) => !s)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
                 {errors.password && (
                   <p className="text-xs text-destructive pl-1">{errors.password.message}</p>
@@ -300,15 +310,23 @@ export default function AdminRegisterPage() {
                     <Key className="h-4 w-4" />
                   </span>
                   <input
-                    type="password"
+                    type={showSecretKey ? "text" : "password"}
                     {...register("secretKey")}
                     disabled={isPending || success}
                     placeholder="Enter admin secret key"
                     className={cn(
-                      "w-full pl-10 pr-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-violet-500/50 transition-all",
+                      "w-full pl-10 pr-11 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-violet-500/50 transition-all",
                       errors.secretKey && "border-destructive/50"
                     )}
                   />
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    onClick={() => setShowSecretKey((s) => !s)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showSecretKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
                 {errors.secretKey && (
                   <p className="text-xs text-destructive pl-1">{errors.secretKey.message}</p>

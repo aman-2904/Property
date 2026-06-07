@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion } from "framer-motion";
-import { Lock, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Lock, Loader2, AlertCircle, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { resetPassword } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
 
@@ -27,6 +27,8 @@ export default function ResetPasswordPage() {
   const [error, setError] = React.useState<string | null>(null);
   const [success, setSuccess] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
   const {
     register,
@@ -101,15 +103,23 @@ export default function ResetPasswordPage() {
               <Lock className="h-4 w-4" />
             </span>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               {...register("password")}
               disabled={isPending || success}
               placeholder="••••••••"
               className={cn(
-                "w-full pl-10 pr-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all",
+                "w-full pl-10 pr-11 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all",
                 errors.password && "border-destructive/50"
               )}
             />
+            <button
+              type="button"
+              tabIndex={-1}
+              onClick={() => setShowPassword((s) => !s)}
+              className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
           </div>
           {errors.password && (
             <p className="text-xs text-destructive pl-1">{errors.password.message}</p>
@@ -125,15 +135,23 @@ export default function ResetPasswordPage() {
               <Lock className="h-4 w-4" />
             </span>
             <input
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               {...register("confirmPassword")}
               disabled={isPending || success}
               placeholder="••••••••"
               className={cn(
-                "w-full pl-10 pr-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all",
+                "w-full pl-10 pr-11 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all",
                 errors.confirmPassword && "border-destructive/50"
               )}
             />
+            <button
+              type="button"
+              tabIndex={-1}
+              onClick={() => setShowConfirmPassword((s) => !s)}
+              className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
           </div>
           {errors.confirmPassword && (
             <p className="text-xs text-destructive pl-1">{errors.confirmPassword.message}</p>
