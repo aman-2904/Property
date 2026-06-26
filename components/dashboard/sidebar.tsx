@@ -20,6 +20,7 @@ import {
   BarChart3,
   ArrowUpRight,
   UserCircle2,
+  Award,
 } from "lucide-react";
 import { signOut } from "@/lib/actions/auth";
 import { ThemeToggle } from "./theme-toggle";
@@ -35,12 +36,22 @@ interface SidebarItem {
   label: string;
   href: string;
   icon: React.ComponentType<any>;
+  subItems?: { label: string; href: string }[];
 }
 
 export function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
+  const [openMenus, setOpenMenus] = React.useState<Record<string, boolean>>(() => {
+    return { "MLM": pathname.startsWith("/admin/mlm") };
+  });
+
+  React.useEffect(() => {
+    if (pathname.startsWith("/admin/mlm")) {
+      setOpenMenus((prev) => ({ ...prev, "MLM": true }));
+    }
+  }, [pathname]);
 
   // Notification States
   const [userId, setUserId] = React.useState<string | null>(null);
@@ -148,6 +159,7 @@ export function Sidebar({ role }: SidebarProps) {
     { label: "Properties & Sales", href: "/agent/properties", icon: Building2 },
     { label: "Sales Management", href: "/agent/sales", icon: BarChart3 },
     { label: "My Commissions", href: "/agent/commissions", icon: Coins },
+    { label: "My Promotion Income", href: "/agent/promotions", icon: Award },
     { label: "My Downline", href: "/agent/network", icon: Network },
     { label: "My Payouts", href: "/agent/payouts", icon: DollarSign },
     { label: "Site Visit Record", href: "/agent/visits", icon: MapPin },
@@ -160,6 +172,17 @@ export function Sidebar({ role }: SidebarProps) {
     { label: "Agents", href: "/admin/agents", icon: Users },
     { label: "Sales", href: "/admin/sales", icon: BarChart3 },
     { label: "Commissions", href: "/admin/commissions", icon: Coins },
+    {
+      label: "MLM",
+      href: "#",
+      icon: Network,
+      subItems: [
+        { label: "Promotion Levels", href: "/admin/mlm/promotion-levels" },
+        { label: "Promotion History", href: "/admin/mlm/promotion-history" },
+        { label: "Promotion Reports", href: "/admin/mlm/promotion-reports" },
+        { label: "Promotion Payments", href: "/admin/mlm/promotion-payments" },
+      ],
+    },
     { label: "Withdrawals", href: "/admin/withdrawals", icon: ArrowUpRight },
     { label: "Payouts Requests", href: "/admin/payouts", icon: Coins },
     { label: "Visits Tracking", href: "/admin/visits", icon: MapPin },
@@ -208,8 +231,68 @@ export function Sidebar({ role }: SidebarProps) {
           </div>
 
           <nav className="space-y-1.5 pt-4">
-            {items.map((item) => {
+            {items.map((item: any) => {
               const Icon = item.icon;
+              const hasSubItems = !!item.subItems;
+
+              if (hasSubItems) {
+                const isMenuOpen = openMenus[item.label] || false;
+                const isSubActive = item.subItems.some((sub: any) => pathname === sub.href);
+
+                return (
+                  <div key={item.label} className="space-y-1">
+                    <button
+                      onClick={() => setOpenMenus(prev => ({ ...prev, [item.label]: !prev[item.label] }))}
+                      className={cn(
+                        "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold tracking-wide transition-all duration-200 text-left",
+                        isSubActive
+                          ? "bg-primary/10 text-primary border border-primary/20"
+                          : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+                      )}
+                    >
+                      <Icon className="h-4 w-4 shrink-0" />
+                      <span className="flex-1 truncate">{item.label}</span>
+                      <motion.span
+                        animate={{ rotate: isMenuOpen ? 90 : 0 }}
+                        className="text-xs text-muted-foreground flex items-center justify-center w-4 h-4"
+                      >
+                        ▶
+                      </motion.span>
+                    </button>
+
+                    <AnimatePresence initial={false}>
+                      {isMenuOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.15 }}
+                          className="pl-7 space-y-1 overflow-hidden"
+                        >
+                          {item.subItems.map((sub: any) => {
+                            const isSubActive = pathname === sub.href;
+                            return (
+                              <Link
+                                key={sub.href}
+                                href={sub.href}
+                                className={cn(
+                                  "block rounded-xl px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-200",
+                                  isSubActive
+                                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                                    : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+                                )}
+                              >
+                                {sub.label}
+                              </Link>
+                            );
+                          })}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              }
+
               const isActive = pathname === item.href;
               const isUnread = unreadModules.has(item.href);
 
@@ -290,8 +373,69 @@ export function Sidebar({ role }: SidebarProps) {
                 </div>
 
                 <nav className="space-y-1.5 pt-4">
-                  {items.map((item) => {
+                  {items.map((item: any) => {
                     const Icon = item.icon;
+                    const hasSubItems = !!item.subItems;
+
+                    if (hasSubItems) {
+                      const isMenuOpen = openMenus[item.label] || false;
+                      const isSubActive = item.subItems.some((sub: any) => pathname === sub.href);
+
+                      return (
+                        <div key={item.label} className="space-y-1">
+                          <button
+                            onClick={() => setOpenMenus(prev => ({ ...prev, [item.label]: !prev[item.label] }))}
+                            className={cn(
+                              "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold tracking-wide transition-all duration-200 text-left",
+                              isSubActive
+                                ? "bg-primary/10 text-primary border border-primary/20"
+                                : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+                            )}
+                          >
+                            <Icon className="h-4 w-4 shrink-0" />
+                            <span className="flex-1 truncate">{item.label}</span>
+                            <motion.span
+                              animate={{ rotate: isMenuOpen ? 90 : 0 }}
+                              className="text-xs text-muted-foreground flex items-center justify-center w-4 h-4"
+                            >
+                              ▶
+                            </motion.span>
+                          </button>
+
+                          <AnimatePresence initial={false}>
+                            {isMenuOpen && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.15 }}
+                                className="pl-7 space-y-1 overflow-hidden"
+                              >
+                                {item.subItems.map((sub: any) => {
+                                  const isSubActive = pathname === sub.href;
+                                  return (
+                                    <Link
+                                      key={sub.href}
+                                      href={sub.href}
+                                      onClick={() => setIsOpen(false)}
+                                      className={cn(
+                                        "block rounded-xl px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-200",
+                                        isSubActive
+                                          ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                                          : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+                                      )}
+                                    >
+                                      {sub.label}
+                                    </Link>
+                                  );
+                                })}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      );
+                    }
+
                     const isActive = pathname === item.href;
                     const isUnread = unreadModules.has(item.href);
 

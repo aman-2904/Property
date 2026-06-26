@@ -3,9 +3,10 @@ import { cn } from "@/lib/utils";
 
 interface StatusBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   status: string;
+  label?: string;
 }
 
-export function StatusBadge({ status, className, ...props }: StatusBadgeProps) {
+export function StatusBadge({ status, className, label, children, ...props }: StatusBadgeProps) {
   const normStatus = status.toLowerCase().replace(/_/g, " ");
 
   const configs: Record<
@@ -95,7 +96,7 @@ export function StatusBadge({ status, className, ...props }: StatusBadgeProps) {
       {...props}
     >
       <span className={cn("h-1.5 w-1.5 rounded-full", config.dot)} />
-      {config.label}
+      {label || children || config.label}
     </span>
   );
 }

@@ -12,6 +12,7 @@ import {
   Users,
   Building,
   ArrowUpRight,
+  Trophy
 } from "lucide-react";
 
 interface AgentDashboardClientProps {
@@ -24,6 +25,7 @@ interface AgentDashboardClientProps {
   chartData: { date: string; amount: number }[];
   recentSales: any[];
   currentRankTitle: string;
+  promotionStatus?: any;
 }
 
 export function AgentDashboardClient({
@@ -36,6 +38,7 @@ export function AgentDashboardClient({
   chartData,
   recentSales,
   currentRankTitle,
+  promotionStatus,
 }: AgentDashboardClientProps) {
   const columns = [
     {
@@ -129,6 +132,40 @@ export function AgentDashboardClient({
         />
       </div>
 
+      {/* Promotion Proximity Card */}
+      {promotionStatus?.nextLevel && (
+        <div className="p-5 rounded-2xl border border-border/40 bg-card/65 backdrop-blur-md shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-violet-500/10 border border-violet-500/25 text-violet-400">
+              <Trophy className="h-5 w-5" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-foreground">Next Rank Milestone: {promotionStatus.nextLevel.title}</h4>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Remaining: {promotionStatus.progress.remainingRequirements.join(", ") || "Ready for upgrade!"}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3 w-full sm:w-[200px]">
+            <div className="h-1.5 w-full rounded-full bg-muted/60 overflow-hidden">
+              <div 
+                className="h-full rounded-full bg-gradient-to-r from-primary to-violet-500 transition-all duration-300"
+                style={{ width: `${Math.min(100, (promotionStatus.progress.directSales.percent + promotionStatus.progress.groupSales.percent) / 2)}%` }}
+              />
+            </div>
+            <span className="text-xs font-bold text-foreground">
+              {Math.min(100, Math.round((promotionStatus.progress.directSales.percent + promotionStatus.progress.groupSales.percent) / 2))}%
+            </span>
+          </div>
+          <a
+            href="/agent/promotions"
+            className="inline-flex h-9 items-center justify-center rounded-xl bg-primary px-4 text-xs font-bold text-primary-foreground hover:bg-primary/95 transition-all text-center"
+          >
+            Track Status
+          </a>
+        </div>
+      )}
+
       {/* Charts & Actions Section */}
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Earnings Chart */}
@@ -162,6 +199,13 @@ export function AgentDashboardClient({
               className="flex items-center justify-between p-4 rounded-2xl bg-muted/20 hover:bg-muted/40 border border-border/30 hover:border-primary/20 transition-all font-semibold text-sm group"
             >
               <span>Submit Property Sale</span>
+              <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            </a>
+            <a
+              href="/agent/promotions"
+              className="flex items-center justify-between p-4 rounded-2xl bg-muted/20 hover:bg-muted/40 border border-border/30 hover:border-primary/20 transition-all font-semibold text-sm group"
+            >
+              <span>My Promotion Income</span>
               <ArrowUpRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
             </a>
             <a

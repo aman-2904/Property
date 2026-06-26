@@ -4,6 +4,8 @@ import { createClient, createAdminClient, getCachedUser } from "@/lib/supabase/s
 import { getAgentBalance } from "@/lib/actions/payouts";
 import { AgentDashboardClient } from "@/components/dashboard/agent-dashboard-client";
 
+import { getAgentPromotionStatus } from "@/lib/actions/promotions";
+
 export default async function AgentDashboardPage() {
   const supabase = createClient();
   const adminSupabase = createAdminClient();
@@ -24,6 +26,7 @@ export default async function AgentDashboardPage() {
     downlineResponse,
     commHistoryResponse,
     recentSalesResponse,
+    promotionStatus,
   ] = await Promise.all([
     adminSupabase
       .from("profiles")
@@ -52,6 +55,7 @@ export default async function AgentDashboardPage() {
       .eq("seller_id", user.id)
       .order("created_at", { ascending: false })
       .limit(5),
+    getAgentPromotionStatus(user.id),
   ]);
 
   const profile = profileResponse.data;
@@ -75,8 +79,7 @@ export default async function AgentDashboardPage() {
     amount: Number(comm.amount),
   }));
 
-  const rankTitles = ["Rookie Agent", "Senior Agent", "Manager", "Director"];
-  const currentRankTitle = rankTitles[profile.promotion_level ?? 0] || "Rookie Agent";
+  const currentRankTitle = promotionStatus?.currentLevel?.title || "Agent";
 
   return (
     <AgentDashboardClient
@@ -89,6 +92,7 @@ export default async function AgentDashboardPage() {
       chartData={chartData}
       recentSales={recentSales || []}
       currentRankTitle={currentRankTitle}
+      promotionStatus={promotionStatus}
     />
   );
 }
