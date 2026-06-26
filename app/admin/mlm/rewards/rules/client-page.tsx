@@ -337,194 +337,197 @@ export function AdminAchievementRulesClient({ initialRules, categories, promotio
             setIsEditOpen(false);
           }}
         >
-          <ModalContent className="sm:max-w-[640px]">
+          <ModalContent className="sm:max-w-[640px] max-h-[90vh] flex flex-col">
             <ModalHeader>
               <ModalTitle>{isCreateOpen ? "Create Reward Rule" : "Edit Reward Rule"}</ModalTitle>
             </ModalHeader>
-            <form onSubmit={isCreateOpen ? handleCreateSubmit : handleEditSubmit} className="space-y-4 py-4">
+            <form onSubmit={isCreateOpen ? handleCreateSubmit : handleEditSubmit} className="space-y-4 py-2 flex flex-col overflow-hidden">
               {errorMsg && (
                 <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-xs font-semibold">
                   {errorMsg}
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-4">
+              {/* Scrollable container for fields */}
+              <div className="space-y-4 overflow-y-auto pr-1 max-h-[60vh]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-muted-foreground">Rule Name</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Bullet Bike, Baleno Car"
+                      className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
+                      value={formData.name}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-muted-foreground">Reward Category</label>
+                    <select
+                      className="w-full h-11 px-3 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
+                      value={formData.category_id}
+                      onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+                    >
+                      <option value="none">No Category (Uncategorized)</option>
+                      {categories.map((c) => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-muted-foreground">Reward Type</label>
+                    <select
+                      className="w-full h-11 px-3 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
+                      value={formData.reward_type}
+                      onChange={(e) => setFormData({ ...formData, reward_type: e.target.value as any })}
+                    >
+                      <option value="Physical Gift">Physical Gift</option>
+                      <option value="Cash">Cash</option>
+                      <option value="Vehicle">Vehicle</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-muted-foreground">Reward Value</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. ₹50,000 Cash, Maruti Suzuki Swift"
+                      className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
+                      value={formData.reward_value}
+                      onChange={(e) => setFormData({ ...formData, reward_value: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-muted-foreground">Required Direct Sales</label>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
+                      value={formData.required_direct_sales}
+                      onChange={(e) => setFormData({ ...formData, required_direct_sales: Math.max(0, Number(e.target.value)) })}
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-muted-foreground">Required Group Sales</label>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
+                      value={formData.required_group_sales}
+                      onChange={(e) => setFormData({ ...formData, required_group_sales: Math.max(0, Number(e.target.value)) })}
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-muted-foreground">Minimum Rank Requirement</label>
+                    <select
+                      className="w-full h-11 px-3 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
+                      value={formData.min_promotion_level}
+                      onChange={(e) => setFormData({ ...formData, min_promotion_level: e.target.value })}
+                    >
+                      <option value="none">No Rank Required</option>
+                      {promotionLevels.map((lvl) => (
+                        <option key={lvl.level} value={lvl.level}>{lvl.title} (Lvl {lvl.level})</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-muted-foreground">Max Claims Per Agent</label>
+                    <input
+                      type="number"
+                      placeholder="1"
+                      className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
+                      value={formData.max_claims_per_user}
+                      onChange={(e) => setFormData({ ...formData, max_claims_per_user: Math.max(1, Number(e.target.value)) })}
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-muted-foreground">Start Date</label>
+                    <input
+                      type="datetime-local"
+                      className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
+                      value={formData.start_date}
+                      onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-muted-foreground">End Date (Contest Period)</label>
+                    <input
+                      type="datetime-local"
+                      className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
+                      value={formData.end_date}
+                      onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-muted-foreground">Status</label>
+                    <select
+                      className="w-full h-11 px-3 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
+                      value={formData.status}
+                      onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                    >
+                      <option value="active">Active</option>
+                      <option value="disabled">Disabled</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-muted-foreground">Display Order</label>
+                    <input
+                      type="number"
+                      placeholder="0"
+                      className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
+                      value={formData.display_order}
+                      onChange={(e) => setFormData({ ...formData, display_order: Number(e.target.value) })}
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-muted-foreground">Rule Name</label>
+                  <label className="text-xs font-bold text-muted-foreground">Image URL</label>
                   <input
                     type="text"
-                    placeholder="e.g. Bullet Bike, Baleno Car"
+                    placeholder="https://example.com/images/reward.png"
                     className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    value={formData.image_url}
+                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-muted-foreground">Reward Category</label>
-                  <select
-                    className="w-full h-11 px-3 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
-                    value={formData.category_id}
-                    onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                  >
-                    <option value="none">No Category (Uncategorized)</option>
-                    {categories.map((c) => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                  </select>
+                  <label className="text-xs font-bold text-muted-foreground">Description</label>
+                  <textarea
+                    placeholder="Provide a detailed description of the reward requirements..."
+                    className="w-full h-20 p-3 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all resize-none"
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  />
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-muted-foreground">Reward Type</label>
-                  <select
-                    className="w-full h-11 px-3 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
-                    value={formData.reward_type}
-                    onChange={(e) => setFormData({ ...formData, reward_type: e.target.value as any })}
-                  >
-                    <option value="Physical Gift">Physical Gift</option>
-                    <option value="Cash">Cash</option>
-                    <option value="Vehicle">Vehicle</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-muted-foreground">Reward Value</label>
+                <div className="flex items-center gap-2 pt-2">
                   <input
-                    type="text"
-                    placeholder="e.g. ₹50,000 Cash, Maruti Suzuki Swift"
-                    className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
-                    value={formData.reward_value}
-                    onChange={(e) => setFormData({ ...formData, reward_value: e.target.value })}
+                    type="checkbox"
+                    id="different_legs_required"
+                    className="h-4.5 w-4.5 rounded border-border bg-muted/25 focus:ring-0 cursor-pointer"
+                    checked={formData.different_legs_required}
+                    onChange={(e) => setFormData({ ...formData, different_legs_required: e.target.checked })}
                   />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-muted-foreground">Required Direct Sales</label>
-                  <input
-                    type="number"
-                    placeholder="0"
-                    className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
-                    value={formData.required_direct_sales}
-                    onChange={(e) => setFormData({ ...formData, required_direct_sales: Math.max(0, Number(e.target.value)) })}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-muted-foreground">Required Group Sales</label>
-                  <input
-                    type="number"
-                    placeholder="0"
-                    className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
-                    value={formData.required_group_sales}
-                    onChange={(e) => setFormData({ ...formData, required_group_sales: Math.max(0, Number(e.target.value)) })}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-muted-foreground">Minimum Rank Requirement</label>
-                  <select
-                    className="w-full h-11 px-3 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
-                    value={formData.min_promotion_level}
-                    onChange={(e) => setFormData({ ...formData, min_promotion_level: e.target.value })}
-                  >
-                    <option value="none">No Rank Required</option>
-                    {promotionLevels.map((lvl) => (
-                      <option key={lvl.level} value={lvl.level}>{lvl.title} (Lvl {lvl.level})</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-muted-foreground">Max Claims Per Agent</label>
-                  <input
-                    type="number"
-                    placeholder="1"
-                    className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
-                    value={formData.max_claims_per_user}
-                    onChange={(e) => setFormData({ ...formData, max_claims_per_user: Math.max(1, Number(e.target.value)) })}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-muted-foreground">Start Date</label>
-                  <input
-                    type="datetime-local"
-                    className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
-                    value={formData.start_date}
-                    onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-muted-foreground">End Date (Contest Period)</label>
-                  <input
-                    type="datetime-local"
-                    className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
-                    value={formData.end_date}
-                    onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-muted-foreground">Status</label>
-                  <select
-                    className="w-full h-11 px-3 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
-                    value={formData.status}
-                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  >
-                    <option value="active">Active</option>
-                    <option value="disabled">Disabled</option>
-                  </select>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-muted-foreground">Display Order</label>
-                  <input
-                    type="number"
-                    placeholder="0"
-                    className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
-                    value={formData.display_order}
-                    onChange={(e) => setFormData({ ...formData, display_order: Number(e.target.value) })}
-                  />
+                  <label htmlFor="different_legs_required" className="text-xs font-bold text-muted-foreground cursor-pointer select-none">
+                    Require multi-leg sales distribution (at least 2 downline branches contributing sales)
+                  </label>
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-muted-foreground">Image URL</label>
-                <input
-                  type="text"
-                  placeholder="https://example.com/images/reward.png"
-                  className="w-full h-11 px-4 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all"
-                  value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-muted-foreground">Description</label>
-                <textarea
-                  placeholder="Provide a detailed description of the reward requirements..."
-                  className="w-full h-20 p-3 rounded-xl border border-border/50 bg-muted/20 text-foreground text-sm focus:outline-none focus:border-primary transition-all resize-none"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                />
-              </div>
-
-              <div className="flex items-center gap-2 pt-2">
-                <input
-                  type="checkbox"
-                  id="different_legs_required"
-                  className="h-4.5 w-4.5 rounded border-border bg-muted/25 focus:ring-0 cursor-pointer"
-                  checked={formData.different_legs_required}
-                  onChange={(e) => setFormData({ ...formData, different_legs_required: e.target.checked })}
-                />
-                <label htmlFor="different_legs_required" className="text-xs font-bold text-muted-foreground cursor-pointer select-none">
-                  Require multi-leg sales distribution (at least 2 downline branches contributing sales)
-                </label>
-              </div>
-
-              <ModalFooter className="pt-2">
+              <ModalFooter className="pt-2 border-t border-border/10 mt-2">
                 <button
                   type="button"
                   onClick={() => {
