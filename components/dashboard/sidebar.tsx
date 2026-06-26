@@ -216,109 +216,110 @@ export function Sidebar({ role }: SidebarProps) {
       </div>
 
       {/* Desktop Sidebar */}
-      <aside className="fixed bottom-0 left-0 top-0 z-40 hidden w-64 border-r border-border/30 bg-card/40 backdrop-blur-xl lg:flex flex-col justify-between py-6 px-4">
-        <div className="space-y-6">
-          <div className="flex items-center gap-3 pl-3">
-            <Coins className="h-7 w-7 text-primary animate-pulse" />
-            <div>
-              <span className="font-extrabold text-lg tracking-wider bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent block">
-                AuraComm
-              </span>
-              <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">
-                {role} Portal
-              </span>
-            </div>
+      <aside className="fixed bottom-0 left-0 top-0 z-40 hidden w-64 border-r border-border/30 bg-card/40 backdrop-blur-xl lg:flex flex-col py-6 px-4">
+        {/* Header */}
+        <div className="flex items-center gap-3 pl-3 mb-6">
+          <Coins className="h-7 w-7 text-primary animate-pulse" />
+          <div>
+            <span className="font-extrabold text-lg tracking-wider bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent block">
+              AuraComm
+            </span>
+            <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">
+              {role} Portal
+            </span>
           </div>
-
-          <nav className="space-y-1.5 pt-4">
-            {items.map((item: any) => {
-              const Icon = item.icon;
-              const hasSubItems = !!item.subItems;
-
-              if (hasSubItems) {
-                const isMenuOpen = openMenus[item.label] || false;
-                const isSubActive = item.subItems.some((sub: any) => pathname === sub.href);
-
-                return (
-                  <div key={item.label} className="space-y-1">
-                    <button
-                      onClick={() => setOpenMenus(prev => ({ ...prev, [item.label]: !prev[item.label] }))}
-                      className={cn(
-                        "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold tracking-wide transition-all duration-200 text-left",
-                        isSubActive
-                          ? "bg-primary/10 text-primary border border-primary/20"
-                          : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
-                      )}
-                    >
-                      <Icon className="h-4 w-4 shrink-0" />
-                      <span className="flex-1 truncate">{item.label}</span>
-                      <motion.span
-                        animate={{ rotate: isMenuOpen ? 90 : 0 }}
-                        className="text-xs text-muted-foreground flex items-center justify-center w-4 h-4"
-                      >
-                        ▶
-                      </motion.span>
-                    </button>
-
-                    <AnimatePresence initial={false}>
-                      {isMenuOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.15 }}
-                          className="pl-7 space-y-1 overflow-hidden"
-                        >
-                          {item.subItems.map((sub: any) => {
-                            const isSubActive = pathname === sub.href;
-                            return (
-                              <Link
-                                key={sub.href}
-                                href={sub.href}
-                                className={cn(
-                                  "block rounded-xl px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-200",
-                                  isSubActive
-                                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                                    : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
-                                )}
-                              >
-                                {sub.label}
-                              </Link>
-                            );
-                          })}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                );
-              }
-
-              const isActive = pathname === item.href;
-              const isUnread = unreadModules.has(item.href);
-
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold tracking-wide transition-all duration-200",
-                    isActive
-                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-[1.02]"
-                      : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
-                  )}
-                >
-                  <Icon className="h-4 w-4 shrink-0" />
-                  <span className="flex-1 truncate">{item.label}</span>
-                  {isUnread && (
-                    <span className="h-2 w-2 rounded-full bg-rose-500 shadow-sm shadow-rose-500/50 shrink-0 animate-pulse" />
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
         </div>
 
-        <div className="space-y-4">
+        {/* Navigation list - flex-1 & scrollable */}
+        <nav className="flex-1 space-y-1.5 overflow-y-auto pr-1 mb-4 select-none scrollbar-thin scrollbar-thumb-border/20">
+          {items.map((item: any) => {
+            const Icon = item.icon;
+            const hasSubItems = !!item.subItems;
+
+            if (hasSubItems) {
+              const isMenuOpen = openMenus[item.label] || false;
+              const isSubActive = item.subItems.some((sub: any) => pathname === sub.href);
+
+              return (
+                <div key={item.label} className="space-y-1">
+                  <button
+                    onClick={() => setOpenMenus(prev => ({ ...prev, [item.label]: !prev[item.label] }))}
+                    className={cn(
+                      "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold tracking-wide transition-all duration-200 text-left",
+                      isSubActive
+                        ? "bg-primary/10 text-primary border border-primary/20"
+                        : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+                    )}
+                  >
+                    <Icon className="h-4 w-4 shrink-0" />
+                    <span className="flex-1 truncate">{item.label}</span>
+                    <motion.span
+                      animate={{ rotate: isMenuOpen ? 90 : 0 }}
+                      className="text-xs text-muted-foreground flex items-center justify-center w-4 h-4"
+                    >
+                      ▶
+                    </motion.span>
+                  </button>
+
+                  <AnimatePresence initial={false}>
+                    {isMenuOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.15 }}
+                        className="pl-7 space-y-1 overflow-hidden"
+                      >
+                        {item.subItems.map((sub: any) => {
+                          const isSubActive = pathname === sub.href;
+                          return (
+                            <Link
+                              key={sub.href}
+                              href={sub.href}
+                              className={cn(
+                                "block rounded-xl px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-200",
+                                isSubActive
+                                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                                  : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+                              )}
+                            >
+                              {sub.label}
+                            </Link>
+                          );
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            }
+
+            const isActive = pathname === item.href;
+            const isUnread = unreadModules.has(item.href);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold tracking-wide transition-all duration-200",
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-[1.02]"
+                    : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+                )}
+              >
+                <Icon className="h-4 w-4 shrink-0" />
+                <span className="flex-1 truncate">{item.label}</span>
+                {isUnread && (
+                  <span className="h-2 w-2 rounded-full bg-rose-500 shadow-sm shadow-rose-500/50 shrink-0 animate-pulse" />
+                )}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Footer */}
+        <div className="space-y-4 border-t border-border/20 pt-4 mt-auto">
           <div className="flex items-center justify-between px-3">
             <span className="text-xs text-muted-foreground font-semibold">Appearance</span>
             <ThemeToggle />
@@ -354,115 +355,116 @@ export function Sidebar({ role }: SidebarProps) {
               animate="open"
               exit="closed"
               transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
-              className="fixed bottom-0 left-0 top-0 z-50 flex w-64 flex-col justify-between bg-card/90 border-r border-border/50 py-6 px-4 shadow-2xl backdrop-blur-xl lg:hidden"
+              className="fixed bottom-0 left-0 top-0 z-50 flex w-64 flex-col bg-card/90 border-r border-border/50 py-6 px-4 shadow-2xl backdrop-blur-xl lg:hidden"
             >
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Coins className="h-6 w-6 text-primary" />
-                    <span className="font-extrabold text-lg tracking-wider bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent">
-                      AuraComm
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => setIsOpen(false)}
-                    className="rounded-xl p-1.5 hover:bg-muted text-foreground"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2">
+                  <Coins className="h-6 w-6 text-primary" />
+                  <span className="font-extrabold text-lg tracking-wider bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent">
+                    AuraComm
+                  </span>
                 </div>
-
-                <nav className="space-y-1.5 pt-4">
-                  {items.map((item: any) => {
-                    const Icon = item.icon;
-                    const hasSubItems = !!item.subItems;
-
-                    if (hasSubItems) {
-                      const isMenuOpen = openMenus[item.label] || false;
-                      const isSubActive = item.subItems.some((sub: any) => pathname === sub.href);
-
-                      return (
-                        <div key={item.label} className="space-y-1">
-                          <button
-                            onClick={() => setOpenMenus(prev => ({ ...prev, [item.label]: !prev[item.label] }))}
-                            className={cn(
-                              "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold tracking-wide transition-all duration-200 text-left",
-                              isSubActive
-                                ? "bg-primary/10 text-primary border border-primary/20"
-                                : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
-                            )}
-                          >
-                            <Icon className="h-4 w-4 shrink-0" />
-                            <span className="flex-1 truncate">{item.label}</span>
-                            <motion.span
-                              animate={{ rotate: isMenuOpen ? 90 : 0 }}
-                              className="text-xs text-muted-foreground flex items-center justify-center w-4 h-4"
-                            >
-                              ▶
-                            </motion.span>
-                          </button>
-
-                          <AnimatePresence initial={false}>
-                            {isMenuOpen && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.15 }}
-                                className="pl-7 space-y-1 overflow-hidden"
-                              >
-                                {item.subItems.map((sub: any) => {
-                                  const isSubActive = pathname === sub.href;
-                                  return (
-                                    <Link
-                                      key={sub.href}
-                                      href={sub.href}
-                                      onClick={() => setIsOpen(false)}
-                                      className={cn(
-                                        "block rounded-xl px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-200",
-                                        isSubActive
-                                          ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                                          : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
-                                      )}
-                                    >
-                                      {sub.label}
-                                    </Link>
-                                  );
-                                })}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      );
-                    }
-
-                    const isActive = pathname === item.href;
-                    const isUnread = unreadModules.has(item.href);
-
-                    return (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        onClick={() => setIsOpen(false)}
-                        className={cn(
-                          "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold tracking-wide transition-all duration-200",
-                          isActive
-                            ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-[1.02]"
-                            : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
-                        )}
-                      >
-                        <Icon className="h-4 w-4 shrink-0" />
-                        <span className="flex-1 truncate">{item.label}</span>
-                        {isUnread && (
-                          <span className="h-2 w-2 rounded-full bg-rose-500 shadow-sm shadow-rose-500/50 shrink-0 animate-pulse" />
-                        )}
-                      </Link>
-                    );
-                  })}
-                </nav>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="rounded-xl p-1.5 hover:bg-muted text-foreground"
+                >
+                  <X className="h-5 w-5" />
+                </button>
               </div>
 
-              <div className="space-y-4">
+              {/* Navigation list - flex-1 & scrollable */}
+              <nav className="flex-1 space-y-1.5 overflow-y-auto pr-1 mb-4 select-none scrollbar-thin scrollbar-thumb-border/20">
+                {items.map((item: any) => {
+                  const Icon = item.icon;
+                  const hasSubItems = !!item.subItems;
+
+                  if (hasSubItems) {
+                    const isMenuOpen = openMenus[item.label] || false;
+                    const isSubActive = item.subItems.some((sub: any) => pathname === sub.href);
+
+                    return (
+                      <div key={item.label} className="space-y-1">
+                        <button
+                          onClick={() => setOpenMenus(prev => ({ ...prev, [item.label]: !prev[item.label] }))}
+                          className={cn(
+                            "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold tracking-wide transition-all duration-200 text-left",
+                            isSubActive
+                              ? "bg-primary/10 text-primary border border-primary/20"
+                              : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+                          )}
+                        >
+                          <Icon className="h-4 w-4 shrink-0" />
+                          <span className="flex-1 truncate">{item.label}</span>
+                          <motion.span
+                            animate={{ rotate: isMenuOpen ? 90 : 0 }}
+                            className="text-xs text-muted-foreground flex items-center justify-center w-4 h-4"
+                          >
+                            ▶
+                          </motion.span>
+                        </button>
+
+                        <AnimatePresence initial={false}>
+                          {isMenuOpen && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.15 }}
+                              className="pl-7 space-y-1 overflow-hidden"
+                            >
+                              {item.subItems.map((sub: any) => {
+                                const isSubActive = pathname === sub.href;
+                                return (
+                                  <Link
+                                    key={sub.href}
+                                    href={sub.href}
+                                    onClick={() => setIsOpen(false)}
+                                    className={cn(
+                                      "block rounded-xl px-4 py-2 text-xs font-semibold tracking-wide transition-all duration-200",
+                                      isSubActive
+                                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                                        : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+                                    )}
+                                  >
+                                    {sub.label}
+                                  </Link>
+                                );
+                              })}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  }
+
+                  const isActive = pathname === item.href;
+                  const isUnread = unreadModules.has(item.href);
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className={cn(
+                        "flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold tracking-wide transition-all duration-200",
+                        isActive
+                          ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-[1.02]"
+                          : "text-muted-foreground hover:bg-muted/30 hover:text-foreground"
+                      )}
+                    >
+                      <Icon className="h-4 w-4 shrink-0" />
+                      <span className="flex-1 truncate">{item.label}</span>
+                      {isUnread && (
+                        <span className="h-2 w-2 rounded-full bg-rose-500 shadow-sm shadow-rose-500/50 shrink-0 animate-pulse" />
+                      )}
+                    </Link>
+                  );
+                })}
+              </nav>
+
+              {/* Footer */}
+              <div className="space-y-4 border-t border-border/20 pt-4 mt-auto">
                 <div className="flex items-center justify-between px-3">
                   <span className="text-xs text-muted-foreground font-semibold">Appearance</span>
                   <ThemeToggle />
