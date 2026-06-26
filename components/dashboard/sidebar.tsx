@@ -21,6 +21,7 @@ import {
   ArrowUpRight,
   UserCircle2,
   Award,
+  Trophy,
 } from "lucide-react";
 import { signOut } from "@/lib/actions/auth";
 import { ThemeToggle } from "./theme-toggle";
@@ -160,6 +161,7 @@ export function Sidebar({ role }: SidebarProps) {
     { label: "Sales Management", href: "/agent/sales", icon: BarChart3 },
     { label: "My Commissions", href: "/agent/commissions", icon: Coins },
     { label: "My Promotion Income", href: "/agent/promotions", icon: Award },
+    { label: "My Rewards", href: "/agent/rewards", icon: Trophy },
     { label: "My Downline", href: "/agent/network", icon: Network },
     { label: "My Payouts", href: "/agent/payouts", icon: DollarSign },
     { label: "Site Visit Record", href: "/agent/visits", icon: MapPin },
@@ -181,6 +183,11 @@ export function Sidebar({ role }: SidebarProps) {
         { label: "Promotion History", href: "/admin/mlm/promotion-history" },
         { label: "Promotion Reports", href: "/admin/mlm/promotion-reports" },
         { label: "Promotion Payments", href: "/admin/mlm/promotion-payments" },
+        { label: "Achievement Rules", href: "/admin/mlm/rewards/rules" },
+        { label: "Reward Categories", href: "/admin/mlm/rewards/categories" },
+        { label: "Reward Claims", href: "/admin/mlm/rewards/claims" },
+        { label: "Reward History", href: "/admin/mlm/rewards/history" },
+        { label: "Reward Reports", href: "/admin/mlm/rewards/reports" },
       ],
     },
     { label: "Withdrawals", href: "/admin/withdrawals", icon: ArrowUpRight },
