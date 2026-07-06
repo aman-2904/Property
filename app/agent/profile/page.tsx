@@ -5,7 +5,7 @@ import { getAgentBalance } from "@/lib/actions/payouts";
 import { AgentProfileClient } from "@/components/dashboard/agent-profile-client";
 
 export const metadata = {
-  title: "My Profile | AuraCommission",
+  title: "My Profile | elitebuildtech",
   description: "View and manage your agent profile, performance stats, and account security.",
 };
 

@@ -231,7 +231,7 @@ export function AdminRewardReportsClient({ initialReports }: ClientProps) {
 
         <div className="p-6 rounded-3xl border border-border/40 bg-card text-foreground shadow-lg col-span-2 space-y-4">
           <div>
-            <h3 className="text-sm font-bold text-foreground">Aura MLM Rewards Distribution Summary</h3>
+            <h3 className="text-sm font-bold text-foreground">elitebuildtech MLM Rewards Distribution Summary</h3>
             <p className="text-[10px] text-muted-foreground">Detailed metrics overview of all logged agent reward claims</p>
           </div>
           <div className="grid grid-cols-2 gap-4 text-xs">

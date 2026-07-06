@@ -161,7 +161,7 @@ export function PropertyForm({ property, onSuccess }: PropertyFormProps) {
             type="text"
             {...register("title")}
             disabled={isPending}
-            placeholder="Aura Green Valley Penthouse"
+            placeholder="elitebuildtech Green Valley Penthouse"
             className={cn(
               "w-full px-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all",
               errors.title && "border-destructive/50"

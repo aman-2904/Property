@@ -1,4 +1,4 @@
--- SQL Migration Script for AuraCommission Platform
+-- SQL Migration Script for elitebuildtech Platform
 -- Target: Supabase PostgreSQL Database
 
 -- Enable UUID extension if not enabled

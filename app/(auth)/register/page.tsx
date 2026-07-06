@@ -337,7 +337,7 @@ export default function RegisterPage() {
                     Create Account
                   </h1>
                   <p className="text-sm text-muted-foreground mt-2">
-                    Join AuraCommission MLM network today
+                    Join elitebuildtech MLM network today
                   </p>
                 </div>
 

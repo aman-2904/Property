@@ -6,7 +6,7 @@ import { getProperties } from "@/lib/actions/properties";
 import { AgentSalesClient } from "@/components/dashboard/agent-sales-client";
 
 export const metadata = {
-  title: "Sales Management | AuraComm Agent Portal",
+  title: "Sales Management | elitebuildtech Agent Portal",
   description: "Track, manage, and monitor all your submitted property sales and commissions.",
 };
 

@@ -5,7 +5,7 @@ import { getAgentCommissions } from "@/lib/actions/sales";
 import { AgentCommissionsClient } from "@/components/dashboard/agent-commissions-client";
 
 export const metadata = {
-  title: "My Commissions | AuraComm Agent Portal",
+  title: "My Commissions | elitebuildtech Agent Portal",
   description: "Track your direct selling commissions and MLM upline override commissions.",
 };
 
