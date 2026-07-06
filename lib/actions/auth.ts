@@ -26,13 +26,18 @@ export async function login(formData: any, isAdminLogin: boolean = false) {
   const adminSupabase = createAdminClient();
   const { data: profile, error: profileError } = await adminSupabase
     .from("profiles")
-    .select("role")
+    .select("role, is_active")
     .eq("id", authData.user.id)
     .single();
 
   if (profileError || !profile) {
     await supabase.auth.signOut();
     return { error: "Failed to retrieve user profile or role." };
+  }
+
+  if (profile.is_active === false) {
+    await supabase.auth.signOut();
+    return { error: "Access Denied: Your account has been paused, suspended, or disabled." };
   }
 
   const role = profile.role?.toUpperCase();

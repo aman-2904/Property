@@ -22,6 +22,7 @@ import {
   UserCircle2,
   Award,
   Trophy,
+  UserCog,
 } from "lucide-react";
 import { signOut } from "@/lib/actions/auth";
 import { ThemeToggle } from "./theme-toggle";
@@ -173,6 +174,7 @@ export function Sidebar({ role }: SidebarProps) {
     { label: "Properties", href: "/admin/properties", icon: Building2 },
     { label: "Agents", href: "/admin/agents", icon: Users },
     { label: "Sales", href: "/admin/sales", icon: BarChart3 },
+    { label: "Manage Admins", href: "/admin/admins", icon: UserCog },
     { label: "Commissions", href: "/admin/commissions", icon: Coins },
     {
       label: "MLM",
