@@ -88,7 +88,7 @@ export async function signUp(formData: any) {
 
   let uplineId: string | null = null;
 
-  if (count && count > 0 && role === "AGENT" && referralCode && referralCode.trim() !== "") {
+  if (typeof count === "number" && count > 0 && role === "AGENT" && referralCode && referralCode.trim() !== "") {
     const { data: sponsor, error: sponsorError } = await adminSupabase
       .from("profiles")
       .select("id, is_active")
