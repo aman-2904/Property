@@ -67,9 +67,9 @@ export default async function LandingPage() {
         </div>
 
         <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-foreground leading-[1.1] text-balance">
-          Automate Real Estate{" "}
+          Welcome to{" "}
           <span className="bg-gradient-to-r from-primary via-violet-400 to-indigo-500 bg-clip-text text-transparent">
-            MLM Commissions
+            Elit Business Tree
           </span>
         </h1>
 
@@ -97,25 +97,25 @@ export default async function LandingPage() {
         <div className="grid gap-6 sm:grid-cols-3 w-full pt-16">
           <div className="p-6 rounded-2xl border border-border/40 glass-premium text-left space-y-2">
             <ShieldCheck className="h-6 w-6 text-emerald-500" />
-            <h3 className="font-bold text-sm">Row Level Security</h3>
+            <h3 className="font-bold text-sm">Secure Portal</h3>
             <p className="text-xs text-muted-foreground">
-              Supabase RLS policies guarantee data isolation across agent levels.
+              Bank-grade security keeps your personal details and network structure completely private and safe.
             </p>
           </div>
 
           <div className="p-6 rounded-2xl border border-border/40 glass-premium text-left space-y-2">
             <Zap className="h-6 w-6 text-primary" />
-            <h3 className="font-bold text-sm">Instant Calculation</h3>
+            <h3 className="font-bold text-sm">Direct Commission</h3>
             <p className="text-xs text-muted-foreground">
-              PostgreSQL functions compute overrides up to 3 levels down instantly on sale approval.
+              Earn overrides and commissions up to 3 levels down automatically once a property sale is verified.
             </p>
           </div>
 
           <div className="p-6 rounded-2xl border border-border/40 glass-premium text-left space-y-2">
             <Award className="h-6 w-6 text-amber-500" />
-            <h3 className="font-bold text-sm">Rank Promotions</h3>
+            <h3 className="font-bold text-sm">Dynamic Growth</h3>
             <p className="text-xs text-muted-foreground">
-              Recruits elevate ranks dynamically as cumulative approved sales volume scales.
+              Level up your rank automatically as your team sales volume scales to earn higher commission brackets.
             </p>
           </div>
         </div>
@@ -124,7 +124,7 @@ export default async function LandingPage() {
       {/* Footer */}
       <footer className="relative z-10 h-16 w-full flex items-center justify-center border-t border-border/30 px-6 text-center text-xs text-muted-foreground">
         <div>
-          &copy; {new Date().getFullYear()} elitebuildtech. All rights reserved. Powered by Next.js & Supabase.
+          &copy; {new Date().getFullYear()} elitebuildtech. All rights reserved.
         </div>
       </footer>
     </div>
