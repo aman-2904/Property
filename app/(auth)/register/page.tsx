@@ -20,6 +20,8 @@ import {
   RefreshCw,
   Eye,
   EyeOff,
+  Phone,
+  MapPin,
 } from "lucide-react";
 import { signUp } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
@@ -28,6 +30,11 @@ import { createClient } from "@/lib/supabase/client";
 const registerSchema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
+  phone: z.string()
+    .min(10, "Phone number must be exactly 10 digits")
+    .max(10, "Phone number must be exactly 10 digits")
+    .regex(/^\d+$/, "Phone number must contain only digits"),
+  address: z.string().min(5, "Address must be at least 5 characters"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   referralCode: z.string().optional().or(z.literal("")),
 });
@@ -68,6 +75,8 @@ export default function RegisterPage() {
     defaultValues: {
       fullName: "",
       email: "",
+      phone: "",
+      address: "",
       password: "",
       referralCode: "",
     },
@@ -396,6 +405,61 @@ export default function RegisterPage() {
                     </div>
                     {errors.email && (
                       <p className="text-xs text-destructive pl-1">{errors.email.message}</p>
+                    )}
+                  </div>
+
+                  {/* Phone Number */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
+                      Phone Number
+                    </label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-muted-foreground pointer-events-none">
+                        <Phone className="h-4 w-4" />
+                      </span>
+                      <input
+                        type="tel"
+                        {...register("phone")}
+                        disabled={isPending}
+                        maxLength={10}
+                        onInput={(e) => {
+                          const target = e.target as HTMLInputElement;
+                          target.value = target.value.replace(/\D/g, "").slice(0, 10);
+                        }}
+                        placeholder="9876543210"
+                        className={cn(
+                          "w-full pl-10 pr-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all",
+                          errors.phone && "border-destructive/50"
+                        )}
+                      />
+                    </div>
+                    {errors.phone && (
+                      <p className="text-xs text-destructive pl-1">{errors.phone.message}</p>
+                    )}
+                  </div>
+
+                  {/* Address */}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
+                      Address
+                    </label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-start pt-3.5 pl-3.5 text-muted-foreground pointer-events-none">
+                        <MapPin className="h-4 w-4" />
+                      </span>
+                      <textarea
+                        {...register("address")}
+                        disabled={isPending}
+                        placeholder="Your full residential or office address"
+                        rows={3}
+                        className={cn(
+                          "w-full pl-10 pr-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all resize-none",
+                          errors.address && "border-destructive/50"
+                        )}
+                      />
+                    </div>
+                    {errors.address && (
+                      <p className="text-xs text-destructive pl-1">{errors.address.message}</p>
                     )}
                   </div>
 

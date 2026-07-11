@@ -21,8 +21,12 @@ import {
   KeyRound,
   Copy,
   Check,
+  Phone,
+  Mail,
+  MapPin,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { updateProfileDetails } from "@/lib/actions/auth";
 import { cn } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -30,6 +34,8 @@ interface AgentProfileClientProps {
   profile: {
     id: string;
     name: string;
+    phone?: string;
+    address?: string;
     referral_code?: string;
     is_active: boolean;
     promotion_level?: number;
@@ -188,6 +194,44 @@ export function AgentProfileClient({
       navigator.clipboard.writeText(profile.referral_code);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  // ── Profile Details Form State ───────────────────────────────────────────
+  const [profileName, setProfileName] = React.useState(profile.name || "");
+  const [profilePhone, setProfilePhone] = React.useState(profile.phone || "");
+  const [profileAddress, setProfileAddress] = React.useState(profile.address || "");
+  const [isUpdatingProfile, setIsUpdatingProfile] = React.useState(false);
+
+  const handleUpdateProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!profileName.trim()) {
+      showToast("Full Name is required.", "error");
+      return;
+    }
+
+    if (profilePhone.trim() && (profilePhone.trim().length !== 10 || !/^\d+$/.test(profilePhone.trim()))) {
+      showToast("Phone number must be exactly 10 digits.", "error");
+      return;
+    }
+
+    setIsUpdatingProfile(true);
+    try {
+      const res = await updateProfileDetails({
+        name: profileName.trim(),
+        phone: profilePhone.trim(),
+        address: profileAddress.trim(),
+      });
+
+      if (res && res.error) {
+        showToast(res.error, "error");
+      } else {
+        showToast("Profile details updated successfully!", "success");
+      }
+    } catch {
+      showToast("An unexpected error occurred. Please try again.", "error");
+    } finally {
+      setIsUpdatingProfile(false);
     }
   };
 
@@ -490,6 +534,136 @@ export function AgentProfileClient({
             ))}
           </div>
         </div>
+
+        {/* ── Profile Details Card ── */}
+        <motion.div
+          custom={4}
+          variants={cardVariants}
+          initial="hidden"
+          animate="visible"
+          className="rounded-3xl border border-border/40 bg-card shadow-xl overflow-hidden"
+        >
+          {/* Card header with gradient accent */}
+          <div className="px-6 py-5 border-b border-border/30 flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20">
+              <User className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-foreground">Profile Details</h3>
+              <p className="text-xs text-muted-foreground">
+                Update your personal information, phone number, and address
+              </p>
+            </div>
+          </div>
+
+          <form onSubmit={handleUpdateProfile} className="p-6">
+            <div className="grid gap-5 md:grid-cols-2">
+              {/* Full Name */}
+              <div className="space-y-1.5">
+                <label htmlFor="profile-name" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
+                  Full Name
+                </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-muted-foreground pointer-events-none">
+                    <User className="h-4 w-4" />
+                  </span>
+                  <input
+                    id="profile-name"
+                    type="text"
+                    value={profileName}
+                    onChange={(e) => setProfileName(e.target.value)}
+                    disabled={isUpdatingProfile}
+                    placeholder="John Doe"
+                    className="w-full pl-10 pr-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all disabled:opacity-60"
+                  />
+                </div>
+              </div>
+
+              {/* Email Address */}
+              <div className="space-y-1.5">
+                <label htmlFor="profile-email" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-muted-foreground pointer-events-none">
+                    <Mail className="h-4 w-4" />
+                  </span>
+                  <input
+                    id="profile-email"
+                    type="email"
+                    value={userEmail}
+                    disabled
+                    className="w-full pl-10 pr-4 py-2.5 bg-muted/10 border border-border/30 rounded-xl text-sm outline-none text-muted-foreground opacity-70 cursor-not-allowed"
+                  />
+                </div>
+              </div>
+
+              {/* Phone Number */}
+              <div className="space-y-1.5">
+                <label htmlFor="profile-phone" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
+                  Phone Number
+                </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-muted-foreground pointer-events-none">
+                    <Phone className="h-4 w-4" />
+                  </span>
+                  <input
+                    id="profile-phone"
+                    type="tel"
+                    value={profilePhone}
+                    onChange={(e) => setProfilePhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                    disabled={isUpdatingProfile}
+                    maxLength={10}
+                    placeholder="9876543210"
+                    className="w-full pl-10 pr-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all disabled:opacity-60"
+                  />
+                </div>
+              </div>
+
+              {/* Address */}
+              <div className="space-y-1.5 md:col-span-2">
+                <label htmlFor="profile-address" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider pl-1">
+                  Address
+                </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-start pt-3.5 pl-3.5 text-muted-foreground pointer-events-none">
+                    <MapPin className="h-4 w-4" />
+                  </span>
+                  <textarea
+                    id="profile-address"
+                    value={profileAddress}
+                    onChange={(e) => setProfileAddress(e.target.value)}
+                    disabled={isUpdatingProfile}
+                    rows={3}
+                    placeholder="Enter full address"
+                    className="w-full pl-10 pr-4 py-2.5 bg-muted/20 border border-border/50 rounded-xl text-sm outline-none focus:border-primary/50 transition-all resize-none disabled:opacity-60"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Submit */}
+            <div className="mt-6 flex items-center justify-end gap-3">
+              <button
+                type="submit"
+                disabled={isUpdatingProfile || !profileName}
+                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-all active:scale-[0.98] disabled:opacity-50 shadow-lg shadow-primary/20"
+              >
+                {isUpdatingProfile ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="h-4 w-4" />
+                    Save Changes
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </motion.div>
 
         {/* ── Change Password Card ── */}
         <motion.div

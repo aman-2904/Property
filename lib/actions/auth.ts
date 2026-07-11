@@ -68,7 +68,7 @@ export async function signUp(formData: any) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  const { email, password, fullName, referralCode, role, secretKey } = formData;
+  const { email, password, fullName, referralCode, role, secretKey, phone, address } = formData;
 
   if (role === "ADMIN") {
     if (secretKey !== "RSADMIN26") {
@@ -115,6 +115,8 @@ export async function signUp(formData: any) {
       data: {
         name: fullName,
         upline_id: uplineId,
+        phone,
+        address,
       },
     },
   });
@@ -206,4 +208,30 @@ export async function getActiveAgents() {
     return [];
   }
   return data || [];
+}
+
+export async function updateProfileDetails(formData: { name: string; phone: string; address: string }) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Authentication failed. User session not found." };
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      name: formData.name,
+      phone: formData.phone,
+      address: formData.address,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", user.id);
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/agent/profile");
+  return { success: true };
 }

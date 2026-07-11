@@ -16,6 +16,8 @@ interface Agent {
   id: string;
   name: string;
   email: string;
+  phone?: string;
+  address?: string;
   promotion_level: number;
   is_active: boolean;
   created_at: string;
@@ -114,6 +116,9 @@ export function AdminAgentsClient({ initialAgents }: AdminAgentsClientProps) {
         <div className="flex flex-col">
           <span className="font-bold text-foreground">{row.name}</span>
           <span className="text-xs text-muted-foreground">{row.email}</span>
+          {row.phone && (
+            <span className="text-xs text-primary font-medium mt-0.5">Ph: {row.phone}</span>
+          )}
         </div>
       ),
     },
@@ -139,6 +144,15 @@ export function AdminAgentsClient({ initialAgents }: AdminAgentsClientProps) {
       header: "Status",
       accessorKey: "is_active",
       render: (row: Agent) => <StatusBadge status={row.is_active ? "active" : "suspended"} />,
+    },
+    {
+      header: "Address",
+      accessorKey: "address",
+      render: (row: Agent) => (
+        <span className="text-xs text-foreground/80 font-medium max-w-[150px] inline-block truncate" title={row.address || ""}>
+          {row.address || "-"}
+        </span>
+      ),
     },
     {
       header: "Registered Date",

@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     email TEXT UNIQUE NOT NULL,
     name TEXT NOT NULL,
     phone TEXT,
+    address TEXT,
     avatar TEXT,
     role public.user_role NOT NULL DEFAULT 'AGENT'::public.user_role,
     referral_code TEXT UNIQUE,
@@ -410,13 +411,14 @@ BEGIN
     END LOOP;
 
     INSERT INTO public.profiles (
-        id, email, name, phone, avatar, role, referral_code, upline_id, network_level, promotion_level, is_active, is_system_user
+        id, email, name, phone, address, avatar, role, referral_code, upline_id, network_level, promotion_level, is_active, is_system_user
     )
     VALUES (
         new.id,
         new.email,
         COALESCE(new.raw_user_meta_data->>'name', 'New Agent'),
         new.raw_user_meta_data->>'phone',
+        new.raw_user_meta_data->>'address',
         new.raw_user_meta_data->>'avatar',
         default_role,
         ref_code,
