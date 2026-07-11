@@ -1,4 +1,4 @@
--- SQL Migration Script for elitebuildtech Platform
+-- SQL Migration Script for Elit buildtech Platform
 -- Target: Supabase PostgreSQL Database
 
 -- Enable UUID extension if not enabled

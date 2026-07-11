@@ -139,7 +139,7 @@ export default function LoginPage() {
     >
       <div className="text-center mb-8">
         <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent">
-          {forgotPasswordStep ? "Reset Password" : "elitebuildtech"}
+          {forgotPasswordStep ? "Reset Password" : "Elit buildtech"}
         </h1>
         <p className="text-sm text-muted-foreground mt-2">
           {forgotPasswordStep === "request" && "Enter your email to receive a password reset OTP"}

@@ -5,7 +5,7 @@ import { getAgentSaleById } from "@/lib/actions/sales";
 import { AgentSaleDetailClient } from "@/components/dashboard/agent-sale-detail-client";
 
 export const metadata = {
-  title: "Sale Details | elitebuildtech Agent Portal",
+  title: "Sale Details | Elit buildtech Agent Portal",
   description: "View property sale details, buyer information, commission breakdown, and approval timeline.",
 };
 

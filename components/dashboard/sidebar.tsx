@@ -213,7 +213,7 @@ export function Sidebar({ role }: SidebarProps) {
         <div className="flex items-center gap-2">
           <Coins className="h-6 w-6 text-primary" />
           <span className="font-extrabold tracking-wider bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent">
-            elitebuildtech
+            Elit buildtech
           </span>
         </div>
         <button
@@ -231,7 +231,7 @@ export function Sidebar({ role }: SidebarProps) {
           <Coins className="h-7 w-7 text-primary animate-pulse" />
           <div>
             <span className="font-extrabold text-lg tracking-wider bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent block">
-              elitebuildtech
+              Elit buildtech
             </span>
             <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold">
               {role} Portal
@@ -371,7 +371,7 @@ export function Sidebar({ role }: SidebarProps) {
                 <div className="flex items-center gap-2">
                   <Coins className="h-6 w-6 text-primary" />
                   <span className="font-extrabold text-lg tracking-wider bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent">
-                    elitebuildtech
+                    Elit buildtech
                   </span>
                 </div>
                 <button

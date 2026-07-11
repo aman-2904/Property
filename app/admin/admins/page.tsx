@@ -5,7 +5,7 @@ import { getAdmins } from "../../../lib/actions/admin-management";
 import { AdminManagementClient } from "../../../components/dashboard/admin-management-client";
 
 export const metadata = {
-  title: "Manage Admins | elitebuildtech Admin Portal",
+  title: "Manage Admins | Elit buildtech Admin Portal",
   description: "Manage portal administrators, status, and permissions.",
 };
 

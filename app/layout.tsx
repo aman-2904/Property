@@ -10,7 +10,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "elitebuildtech - Premium MLM Property Commission Platform",
+  title: "Elit buildtech - Premium MLM Property Commission Platform",
   description:
     "Empower your real estate sales force with direct and multi-level override commission tracking, real-time payouts, and interactive tree networks.",
   keywords: [
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     "Downline Tree",
     "SaaS Dashboard",
   ],
-  authors: [{ name: "elitebuildtech Team" }],
+  authors: [{ name: "Elit buildtech Team" }],
 };
 
 export default function RootLayout({

@@ -39,7 +39,7 @@ export default async function LandingPage() {
         <div className="flex items-center gap-2.5">
           <Coins className="h-8 w-8 text-primary animate-pulse" />
           <span className="font-extrabold text-xl tracking-wider bg-gradient-to-r from-primary to-violet-400 bg-clip-text text-transparent">
-            elitebuildtech
+            Elit buildtech
           </span>
         </div>
         <div className="flex items-center gap-4">
@@ -124,7 +124,7 @@ export default async function LandingPage() {
       {/* Footer */}
       <footer className="relative z-10 h-16 w-full flex items-center justify-center border-t border-border/30 px-6 text-center text-xs text-muted-foreground">
         <div>
-          &copy; {new Date().getFullYear()} elitebuildtech. All rights reserved.
+          &copy; {new Date().getFullYear()} Elit buildtech. All rights reserved.
         </div>
       </footer>
     </div>

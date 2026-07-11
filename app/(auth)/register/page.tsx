@@ -346,7 +346,7 @@ export default function RegisterPage() {
                     Create Account
                   </h1>
                   <p className="text-sm text-muted-foreground mt-2">
-                    Join elitebuildtech MLM network today
+                    Join Elit buildtech MLM network today
                   </p>
                 </div>
 
