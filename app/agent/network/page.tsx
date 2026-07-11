@@ -4,6 +4,40 @@ import { createClient, createAdminClient, getCachedUser } from "@/lib/supabase/s
 import { getAgentTeamAnalytics } from "@/lib/actions/network";
 import { AgentNetworkClient } from "@/components/dashboard/agent-network-client";
 
+async function getUplinePath(uplineId: string | null, supabase: any) {
+  const path: any[] = [];
+  let currentUplineId = uplineId;
+  let distance = 1;
+
+  while (currentUplineId) {
+    const { data: sponsor, error } = await supabase
+      .from("profiles")
+      .select("id, name, email, role, promotion_level, upline_id")
+      .eq("id", currentUplineId)
+      .single();
+
+    if (error || !sponsor) {
+      break;
+    }
+
+    path.push({
+      sponsor_id: sponsor.id,
+      step_distance: distance,
+      sponsor: {
+        name: sponsor.name,
+        email: sponsor.email,
+        role: sponsor.role,
+        promotion_level: sponsor.promotion_level,
+      },
+    });
+
+    currentUplineId = sponsor.upline_id;
+    distance++;
+  }
+
+  return path;
+}
+
 export default async function AgentNetworkPage() {
   const supabase = createClient();
   const adminSupabase = createAdminClient();
@@ -16,12 +50,11 @@ export default async function AgentNetworkPage() {
     redirect("/login");
   }
 
-  // Fetch profile, 3-level flat network, analytics, and upline path in parallel
+  // Fetch profile, 3-level flat network, and analytics in parallel
   const [
     profileResponse,
     downlineMembersResponse,
     teamStats,
-    uplinePathResponse,
   ] = await Promise.all([
     adminSupabase
       .from("profiles")
@@ -33,20 +66,6 @@ export default async function AgentNetworkPage() {
       max_depth: 3,
     }),
     getAgentTeamAnalytics(user.id),
-    supabase
-      .from("upline_sponsor_path")
-      .select(`
-        sponsor_id,
-        step_distance,
-        sponsor:sponsor_id (
-          name,
-          email,
-          role,
-          promotion_level
-        )
-      `)
-      .eq("agent_id", user.id)
-      .order("step_distance", { ascending: true }),
   ]);
 
   const profile = profileResponse.data;
@@ -55,7 +74,9 @@ export default async function AgentNetworkPage() {
   }
 
   const downlineMembers = downlineMembersResponse.data || [];
-  const uplinePath = uplinePathResponse.data || [];
+  
+  // Fetch upline path recursively
+  const uplinePath = await getUplinePath(profile.upline_id, adminSupabase);
 
   // Filter out the agent themselves (depth = 0) for flat downline list
   const downlineList = downlineMembers.filter((d: any) => d.id !== user.id);
