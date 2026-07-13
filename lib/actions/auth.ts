@@ -62,13 +62,18 @@ export async function login(formData: any, isAdminLogin: boolean = false) {
 }
 
 export async function signUp(formData: any) {
-  const supabase = createClient();
+  // Use generic client to prevent Next.js from auto-refreshing the router due to cookie modifications.
+  const supabase = createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+  
   const adminSupabase = createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  const { email, password, fullName, referralCode, role, secretKey, phone, address } = formData;
+  const { email, password, fullName, referralCode, role, secretKey, phone } = formData;
 
   if (role === "ADMIN") {
     if (secretKey !== "RSADMIN26") {
@@ -116,7 +121,6 @@ export async function signUp(formData: any) {
         name: fullName,
         upline_id: uplineId,
         phone,
-        address,
       },
     },
   });
@@ -127,27 +131,33 @@ export async function signUp(formData: any) {
 
   // 3. Update the role in profiles if specified and not the first user
   if (signUpData?.user && role && ["AGENT", "ADMIN"].includes(role)) {
-    const adminSupabase = createSupabaseClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
-    
-    // Check if user has role SUPER_ADMIN (first user is SUPER_ADMIN, keep it)
-    const { data: profile } = await adminSupabase
-      .from("profiles")
-      .select("role")
-      .eq("id", signUpData.user.id)
-      .single();
-
-    if (profile && profile.role !== "SUPER_ADMIN") {
-      const { error: roleError } = await adminSupabase
+    try {
+      const adminSupabase = createSupabaseClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+      );
+      
+      // Check if user has role SUPER_ADMIN (first user is SUPER_ADMIN, keep it)
+      const { data: profile } = await adminSupabase
         .from("profiles")
-        .update({ role })
-        .eq("id", signUpData.user.id);
-        
-      if (roleError) {
-        console.error("Failed to update user role to", role, ":", roleError.message);
+        .select("role")
+        .eq("id", signUpData.user.id)
+        .single();
+
+      if (profile && profile.role !== "SUPER_ADMIN") {
+        const { error: roleError } = await adminSupabase
+          .from("profiles")
+          .update({ role })
+          .eq("id", signUpData.user.id);
+          
+        if (roleError) {
+          console.error("Failed to update user role to", role, ":", roleError.message);
+        }
       }
+    } catch (e) {
+      console.error("Error during profile role update:", e);
+      // We don't want to fail the signup process if this secondary step fails,
+      // because the user already received the OTP.
     }
   }
 

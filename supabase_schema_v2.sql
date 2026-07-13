@@ -376,6 +376,7 @@ DECLARE
     default_role public.user_role;
     ref_code TEXT;
     code_exists BOOLEAN;
+    raw_upline_id TEXT;
 BEGIN
     SELECT NOT EXISTS (SELECT 1 FROM public.profiles) INTO is_first_user;
     
@@ -387,14 +388,18 @@ BEGIN
 
     valid_sponsor_id := NULL;
     valid_network_lvl := 1;
-    IF (new.raw_user_meta_data->>'upline_id') IS NOT NULL THEN
+    
+    raw_upline_id := new.raw_user_meta_data->>'upline_id';
+    
+    -- Check if upline_id is valid (not null, not empty string, not "null" string)
+    IF raw_upline_id IS NOT NULL AND raw_upline_id != '' AND raw_upline_id != 'null' THEN
         SELECT EXISTS (
             SELECT 1 FROM public.profiles 
-            WHERE id = (new.raw_user_meta_data->>'upline_id')::uuid
+            WHERE id = raw_upline_id::uuid
         ) INTO sponsor_exists;
         
         IF sponsor_exists THEN
-            valid_sponsor_id := (new.raw_user_meta_data->>'upline_id')::uuid;
+            valid_sponsor_id := raw_upline_id::uuid;
             SELECT network_level INTO valid_network_lvl 
             FROM public.profiles 
             WHERE id = valid_sponsor_id;
@@ -416,9 +421,9 @@ BEGIN
     VALUES (
         new.id,
         new.email,
-        COALESCE(new.raw_user_meta_data->>'name', 'New Agent'),
+        COALESCE(NULLIF(new.raw_user_meta_data->>'name', ''), 'New Agent'),
         new.raw_user_meta_data->>'phone',
-        new.raw_user_meta_data->>'address',
+        NULL,
         new.raw_user_meta_data->>'avatar',
         default_role,
         ref_code,
@@ -427,6 +432,15 @@ BEGIN
         0, -- rookie agent level
         TRUE,
         FALSE
+    );
+    RETURN new;
+EXCEPTION WHEN OTHERS THEN
+    -- Fallback to ensure the transaction doesn't abort if a constraint or parsing fails
+    INSERT INTO public.profiles (
+        id, email, name, role, referral_code, promotion_level, is_active, is_system_user
+    ) VALUES (
+        new.id, new.email, 'New Agent', 'AGENT'::public.user_role, 
+        UPPER(SUBSTRING(MD5(RANDOM()::TEXT) FROM 1 FOR 8)), 0, TRUE, FALSE
     );
     RETURN new;
 END;
