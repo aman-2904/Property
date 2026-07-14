@@ -47,6 +47,9 @@ export default async function DashboardRouterPage() {
   if (role === "SUPER_ADMIN" || role === "ADMIN") {
     logToFile(`Redirecting user ${user.email} (role: ${role}) to /admin/dashboard`);
     redirect("/admin/dashboard");
+  } else if (role === "STAFF") {
+    logToFile(`Redirecting user ${user.email} (role: ${role}) to /staff/dashboard`);
+    redirect("/staff/dashboard");
   }
 
   // Default: agent (or any unrecognised role)

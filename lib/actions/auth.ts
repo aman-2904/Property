@@ -5,7 +5,14 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
-export async function login(formData: any, isAdminLogin: boolean = false) {
+export async function login(formData: any, loginTypeOrAdmin: boolean | 'agent' | 'admin' | 'staff' = false) {
+  let loginType: 'agent' | 'admin' | 'staff' = 'agent';
+  if (typeof loginTypeOrAdmin === 'boolean') {
+    loginType = loginTypeOrAdmin ? 'admin' : 'agent';
+  } else {
+    loginType = loginTypeOrAdmin;
+  }
+
   const supabase = createClient();
 
   const { email, password } = formData;
@@ -41,17 +48,30 @@ export async function login(formData: any, isAdminLogin: boolean = false) {
   }
 
   const role = profile.role?.toUpperCase();
-  const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN";
 
-  if (isAdminLogin && !isAdmin) {
-    await supabase.auth.signOut();
-    return { error: "Access Denied: Agents must log in at the agent portal" };
+  if (loginType === 'admin') {
+    if (role !== 'ADMIN' && role !== 'SUPER_ADMIN') {
+      await supabase.auth.signOut();
+      return { error: "Access Denied: Admins must log in at the admin portal" };
+    }
+  } else if (loginType === 'staff') {
+    if (role !== 'STAFF') {
+      await supabase.auth.signOut();
+      return { error: "Access Denied: Staff must log in at the staff portal" };
+    }
+  } else {
+    // agent
+    if (role !== 'AGENT') {
+      await supabase.auth.signOut();
+      return { error: "Access Denied: Agents must log in at the agent portal" };
+    }
   }
 
-  if (!isAdminLogin && isAdmin) {
-    await supabase.auth.signOut();
-    return { error: "Access Denied: Admins must log in at the admin portal" };
-  }
+  // Update last_login timestamp
+  await adminSupabase
+    .from("profiles")
+    .update({ last_login: new Date().toISOString() })
+    .eq("id", authData.user.id);
 
   revalidatePath("/", "layout");
 
@@ -78,6 +98,10 @@ export async function signUp(formData: any) {
   if (role === "ADMIN") {
     if (secretKey !== "RSADMIN26") {
       return { error: "Access Denied: Invalid Admin Secret Key." };
+    }
+  } else if (role === "STAFF") {
+    if (secretKey !== "RSSTAFF26") {
+      return { error: "Access Denied: Invalid Staff Secret Key." };
     }
   }
 
@@ -130,7 +154,7 @@ export async function signUp(formData: any) {
   }
 
   // 3. Update the role in profiles if specified and not the first user
-  if (signUpData?.user && role && ["AGENT", "ADMIN"].includes(role)) {
+  if (signUpData?.user && role && ["AGENT", "ADMIN", "STAFF"].includes(role)) {
     try {
       const adminSupabase = createSupabaseClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,

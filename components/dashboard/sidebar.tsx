@@ -31,7 +31,7 @@ import { createClient } from "@/lib/supabase/client";
 import { markNotificationsAsReadAction } from "@/lib/actions/notifications";
 
 interface SidebarProps {
-  role: "SUPER_ADMIN" | "ADMIN" | "AGENT";
+  role: "SUPER_ADMIN" | "ADMIN" | "AGENT" | "STAFF";
 }
 
 interface SidebarItem {
@@ -195,11 +195,22 @@ export function Sidebar({ role }: SidebarProps) {
     { label: "Withdrawals", href: "/admin/withdrawals", icon: ArrowUpRight },
     { label: "Payouts Requests", href: "/admin/payouts", icon: Coins },
     { label: "Visits Tracking", href: "/admin/visits", icon: MapPin },
+    { label: "Staff Work", href: "/admin/staff-work", icon: ClipboardList },
     { label: "Activity Logs", href: "/admin/activity", icon: ClipboardList },
     { label: "Settings", href: "/admin/settings", icon: Settings },
   ];
 
-  const items = role === "SUPER_ADMIN" || role === "ADMIN" ? adminItems : agentItems;
+  const staffItems: SidebarItem[] = [
+    { label: "Dashboard", href: "/staff/dashboard", icon: LayoutDashboard },
+    { label: "Customer Leads", href: "/staff/leads", icon: ClipboardList },
+  ];
+
+  const items = 
+    role === "SUPER_ADMIN" || role === "ADMIN" 
+      ? adminItems 
+      : role === "STAFF"
+        ? staffItems
+        : agentItems;
 
   const sidebarVariants = {
     open: { x: 0, opacity: 1 },
