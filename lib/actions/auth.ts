@@ -267,5 +267,6 @@ export async function updateProfileDetails(formData: { name: string; phone: stri
   }
 
   revalidatePath("/agent/profile");
+  revalidatePath("/staff/profile");
   return { success: true };
 }

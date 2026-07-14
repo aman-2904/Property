@@ -23,6 +23,7 @@ import {
   Award,
   Trophy,
   UserCog,
+  CalendarClock,
 } from "lucide-react";
 import { signOut } from "@/lib/actions/auth";
 import { ThemeToggle } from "./theme-toggle";
@@ -203,6 +204,8 @@ export function Sidebar({ role }: SidebarProps) {
   const staffItems: SidebarItem[] = [
     { label: "Dashboard", href: "/staff/dashboard", icon: LayoutDashboard },
     { label: "Customer Leads", href: "/staff/leads", icon: ClipboardList },
+    { label: "Upcoming Follow-ups", href: "/staff/followups", icon: CalendarClock },
+    { label: "My Profile", href: "/staff/profile", icon: UserCircle2 },
   ];
 
   const items = 

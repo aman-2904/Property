@@ -12,7 +12,12 @@ envContent.split('\n').forEach(line => {
   }
 });
 
-const supabase = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
+const ws = require('ws');
+const supabase = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
+  realtime: {
+    transport: ws,
+  },
+});
 
 async function printAgents() {
   console.log("Fetching profiles...");

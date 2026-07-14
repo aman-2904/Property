@@ -30,6 +30,8 @@ export default async function StaffDashboardPage() {
   const todaysFollowUps = followUps.filter(f => f.follow_up_date === todayStr);
   const futureFollowUps = followUps.filter(f => f.follow_up_date > todayStr);
 
+
+
   const kpis = [
     {
       label: "Today's Leads",
@@ -225,18 +227,24 @@ export default async function StaffDashboardPage() {
       </div>
 
       {/* Upcoming / General Schedule Section */}
-      {futureFollowUps.length > 0 && (
-        <div className="p-6 rounded-2xl border border-border/40 bg-card/40 backdrop-blur-xl space-y-6">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-blue-500/10 text-blue-500 rounded-xl border border-blue-500/20">
-              <Calendar className="h-5 w-5" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold">Upcoming Follow-ups</h2>
-              <p className="text-xs text-muted-foreground">Scheduled for future dates</p>
-            </div>
+      <div className="p-6 rounded-2xl border border-border/40 bg-card/40 backdrop-blur-xl space-y-6">
+        <div className="flex items-center gap-2.5">
+          <div className="p-2 bg-blue-500/10 text-blue-500 rounded-xl border border-blue-500/20">
+            <Calendar className="h-5 w-5" />
           </div>
+          <div>
+            <h2 className="text-lg font-bold">Upcoming Follow-ups</h2>
+            <p className="text-xs text-muted-foreground">Scheduled for future dates</p>
+          </div>
+        </div>
 
+        {futureFollowUps.length === 0 ? (
+          <div className="text-center py-10 border border-dashed border-border/40 rounded-xl">
+            <Calendar className="h-8 w-8 text-blue-500/75 mx-auto mb-2 opacity-75" />
+            <p className="text-sm font-semibold text-muted-foreground">No upcoming follow-ups.</p>
+            <p className="text-xs text-muted-foreground/60 mt-0.5">You are all caught up!</p>
+          </div>
+        ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {futureFollowUps.slice(0, 6).map((item) => (
               <div
@@ -246,21 +254,21 @@ export default async function StaffDashboardPage() {
                 <div className="space-y-1.5 min-w-0">
                   <p className="font-bold text-sm truncate">{item.customer_leads?.name}</p>
                   <p className="text-xs text-muted-foreground truncate">{item.message}</p>
-                  <div className="text-[10px] font-semibold text-blue-400 bg-blue-500/5 px-2 py-0.5 rounded-full inline-block">
+                  <div className="text-[10px] font-semibold text-blue-400 bg-blue-500/5 px-2 py-0.5 rounded-full inline-block font-mono">
                     {item.follow_up_date} at {item.follow_up_time}
                   </div>
                 </div>
                 <Link
                   href={`/staff/leads/${item.lead_id}`}
-                  className="p-2 rounded-lg border border-border/40 bg-card/60 text-muted-foreground hover:text-foreground transition-all shrink-0"
+                  className="p-2 rounded-lg border border-border/40 bg-card/60 text-muted-foreground hover:text-foreground transition-all shrink-0 hover:scale-105"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Link>
               </div>
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

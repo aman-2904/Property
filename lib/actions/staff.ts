@@ -620,3 +620,55 @@ export async function getDashboardFollowUps() {
   return data || [];
 }
 
+export async function getStaffFollowUps(params: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: string;
+}) {
+  const supabase = createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const page = params.page || 1;
+  const limit = params.limit || 10;
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
+
+  let query = supabase
+    .from("lead_follow_ups")
+    .select("*, customer_leads!inner(id, name, phone, staff_id)", { count: "exact" })
+    .eq("customer_leads.staff_id", user.id);
+
+  // Filter by status
+  if (params.status && params.status !== "all") {
+    if (params.status === "Pending") {
+      query = query.eq("status", "Pending").gte("follow_up_date", new Date().toISOString().split("T")[0]);
+    } else if (params.status === "Overdue") {
+      query = query.eq("status", "Pending").lt("follow_up_date", new Date().toISOString().split("T")[0]);
+    } else {
+      query = query.eq("status", params.status);
+    }
+  }
+
+  // Filter by search string (against customer_leads table fields)
+  if (params.search) {
+    query = query.or(`name.ilike.%${params.search}%,phone.ilike.%${params.search}%`, { foreignTable: "customer_leads" });
+  }
+
+  // Order chronologically
+  query = query
+    .order("follow_up_date", { ascending: true })
+    .order("follow_up_time", { ascending: true })
+    .range(from, to);
+
+  const { data, count, error } = await query;
+  if (error) {
+    console.error("Error fetching staff followups:", error);
+    return { data: [], count: 0 };
+  }
+
+  return { data: data || [], count: count || 0 };
+}
+
+
