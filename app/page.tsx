@@ -25,6 +25,8 @@ export default async function LandingPage() {
       redirect("/admin/dashboard");
     } else if (role === "AGENT") {
       redirect("/agent/dashboard");
+    } else if (role === "STAFF") {
+      redirect("/staff/dashboard");
     }
   }
 
@@ -49,6 +51,12 @@ export default async function LandingPage() {
             className="text-sm font-semibold hover:text-primary transition-colors hidden sm:inline"
           >
             Sign In
+          </Link>
+          <Link
+            href="/staff/login"
+            className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors hidden sm:inline"
+          >
+            Staff Login
           </Link>
           <Link
             href="/register"
@@ -90,6 +98,12 @@ export default async function LandingPage() {
             className="w-full sm:w-auto h-12 inline-flex items-center justify-center rounded-xl border border-border/50 hover:bg-muted bg-background/50 px-8 text-sm font-bold text-foreground transition-all active:scale-[0.99]"
           >
             Portal Sign In
+          </Link>
+          <Link
+            href="/staff/login"
+            className="w-full sm:w-auto h-12 inline-flex items-center justify-center rounded-xl border border-primary/30 hover:bg-primary/5 bg-background/50 px-8 text-sm font-bold text-primary transition-all active:scale-[0.99]"
+          >
+            Staff Login
           </Link>
         </div>
 
